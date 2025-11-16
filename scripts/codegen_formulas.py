@@ -57,16 +57,17 @@ def formula_to_python(formula: str, features: list) -> str:
         py_expr = re.sub(rf'\bx{i}\b', feat, py_expr)
 
     # Replace math functions with math module calls
+    # Use negative lookbehind to avoid replacing already-prefixed functions
     replacements = {
-        r'\bsqrt\(': 'math.sqrt(',
-        r'\blog\(': 'math.log(',
-        r'\bexp\(': 'math.exp(',
-        r'\bsin\(': 'math.sin(',
-        r'\bcos\(': 'math.cos(',
-        r'\btan\(': 'math.tan(',
+        r'(?<!math\.)\bsqrt\(': 'math.sqrt(',
+        r'(?<!math\.)\blog\(': 'math.log(',
+        r'(?<!math\.)\bexp\(': 'math.exp(',
+        r'(?<!math\.)\bsin\(': 'math.sin(',
+        r'(?<!math\.)\bcos\(': 'math.cos(',
+        r'(?<!math\.)\btan\(': 'math.tan(',
         r'\bceiling\(': 'math.ceil(',  # PySR uses 'ceiling'
-        r'\bceil\(': 'math.ceil(',
-        r'\bfloor\(': 'math.floor(',
+        r'(?<!math\.)\bceil\(': 'math.ceil(',
+        r'(?<!math\.)\bfloor\(': 'math.floor(',
         r'\babs\(': 'abs(',
     }
 
