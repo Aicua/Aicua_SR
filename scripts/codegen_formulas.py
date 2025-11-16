@@ -64,6 +64,7 @@ def formula_to_python(formula: str, features: list) -> str:
         r'\bsin\(': 'math.sin(',
         r'\bcos\(': 'math.cos(',
         r'\btan\(': 'math.tan(',
+        r'\bceiling\(': 'math.ceil(',  # PySR uses 'ceiling'
         r'\bceil\(': 'math.ceil(',
         r'\bfloor\(': 'math.floor(',
         r'\babs\(': 'abs(',
