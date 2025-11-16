@@ -65,10 +65,6 @@ class CoTRoseCLIGenerator:
             f"sketch_extrude {petal_name} {extrude_depth:.4f};",
         ]
 
-        # Rotate petal into position
-        if rotation_angle > 0:
-            geometry_cli.append(f"rotate {petal_name} 0 0 1 {rotation_angle:.2f};")
-
         # Get petal height from control points
         cps = cot_result["control_points"]
         petal_height = max(cp[1] for cp in cps)
@@ -100,6 +96,13 @@ class CoTRoseCLIGenerator:
         rigging_cli.append(f"finalize_bones {rig_name};")
         bind_weight = flexibility * [1.0, 1.5, 2.0][layer_idx - 1]
         rigging_cli.append(f"bind_armature {rig_name} {petal_name} {bind_weight:.4f};")
+
+        # Rotate petal into position using root bone (bone_0)
+        # rotate_bone on root bone rotates entire object
+        if rotation_angle > 0:
+            rigging_cli.append(f"")
+            rigging_cli.append(f"# Position petal in spiral arrangement (rotate root bone)")
+            rigging_cli.append(f"rotate_bone {rig_name} bone_0 0 0 {rotation_angle:.2f};")
 
         # Generate animation
         petal_mass = base_size * base_spread * petal_height * 0.01

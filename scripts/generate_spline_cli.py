@@ -135,10 +135,6 @@ class SplineRoseCLIGenerator:
             f"sketch_extrude {petal_name} {sp['extrude_depth']:.4f};",
         ]
 
-        # Rotate petal into position (if rotation needed)
-        if rotation_angle > 0:
-            geometry_cli.append(f"rotate {petal_name} 0 0 1 {rotation_angle:.2f};")
-
         # Generate bone rigging
         flexibility = 0.5 + (3 - layer_idx) * 0.15
         # Use cp3_y as petal height, calculate base_spread from cp1_x and cp5_x
@@ -172,6 +168,13 @@ class SplineRoseCLIGenerator:
 
         rigging_cli.append(f"finalize_bones {rig_name};")
         rigging_cli.append(f"bind_armature {rig_name} {petal_name} {bp['bind_weight']:.4f};")
+
+        # Rotate petal into position using root bone (bone_0)
+        # rotate_bone on root bone rotates entire object
+        if rotation_angle > 0:
+            rigging_cli.append(f"")
+            rigging_cli.append(f"# Position petal in spiral arrangement (rotate root bone)")
+            rigging_cli.append(f"rotate_bone {rig_name} bone_0 0 0 {rotation_angle:.2f};")
 
         # Generate animation (wing_flap style)
         petal_mass = base_size * base_spread * petal_height * 0.01

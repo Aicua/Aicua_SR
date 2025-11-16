@@ -106,19 +106,19 @@ exit;
 # Rotation Commands - When to Use Each
 # ============================================================
 
-1. rotate (static, instant positioning):
-   rotate petal_L1_P0 0 0 1 137.5;
-   - Use: Initial petal arrangement (spiral pattern)
-   - Effect: Instant rotation of entire object
-   - CoT decides: Based on petal_idx * golden_angle
+1. rotate_bone (static bone rotation / object positioning):
+   rotate_bone petal_L1_P0_rig bone_0 0 0 137.5;
+   - Use: Rotate root bone = rotate entire object (spiral arrangement)
+   - Effect: Instant bone rotation (Euler angles: X, Y, Z)
+   - CoT decides: Based on petal_idx * golden_angle for positioning
+   - Note: Rotating bone_0 (root) rotates entire petal
 
-2. rotate_bone (static bone angle):
    rotate_bone petal_L1_P0_rig bone_1 0 30 30;
-   - Use: Set initial bone orientation
-   - Effect: Instant bone rotation (Euler angles)
-   - CoT decides: Based on petal opening degree
+   - Use: Rotate child bone for petal angle/curvature
+   - Effect: Adjust bone orientation within armature
+   - CoT decides: Based on opening degree or layer
 
-3. auto_rotate (animated, smooth):
+2. auto_rotate (animated, smooth):
    auto_rotate petal_L1_P0_rig bone_1 1 0 0 15.0 3000 smooth;
    - Use: Bloom animation (petal opening over time)
    - Effect: Smooth interpolated rotation over duration
@@ -127,7 +127,7 @@ exit;
      - Layer 2: 25° bloom
      - Layer 3: 35° bloom
 
-4. wing_flap (continuous oscillation):
+3. wing_flap (continuous oscillation):
    wing_flap petal_L1_P0_rig bone_1 30 10.0 0 -1 0 0;
    - Use: Wind/breathing animation
    - Effect: Repeating back-and-forth motion
