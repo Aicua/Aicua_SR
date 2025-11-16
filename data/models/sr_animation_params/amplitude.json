@@ -1,0 +1,12 @@
+{
+  "formula": "x2 * x3 * 5.0 / sqrt(x1 + 0.1)",
+  "score": 0.9874912414597665,
+  "complexity": 8,
+  "features": [
+    "base_size",
+    "petal_mass",
+    "wind_speed",
+    "flexibility"
+  ],
+  "timestamp": "2025-11-16T03:12:09.730306"
+}

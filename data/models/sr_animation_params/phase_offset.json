@@ -1,0 +1,12 @@
+{
+  "formula": "2.1415",
+  "score": 0.982771037861548,
+  "complexity": 11,
+  "features": [
+    "base_size",
+    "petal_mass",
+    "wind_speed",
+    "flexibility"
+  ],
+  "timestamp": "2025-11-16T03:12:09.730422"
+}

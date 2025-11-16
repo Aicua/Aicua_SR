@@ -1,0 +1,12 @@
+{
+  "formula": "x0 / (3.0 * x0 * x2 + 1) * 0.9",
+  "score": 0.9857936438482219,
+  "complexity": 5,
+  "features": [
+    "petal_length",
+    "petal_width",
+    "flexibility_factor",
+    "layer_index"
+  ],
+  "timestamp": "2025-11-16T03:12:09.727018"
+}

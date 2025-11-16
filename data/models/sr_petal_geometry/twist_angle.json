@@ -1,0 +1,12 @@
+{
+  "formula": "137.5 * x2 / (x1 * 2 + 3)",
+  "score": 0.9560541631650288,
+  "complexity": 14,
+  "features": [
+    "base_size",
+    "layer_index",
+    "petal_index",
+    "opening_degree"
+  ],
+  "timestamp": "2025-11-16T03:12:09.724026"
+}

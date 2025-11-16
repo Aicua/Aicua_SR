@@ -1,0 +1,12 @@
+{
+  "formula": "x2 * (0.5 + x3 * 0.5)",
+  "score": 0.957870115302674,
+  "complexity": 12,
+  "features": [
+    "petal_length",
+    "petal_width",
+    "flexibility_factor",
+    "layer_index"
+  ],
+  "timestamp": "2025-11-16T03:12:09.727229"
+}

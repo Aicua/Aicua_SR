@@ -1,0 +1,19 @@
+# Rose Petal Layer 1, Petal 0
+# Geometry
+2d;
+obj petal_1_0;
+bezier_surface petal_1_0 0.6 0.4 0.9 15.0 0.04;
+exit;
+
+# Rigging
+create_armature petal_1_0_arm;
+add_bone petal_1_0_arm bone_base 0 0 0 0 0.2 0;
+add_bone petal_1_0_arm bone_mid 0 0.2 0 0 0.4 0;
+add_bone petal_1_0_arm bone_tip 0 0.4 0 0 0.6 0;
+parent_bone petal_1_0_arm bone_mid bone_base;
+parent_bone petal_1_0_arm bone_tip bone_mid;
+finalize_bones petal_1_0_arm;
+bind_armature petal_1_0_arm petal_1_0 1.0;
+
+# Animation
+wing_flap petal_1_0_arm bone_tip 5.2 25.0 0 1 0 0;
