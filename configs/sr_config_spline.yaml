@@ -1,0 +1,94 @@
+# Symbolic Regression Configuration - SPLINE VERSION
+
+general:
+  niterations: 100
+  populations: 20
+  population_size: 33
+  model_selection: "best"
+  verbosity: 1
+
+# Category-specific configurations for SPLINE-based geometry
+categories:
+  petal_spline:
+    features:
+      - base_size
+      - layer_index
+      - petal_index
+      - opening_degree
+    targets:
+      - tip_x          # X position of petal tip
+      - tip_y          # Height of petal
+      - tip_z          # Z position (curvature)
+      - base_spread    # Width at base
+      - base_z_offset  # Z offset at base
+      - extrude_depth  # Petal thickness
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "sin", "cos"]
+    constraints:
+      maxsize: 20
+
+  bone_rigging_v2:
+    features:
+      - petal_tip_y
+      - petal_base_spread
+      - flexibility_factor
+      - layer_index
+    targets:
+      - bone_count
+      - bone_start_y
+      - bone_end_y
+      - bone_segment_length
+      - bind_weight
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "ceil", "floor"]
+    constraints:
+      maxsize: 15
+
+  animation_wingflap:
+    features:
+      - base_size
+      - petal_mass
+      - wind_speed
+      - flexibility
+      - layer_index
+    targets:
+      - frequency
+      - amplitude
+      - axis_x
+      - axis_y
+      - axis_z
+      - phase_offset
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "sin", "cos", "exp"]
+    constraints:
+      maxsize: 18
+
+# Quality thresholds
+quality:
+  min_r2_score: 0.90
+  max_complexity: 20
+  validation_split: 0.2
+
+# Physical constraints for generated parameters
+constraints:
+  tip_y:
+    min: 0.1
+    max: 10.0
+  base_spread:
+    min: 0.05
+    max: 5.0
+  extrude_depth:
+    min: 0.001
+    max: 0.5
+  bone_count:
+    min: 2
+    max: 8
+  frequency:
+    min: 1.0
+    max: 50.0
+  amplitude:
+    min: 5.0
+    max: 90.0
