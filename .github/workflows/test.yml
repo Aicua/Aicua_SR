@@ -34,6 +34,10 @@ jobs:
         run: |
           python scripts/generate_spline_dataset.py
 
+      - name: Generate CoT dataset
+        run: |
+          python scripts/generate_cot_dataset.py
+
       - name: Train models (mock/quick)
         run: |
           python scripts/train_sr_models.py
@@ -73,6 +77,26 @@ jobs:
           fi
 
           echo "✓ Spline CLI generation test passed"
+
+      - name: Test CoT CLI generation
+        run: |
+          python scripts/generate_cot_cli.py --size 2.0 --opening 0.8 --layers 1 --detail medium --output /tmp/test_cot.cli
+
+          echo "Generated CoT CLI preview:"
+          head -30 /tmp/test_cot.cli
+
+          # Validate CoT reasoning comments
+          if ! grep -q "CoT Decision" /tmp/test_cot.cli; then
+            echo "Error: No CoT Decision comments found"
+            exit 1
+          fi
+
+          if ! grep -q "spline" /tmp/test_cot.cli; then
+            echo "Error: No spline commands found"
+            exit 1
+          fi
+
+          echo "✓ CoT CLI generation test passed"
 
       - name: Validate generated code syntax
         run: |

@@ -1,0 +1,102 @@
+# Chain-of-Thought (CoT) Reasoning Examples
+# Demonstrates dynamic CP count based on shape analysis
+
+# ============================================================
+# Example 1: Wing (Low Detail) - 4 CPs
+# ============================================================
+
+Shape Analysis:
+  Object: wing_left
+  Type: wing
+  Symmetry: bilateral
+  Detail: low
+
+Reasoning Chain:
+  Step 1: Object type 'wing' suggests 4 CPs (range: 3-6)
+  Step 2: Bilateral symmetry → prefer odd CP count → 5 CPs
+  Step 3: Smooth curvature → keep 5 CPs
+  Step 4: Low detail → simplify → 4 CPs
+  Final: Optimal CP count = 4 (+ close = 8 values)
+
+Generated CLI:
+obj wing_left;
+spline -0.2 0 0 1.0 0.2 0 -0.2 0;
+# 3 CPs + close point (triangle)
+
+
+# ============================================================
+# Example 2: Petal (Medium Detail) - 5 CPs
+# ============================================================
+
+Shape Analysis:
+  Object: petal_L1_P0
+  Type: petal
+  Symmetry: bilateral
+  Detail: medium
+
+Reasoning Chain:
+  Step 1: Object type 'petal' suggests 5 CPs (range: 4-8)
+  Step 2: Bilateral symmetry → prefer odd CP count → 5 CPs
+  Step 3: Smooth curvature → keep 5 CPs
+  Step 4: Medium detail → keep 5 CPs
+  Step 5: Organic shape → ensure curve control → 5 CPs
+  Final: Optimal CP count = 5 (+ close = 12 values)
+
+Generated CLI:
+2d;
+obj petal_L1_P0;
+spline -0.2088 0.0000 -0.1253 0.4608 0.0000 1.1520 0.1253 0.4608 0.2088 0.0000 -0.2088 0.0000;
+exit;
+# 5 CPs + close point (curved petal)
+
+
+# ============================================================
+# Example 3: Leaf (High Detail) - 8 CPs
+# ============================================================
+
+Shape Analysis:
+  Object: leaf_main
+  Type: leaf
+  Symmetry: bilateral
+  Detail: high
+
+Reasoning Chain:
+  Step 1: Object type 'leaf' suggests 6 CPs (range: 5-9)
+  Step 2: Bilateral symmetry → prefer odd CP count → 7 CPs
+  Step 3: Complex curvature → increase CPs → 9 CPs
+  Step 4: High detail → add precision → 9 CPs
+  Step 5: Organic shape → ensure curve control → 9 CPs
+  Final: Optimal CP count = 9 (+ close = 20 values)
+
+Generated CLI:
+2d;
+obj leaf_main;
+spline -0.15 0 -0.1125 0.375 -0.075 0.75 -0.0375 1.125 0 1.5 0.0375 1.125 0.075 0.75 0.1125 0.375 0.15 0 -0.15 0;
+exit;
+# 9 CPs + close point (detailed organic)
+
+
+# ============================================================
+# Key Benefits of CoT Reasoning:
+# ============================================================
+
+1. Automatic CP optimization:
+   - Simple shapes → fewer CPs (faster rendering)
+   - Complex shapes → more CPs (higher quality)
+
+2. Explainable decisions:
+   - Each step documented
+   - Confidence scores provided
+   - Reproducible reasoning
+
+3. Adaptable to new shapes:
+   - Triangle: 3-4 CPs
+   - Petal: 4-8 CPs
+   - Leaf: 5-9 CPs
+   - Circle: 8-16 CPs
+   - Heart: 6-10 CPs
+
+4. SR can learn CoT patterns:
+   - Input: shape features (type, symmetry, detail)
+   - Output: optimal CP count
+   - Formulas discovered automatically
