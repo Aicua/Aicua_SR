@@ -267,36 +267,37 @@ def generate_spline_cli_example():
 # Rose Petal using Spline - Layer 1, Petal 0
 # Base size: 2.0, Opening: 0.8
 
-# Geometry (Spline)
+# Geometry (Spline - 2D coordinates only)
 2d;
 obj petal_L1_P0;
 
-# Spline control points: base_left, tip, base_right
-# CP format: x y z x y z x y z
-spline -0.3 0 0.05 0 1.2 0.1 0.3 0 0.05;
+# Spline control points (5 points, 2D: x y pairs)
+# CP1: base_left, CP2: mid_left_curve, CP3: tip, CP4: mid_right_curve, CP5: base_right
+# Format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5
+spline -0.2088 0.0000 -0.1392 0.4608 0.0000 1.1520 0.1392 0.4608 0.2088 0.0000;
 exit;
 
 # Extrude to give thickness
-sketch_extrude petal_L1_P0 0.02;
+sketch_extrude petal_L1_P0 0.022;
 
-# Rigging (bones along petal)
+# Rigging (bones along petal height)
 create_armature petal_L1_P0_rig;
 
-# Bone from base to middle
-add_bone petal_L1_P0_rig bone_base 0 0 0 0 0.6 0.05;
+# Bone from base to middle (along Y axis)
+add_bone petal_L1_P0_rig bone_0 0 0.0000 0 0 0.5760 0;
 
 # Bone from middle to tip
-add_bone petal_L1_P0_rig bone_tip 0 0.6 0.05 0 1.2 0.1;
+add_bone petal_L1_P0_rig bone_1 0 0.5760 0 0 1.1520 0;
 
 # Parent chain
-parent_bone petal_L1_P0_rig bone_tip bone_base;
+parent_bone petal_L1_P0_rig bone_1 bone_0;
 
 finalize_bones petal_L1_P0_rig;
-bind_armature petal_L1_P0_rig petal_L1_P0 1.5;
+bind_armature petal_L1_P0_rig petal_L1_P0 0.8;
 
 # Animation (wing_flap style)
 # wing_flap rig bone freq amp axis_x axis_y axis_z phase
-wing_flap petal_L1_P0_rig bone_tip 15 30.0 -1 -1 0 0;
+wing_flap petal_L1_P0_rig bone_1 30 10.0 0 -1 0 0;
 """
     return example.strip()
 
