@@ -24,7 +24,8 @@ class CoTRoseCLIGenerator:
         self.verbose = verbose
 
     def generate_petal_with_cot(
-        self, layer_idx, petal_idx, base_size, opening_degree, detail_level="medium"
+        self, layer_idx, petal_idx, base_size, opening_degree, detail_level="medium",
+        bloom_animation=False, bloom_duration=3000
     ):
         """Generate single petal using CoT reasoning."""
 
@@ -116,6 +117,19 @@ class CoTRoseCLIGenerator:
             f"wing_flap {rig_name} {last_bone} {frequency:.0f} {amplitude:.1f} {axis_x} -1 0 0;",
         ]
 
+        # Add bloom animation if requested (auto_rotate for smooth opening)
+        if bloom_animation:
+            # Calculate bloom angle based on layer (outer layers open more)
+            bloom_angle = 15.0 + (layer_idx - 1) * 10.0  # L1: 15°, L2: 25°, L3: 35°
+            # Stagger timing: outer petals start later
+            delay_offset = petal_idx * 200  # 200ms between each petal
+
+            animation_cli.append(f"")
+            animation_cli.append(f"# Bloom animation (smooth opening)")
+            animation_cli.append(
+                f"auto_rotate {rig_name} {last_bone} 1 0 0 {bloom_angle:.1f} {bloom_duration} smooth;"
+            )
+
         return {
             "geometry": geometry_cli,
             "rigging": rigging_cli,
@@ -124,7 +138,8 @@ class CoTRoseCLIGenerator:
         }
 
     def generate_rose(
-        self, base_size=2.0, opening_degree=0.8, n_layers=3, detail_level="medium"
+        self, base_size=2.0, opening_degree=0.8, n_layers=3, detail_level="medium",
+        bloom_animation=False, bloom_duration=3000
     ):
         """Generate complete rose with CoT reasoning."""
 
@@ -136,6 +151,7 @@ class CoTRoseCLIGenerator:
             f"# Opening Degree: {opening_degree}",
             f"# Layers: {n_layers}",
             f"# Detail Level: {detail_level}",
+            f"# Bloom Animation: {bloom_animation}",
             f"# Dynamic CP count based on shape analysis",
             "",
         ]
@@ -151,7 +167,8 @@ class CoTRoseCLIGenerator:
 
             for petal_idx in range(n_petals):
                 petal_data = self.generate_petal_with_cot(
-                    layer_idx, petal_idx, base_size, opening_degree, detail_level
+                    layer_idx, petal_idx, base_size, opening_degree, detail_level,
+                    bloom_animation, bloom_duration
                 )
 
                 all_cli.extend(petal_data["geometry"])
@@ -193,6 +210,8 @@ def main():
     parser.add_argument(
         "--detail", type=str, default="medium", help="Detail level: low/medium/high"
     )
+    parser.add_argument("--bloom", action="store_true", help="Enable bloom animation (auto_rotate)")
+    parser.add_argument("--bloom-duration", type=int, default=3000, help="Bloom duration in ms")
     parser.add_argument("--output", type=str, default=None, help="Output file")
     parser.add_argument("--verbose", action="store_true", help="Show CoT reasoning")
 
@@ -206,6 +225,9 @@ def main():
     print(f"  Opening Degree: {args.opening}")
     print(f"  Layers: {args.layers}")
     print(f"  Detail Level: {args.detail}")
+    print(f"  Bloom Animation: {args.bloom}")
+    if args.bloom:
+        print(f"  Bloom Duration: {args.bloom_duration}ms")
     print()
 
     generator = CoTRoseCLIGenerator(verbose=args.verbose)
@@ -214,6 +236,8 @@ def main():
         opening_degree=args.opening,
         n_layers=args.layers,
         detail_level=args.detail,
+        bloom_animation=args.bloom,
+        bloom_duration=args.bloom_duration,
     )
 
     if args.output:

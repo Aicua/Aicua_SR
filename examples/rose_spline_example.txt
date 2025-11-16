@@ -32,3 +32,11 @@ bind_armature petal_L1_P0_rig petal_L1_P0 0.8;
 # Animation (wing_flap style)
 # wing_flap rig bone freq amp axis_x axis_y axis_z phase
 wing_flap petal_L1_P0_rig bone_1 30 10.0 0 -1 0 0;
+
+# Bloom animation (smooth opening) - optional
+# auto_rotate rig bone axis_x axis_y axis_z angle duration_ms interpolation
+auto_rotate petal_L1_P0_rig bone_1 1 0 0 15.0 3000 smooth;
+
+# Static bone rotation (for initial positioning) - optional
+# rotate_bone rig bone angle_x angle_y angle_z
+rotate_bone petal_L1_P0_rig bone_1 0 30 30;
