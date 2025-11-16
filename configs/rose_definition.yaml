@@ -1,0 +1,82 @@
+# Rose Structure Definition
+# This defines the knowledge graph for a rose flower
+
+rose:
+  category: "flower"
+  base_size: 2.0  # Default base size in units
+
+  segments:
+    - petal_layer_1  # Inner petals (tight, cupped)
+    - petal_layer_2  # Middle petals
+    - petal_layer_3  # Outer petals (wide open)
+    - center         # Reproductive parts
+    - sepal          # Green leaves under flower
+    - stem           # Main stem
+
+  # Focus segments for this project
+  focus:
+    - petal_layer_1
+    - petal_layer_2
+    - petal_layer_3
+
+  # Petal configuration
+  petals:
+    layers: 3
+    petals_per_layer: [5, 8, 13]  # Fibonacci-like
+
+    # Properties per layer
+    layer_1:
+      type: "inner"
+      curvature: "high"
+      opening: "tight"
+      height_ratio: 0.8
+
+    layer_2:
+      type: "middle"
+      curvature: "medium"
+      opening: "partial"
+      height_ratio: 0.6
+
+    layer_3:
+      type: "outer"
+      curvature: "low"
+      opening: "wide"
+      height_ratio: 0.3
+
+# Geometry primitives for rose components
+geometry_mapping:
+  petal:
+    primary: "curved_surface"
+    alternatives: ["nurbs_patch", "bezier_surface"]
+    parameters:
+      - base_width
+      - length
+      - curvature
+      - twist_angle
+      - thickness
+
+  bone:
+    primary: "bone_chain"
+    parameters:
+      - length
+      - count
+      - flexibility
+      - parent
+
+# Animation definitions
+animations:
+  wind_sway:
+    type: "oscillating"
+    parameters:
+      - frequency
+      - amplitude
+      - phase_offset
+      - damping
+
+  blooming:
+    type: "transition"
+    parameters:
+      - start_curvature
+      - end_curvature
+      - duration
+      - easing

@@ -1,0 +1,65 @@
+# Symbolic Regression Training Configuration
+
+# General SR settings
+general:
+  niterations: 100        # Number of evolution iterations
+  populations: 20         # Parallel populations
+  population_size: 33     # Size of each population
+  model_selection: "best" # or "accuracy"
+  verbosity: 1
+
+# Category-specific configurations
+categories:
+  petal_geometry:
+    features:
+      - base_size
+      - layer_index
+      - petal_index
+      - opening_degree
+    targets:
+      - base_width
+      - length
+      - curvature
+      - twist_angle
+      - thickness
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "sin", "cos"]
+    constraints:
+      maxsize: 20  # Max formula complexity
+
+  bone_rigging:
+    features:
+      - petal_length
+      - petal_width
+      - flexibility_factor
+      - layer_index
+    targets:
+      - bone_count
+      - bone_length
+      - joint_spacing
+      - bind_weight
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "ceil", "floor"]
+
+  animation_params:
+    features:
+      - base_size
+      - petal_mass
+      - wind_speed
+      - flexibility
+    targets:
+      - frequency
+      - amplitude
+      - phase_offset
+      - damping_factor
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "sin", "cos", "exp"]
+
+# Quality thresholds
+quality:
+  min_r2_score: 0.95    # Minimum R² to accept formula
+  max_complexity: 15    # Prefer simpler formulas
+  validation_split: 0.2 # 20% for validation

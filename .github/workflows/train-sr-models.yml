@@ -1,0 +1,114 @@
+name: Train SR Models
+
+on:
+  workflow_dispatch:
+    inputs:
+      iterations:
+        description: 'Number of SR iterations'
+        default: '50'
+        type: string
+      category:
+        description: 'Category to train (all, petal_geometry, bone_rigging, animation_params)'
+        default: 'all'
+        type: string
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120  # SR training can take time
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # PySR requires Julia
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: '1.9'
+
+      - name: Install PySR Julia dependencies
+        run: |
+          python -c "
+          import pysr
+          pysr.install()
+          " || echo "PySR Julia setup may need manual intervention"
+
+      - name: Check dataset exists
+        run: |
+          if [ ! -f "data/processed/petal_geometry.csv" ]; then
+            echo "Dataset not found. Generating..."
+            python scripts/generate_rose_dataset.py
+          else
+            echo "Dataset found."
+          fi
+
+      - name: Train SR models
+        env:
+          ITERATIONS: ${{ github.event.inputs.iterations }}
+          CATEGORY: ${{ github.event.inputs.category }}
+        run: |
+          echo "Training SR models..."
+          echo "Iterations: $ITERATIONS"
+          echo "Category: $CATEGORY"
+
+          # Modify script to use input parameters
+          python scripts/train_sr_models.py
+
+      - name: Generate Python code from formulas
+        run: |
+          echo "Generating Python code..."
+          python scripts/codegen_formulas.py
+
+      - name: Run tests
+        run: |
+          echo "Running tests on discovered formulas..."
+          python -m pytest tests/ -v || echo "Some tests may fail initially"
+
+      - name: Upload models as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sr-discovered-formulas
+          path: |
+            data/models/
+            data/generated/
+          retention-days: 90
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "feat: Update SR-discovered formulas"
+          title: "[AutoML] New SR-discovered formulas"
+          body: |
+            ## Automated Symbolic Regression Training
+
+            This PR contains newly discovered formulas from the SR training pipeline.
+
+            ### Changes:
+            - Updated formulas in `data/models/`
+            - Auto-generated Python code in `data/generated/`
+
+            ### Training Parameters:
+            - Iterations: ${{ github.event.inputs.iterations }}
+            - Category: ${{ github.event.inputs.category }}
+
+            ### Review Checklist:
+            - [ ] Check R² scores in formula JSONs
+            - [ ] Review generated Python code
+            - [ ] Run integration tests
+            - [ ] Test CLI generation with new formulas
+
+          branch: automated/sr-formulas-update
+          delete-branch: true

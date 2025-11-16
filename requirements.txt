@@ -1,0 +1,17 @@
+# Core dependencies
+numpy>=1.21.0
+pandas>=1.3.0
+pyyaml>=6.0
+
+# Symbolic Regression
+pysr>=0.16.0
+sympy>=1.11.0
+
+# Visualization (optional)
+matplotlib>=3.5.0
+
+# Testing
+pytest>=7.0.0
+
+# Code generation
+jinja2>=3.0.0
