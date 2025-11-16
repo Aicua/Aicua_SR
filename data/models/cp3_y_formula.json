@@ -1,0 +1,15 @@
+{
+  "target": "cp3_y",
+  "equation": "base_size*(-layer_idx - 2.0)*(opening_degree*0.060000002 - 0.24)",
+  "complexity": 11,
+  "loss": 1.6614858e-14,
+  "variables": ["base_size", "layer_idx", "petal_idx", "opening_degree"],
+  "training_info": {
+    "platform": "Kaggle",
+    "gpu": "Tesla T4",
+    "training_time_seconds": 32,
+    "dataset_size": 3900,
+    "niterations": 100,
+    "date": "2025-11-16"
+  }
+}
