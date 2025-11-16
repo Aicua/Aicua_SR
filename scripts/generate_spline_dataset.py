@@ -19,13 +19,15 @@ def generate_spline_petal_dataset(n_samples: int = 100) -> pd.DataFrame:
     """
     Generate dataset for petal geometry using SPLINE control points.
 
-    Spline format: spline x1 y1 z1 x2 y2 z2 x3 y3 z3 ...
+    Spline format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5 ...
+    (2D coordinates only - pairs of x,y)
 
-    For rose petal, we use 4 control points:
+    For rose petal, we use 5 control points:
     - CP1: Base left
-    - CP2: Tip (top)
-    - CP3: Base right
-    - (Optional CP4 for more complex shapes)
+    - CP2: Mid-left (curve control)
+    - CP3: Tip (top)
+    - CP4: Mid-right (curve control)
+    - CP5: Base right
 
     Features:
         - base_size: Overall rose size
@@ -33,12 +35,12 @@ def generate_spline_petal_dataset(n_samples: int = 100) -> pd.DataFrame:
         - petal_index: Position within layer
         - opening_degree: 0.0 (closed) to 1.0 (fully open)
 
-    Targets (Spline Control Points):
-        - tip_x: X position of petal tip
-        - tip_y: Y position (height)
-        - tip_z: Z position (forward/back)
-        - base_spread: Distance between base points
-        - base_z_offset: Z offset at base (curvature)
+    Targets (Spline 2D Control Points):
+        - cp1_x, cp1_y: Base left
+        - cp2_x, cp2_y: Mid-left curve
+        - cp3_x, cp3_y: Tip
+        - cp4_x, cp4_y: Mid-right curve
+        - cp5_x, cp5_y: Base right
         - extrude_depth: Thickness when extruded
     """
     data = []
@@ -53,45 +55,57 @@ def generate_spline_petal_dataset(n_samples: int = 100) -> pd.DataFrame:
             n_petals = petals_per_layer[layer_idx - 1]
 
             for petal_idx in range(n_petals):
-                # === SPLINE PARAMETERS (to be discovered by SR) ===
-
-                # Tip position (top of petal)
-                # Inner petals: more vertical, less spread
-                # Outer petals: more horizontal, more spread
+                # === SPLINE 2D PARAMETERS ===
 
                 layer_factor = [0.6, 0.8, 1.0][layer_idx - 1]
 
-                # Tip X: Horizontal spread (0 for inner, larger for outer)
-                tip_x = base_size * 0.1 * (layer_idx - 1) * opening_degree
-
-                # Tip Y: Height of petal (vertical)
-                # Inner petals taller relative to width
-                tip_y = base_size * layer_factor * (1.2 - opening_degree * 0.3)
-
-                # Tip Z: Forward/backward position
-                # Creates 3D curvature
-                tip_z = base_size * 0.1 * layer_factor * (1 - opening_degree * 0.5)
-
-                # Base spread: Width at base
+                # Base spread (width at bottom)
                 base_spread = base_size * 0.3 * layer_factor * (1 + opening_degree * 0.2)
 
-                # Base Z offset: Creates curvature at base
-                base_z_offset = base_size * 0.05 * (3 - layer_idx) / 3
+                # Petal height
+                petal_height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
 
-                # Extrude depth: Petal thickness
+                # Tip x offset (for asymmetry/tilt)
+                tip_x_offset = base_size * 0.05 * (layer_idx - 1) * opening_degree
+
+                # Control points (2D: x, y)
+                # CP1: Base left
+                cp1_x = -base_spread / 2
+                cp1_y = 0.0
+
+                # CP2: Mid-left curve (creates curvature)
+                cp2_x = -base_spread / 3
+                cp2_y = petal_height * 0.4
+
+                # CP3: Tip
+                cp3_x = tip_x_offset
+                cp3_y = petal_height
+
+                # CP4: Mid-right curve
+                cp4_x = base_spread / 3
+                cp4_y = petal_height * 0.4
+
+                # CP5: Base right
+                cp5_x = base_spread / 2
+                cp5_y = 0.0
+
+                # Extrude depth (thickness)
                 extrude_depth = base_size * 0.01 * (1 + layer_idx * 0.1)
 
-                # Rotation angle for spiral arrangement (Golden angle)
+                # Rotation angle for spiral arrangement
                 golden_angle = 137.5
                 rotation_angle = (petal_idx * golden_angle) % 360
 
                 # Add noise
                 noise = 0.03
-                tip_x *= (1 + np.random.normal(0, noise))
-                tip_y *= (1 + np.random.normal(0, noise))
-                tip_z *= (1 + np.random.normal(0, noise))
-                base_spread *= (1 + np.random.normal(0, noise))
-                base_z_offset *= (1 + np.random.normal(0, noise))
+                cp1_x *= (1 + np.random.normal(0, noise))
+                cp2_x *= (1 + np.random.normal(0, noise))
+                cp2_y *= (1 + np.random.normal(0, noise))
+                cp3_x += np.random.normal(0, noise * base_size * 0.1)
+                cp3_y *= (1 + np.random.normal(0, noise))
+                cp4_x *= (1 + np.random.normal(0, noise))
+                cp4_y *= (1 + np.random.normal(0, noise))
+                cp5_x *= (1 + np.random.normal(0, noise))
                 extrude_depth *= (1 + np.random.normal(0, noise))
 
                 data.append({
@@ -101,12 +115,17 @@ def generate_spline_petal_dataset(n_samples: int = 100) -> pd.DataFrame:
                     'petal_index': petal_idx,
                     'opening_degree': round(opening_degree, 4),
 
-                    # Targets (Spline parameters)
-                    'tip_x': round(tip_x, 6),
-                    'tip_y': round(tip_y, 6),
-                    'tip_z': round(tip_z, 6),
-                    'base_spread': round(base_spread, 6),
-                    'base_z_offset': round(base_z_offset, 6),
+                    # Targets (2D Spline control points)
+                    'cp1_x': round(cp1_x, 6),
+                    'cp1_y': round(cp1_y, 6),
+                    'cp2_x': round(cp2_x, 6),
+                    'cp2_y': round(cp2_y, 6),
+                    'cp3_x': round(cp3_x, 6),
+                    'cp3_y': round(cp3_y, 6),
+                    'cp4_x': round(cp4_x, 6),
+                    'cp4_y': round(cp4_y, 6),
+                    'cp5_x': round(cp5_x, 6),
+                    'cp5_y': round(cp5_y, 6),
                     'extrude_depth': round(extrude_depth, 6),
                     'rotation_angle': round(rotation_angle, 4),
                 })

@@ -16,11 +16,16 @@ categories:
       - petal_index
       - opening_degree
     targets:
-      - tip_x          # X position of petal tip
-      - tip_y          # Height of petal
-      - tip_z          # Z position (curvature)
-      - base_spread    # Width at base
-      - base_z_offset  # Z offset at base
+      - cp1_x          # Base left X
+      - cp1_y          # Base left Y
+      - cp2_x          # Mid-left curve X
+      - cp2_y          # Mid-left curve Y
+      - cp3_x          # Tip X
+      - cp3_y          # Tip Y (height)
+      - cp4_x          # Mid-right curve X
+      - cp4_y          # Mid-right curve Y
+      - cp5_x          # Base right X
+      - cp5_y          # Base right Y
       - extrude_depth  # Petal thickness
     operators:
       binary: ["+", "-", "*", "/"]

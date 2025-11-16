@@ -36,25 +36,40 @@ class SplineRoseCLIGenerator:
             self.use_sr = False
 
     def compute_spline_params(self, base_size, layer_idx, petal_idx, opening_degree):
-        """Compute spline parameters using SR formulas or fallback."""
+        """Compute 2D spline control points using SR formulas or fallback."""
         if self.use_sr:
             return {
-                'tip_x': self.petal_mod.compute_tip_x(base_size, layer_idx, petal_idx, opening_degree),
-                'tip_y': self.petal_mod.compute_tip_y(base_size, layer_idx, petal_idx, opening_degree),
-                'tip_z': self.petal_mod.compute_tip_z(base_size, layer_idx, petal_idx, opening_degree),
-                'base_spread': self.petal_mod.compute_base_spread(base_size, layer_idx, petal_idx, opening_degree),
-                'base_z_offset': self.petal_mod.compute_base_z_offset(base_size, layer_idx, petal_idx, opening_degree),
+                'cp1_x': self.petal_mod.compute_cp1_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp1_y': self.petal_mod.compute_cp1_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp2_x': self.petal_mod.compute_cp2_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp2_y': self.petal_mod.compute_cp2_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp3_x': self.petal_mod.compute_cp3_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp3_y': self.petal_mod.compute_cp3_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp4_x': self.petal_mod.compute_cp4_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp4_y': self.petal_mod.compute_cp4_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp5_x': self.petal_mod.compute_cp5_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp5_y': self.petal_mod.compute_cp5_y(base_size, layer_idx, petal_idx, opening_degree),
                 'extrude_depth': self.petal_mod.compute_extrude_depth(base_size, layer_idx, petal_idx, opening_degree),
             }
         else:
-            # Fallback formulas (similar to dataset generation)
+            # Fallback formulas (2D spline control points)
             layer_factor = [0.6, 0.8, 1.0][layer_idx - 1]
+
+            base_spread = base_size * 0.3 * layer_factor * (1 + opening_degree * 0.2)
+            petal_height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
+            tip_x_offset = base_size * 0.05 * (layer_idx - 1) * opening_degree
+
             return {
-                'tip_x': base_size * 0.1 * (layer_idx - 1) * opening_degree,
-                'tip_y': base_size * layer_factor * (1.2 - opening_degree * 0.3),
-                'tip_z': base_size * 0.1 * layer_factor * (1 - opening_degree * 0.5),
-                'base_spread': base_size * 0.3 * layer_factor * (1 + opening_degree * 0.2),
-                'base_z_offset': base_size * 0.05 * (3 - layer_idx) / 3,
+                'cp1_x': -base_spread / 2,
+                'cp1_y': 0.0,
+                'cp2_x': -base_spread / 3,
+                'cp2_y': petal_height * 0.4,
+                'cp3_x': tip_x_offset,
+                'cp3_y': petal_height,
+                'cp4_x': base_spread / 3,
+                'cp4_y': petal_height * 0.4,
+                'cp5_x': base_spread / 2,
+                'cp5_y': 0.0,
                 'extrude_depth': base_size * 0.01 * (1 + layer_idx * 0.1),
             }
 
@@ -98,40 +113,24 @@ class SplineRoseCLIGenerator:
             }
 
     def generate_petal_spline(self, layer_idx, petal_idx, base_size, opening_degree):
-        """Generate CLI for single petal using spline."""
+        """Generate CLI for single petal using 2D spline."""
 
         petal_name = f"petal_L{layer_idx}_P{petal_idx}"
 
-        # Get spline parameters
+        # Get 2D spline control points
         sp = self.compute_spline_params(base_size, layer_idx, petal_idx, opening_degree)
 
         # Calculate rotation angle for spiral arrangement
         golden_angle = 137.5
         rotation_angle = (petal_idx * golden_angle) % 360
 
-        # Spline control points:
-        # CP1: Base left (-spread/2, 0, z_offset)
-        # CP2: Tip (tip_x, tip_y, tip_z)
-        # CP3: Base right (spread/2, 0, z_offset)
-
-        cp1_x = -sp['base_spread'] / 2
-        cp1_y = 0
-        cp1_z = sp['base_z_offset']
-
-        cp2_x = sp['tip_x']
-        cp2_y = sp['tip_y']
-        cp2_z = sp['tip_z']
-
-        cp3_x = sp['base_spread'] / 2
-        cp3_y = 0
-        cp3_z = sp['base_z_offset']
-
-        # Generate geometry CLI
+        # Generate geometry CLI with 2D spline (x y pairs)
+        # Format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5
         geometry_cli = [
             f"# {petal_name} - Layer {layer_idx}, Petal {petal_idx}",
             f"2d;",
             f"obj {petal_name};",
-            f"spline {cp1_x:.4f} {cp1_y:.4f} {cp1_z:.4f} {cp2_x:.4f} {cp2_y:.4f} {cp2_z:.4f} {cp3_x:.4f} {cp3_y:.4f} {cp3_z:.4f};",
+            f"spline {sp['cp1_x']:.4f} {sp['cp1_y']:.4f} {sp['cp2_x']:.4f} {sp['cp2_y']:.4f} {sp['cp3_x']:.4f} {sp['cp3_y']:.4f} {sp['cp4_x']:.4f} {sp['cp4_y']:.4f} {sp['cp5_x']:.4f} {sp['cp5_y']:.4f};",
             f"exit;",
             f"sketch_extrude {petal_name} {sp['extrude_depth']:.4f};",
         ]
@@ -142,7 +141,10 @@ class SplineRoseCLIGenerator:
 
         # Generate bone rigging
         flexibility = 0.5 + (3 - layer_idx) * 0.15
-        bp = self.compute_bone_params(sp['tip_y'], sp['base_spread'], flexibility, layer_idx)
+        # Use cp3_y as petal height, calculate base_spread from cp1_x and cp5_x
+        petal_height = sp['cp3_y']
+        base_spread = sp['cp5_x'] - sp['cp1_x']
+        bp = self.compute_bone_params(petal_height, base_spread, flexibility, layer_idx)
 
         rig_name = f"{petal_name}_rig"
 
@@ -152,19 +154,16 @@ class SplineRoseCLIGenerator:
             f"create_armature {rig_name};",
         ]
 
-        # Generate bones along petal
-        bone_segment = sp['tip_y'] / bp['bone_count']
+        # Generate bones along petal (2D: x=0, y=height, z=0)
+        bone_segment = petal_height / bp['bone_count']
 
         for i in range(bp['bone_count']):
             bone_name = f"bone_{i}"
             start_y = i * bone_segment
             end_y = (i + 1) * bone_segment
-            # Z offset increases along petal
-            start_z = sp['base_z_offset'] + (sp['tip_z'] - sp['base_z_offset']) * (start_y / sp['tip_y'])
-            end_z = sp['base_z_offset'] + (sp['tip_z'] - sp['base_z_offset']) * (end_y / sp['tip_y'])
 
             rigging_cli.append(
-                f"add_bone {rig_name} {bone_name} 0 {start_y:.4f} {start_z:.4f} 0 {end_y:.4f} {end_z:.4f};"
+                f"add_bone {rig_name} {bone_name} 0 {start_y:.4f} 0 0 {end_y:.4f} 0;"
             )
 
         # Parent bones
@@ -175,7 +174,7 @@ class SplineRoseCLIGenerator:
         rigging_cli.append(f"bind_armature {rig_name} {petal_name} {bp['bind_weight']:.4f};")
 
         # Generate animation (wing_flap style)
-        petal_mass = base_size * sp['base_spread'] * sp['tip_y'] * 0.01
+        petal_mass = base_size * base_spread * petal_height * 0.01
         wind_speed = 3.0  # Default
 
         ap = self.compute_anim_params(base_size, petal_mass, wind_speed, flexibility, layer_idx)
