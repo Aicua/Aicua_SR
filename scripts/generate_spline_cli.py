@@ -125,12 +125,12 @@ class SplineRoseCLIGenerator:
         rotation_angle = (petal_idx * golden_angle) % 360
 
         # Generate geometry CLI with 2D spline (x y pairs)
-        # Format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5
+        # Format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5 x6 y6 (closed curve - last point = first point)
         geometry_cli = [
             f"# {petal_name} - Layer {layer_idx}, Petal {petal_idx}",
             f"2d;",
             f"obj {petal_name};",
-            f"spline {sp['cp1_x']:.4f} {sp['cp1_y']:.4f} {sp['cp2_x']:.4f} {sp['cp2_y']:.4f} {sp['cp3_x']:.4f} {sp['cp3_y']:.4f} {sp['cp4_x']:.4f} {sp['cp4_y']:.4f} {sp['cp5_x']:.4f} {sp['cp5_y']:.4f};",
+            f"spline {sp['cp1_x']:.4f} {sp['cp1_y']:.4f} {sp['cp2_x']:.4f} {sp['cp2_y']:.4f} {sp['cp3_x']:.4f} {sp['cp3_y']:.4f} {sp['cp4_x']:.4f} {sp['cp4_y']:.4f} {sp['cp5_x']:.4f} {sp['cp5_y']:.4f} {sp['cp1_x']:.4f} {sp['cp1_y']:.4f};",
             f"exit;",
             f"sketch_extrude {petal_name} {sp['extrude_depth']:.4f};",
         ]

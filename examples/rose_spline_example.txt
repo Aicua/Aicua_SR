@@ -5,10 +5,10 @@
 2d;
 obj petal_L1_P0;
 
-# Spline control points (5 points, 2D: x y pairs)
-# CP1: base_left, CP2: mid_left_curve, CP3: tip, CP4: mid_right_curve, CP5: base_right
-# Format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5
-spline -0.2088 0.0000 -0.1392 0.4608 0.0000 1.1520 0.1392 0.4608 0.2088 0.0000;
+# Spline control points (5 points + close, 2D: x y pairs)
+# CP1: base_left, CP2: mid_left_curve, CP3: tip, CP4: mid_right_curve, CP5: base_right, CP6: close (=CP1)
+# Format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5 x6 y6 (closed curve)
+spline -0.2088 0.0000 -0.1392 0.4608 0.0000 1.1520 0.1392 0.4608 0.2088 0.0000 -0.2088 0.0000;
 exit;
 
 # Extrude to give thickness
