@@ -32,7 +32,6 @@ jobs:
 
       - name: Generate test dataset
         run: |
-          python scripts/generate_rose_dataset.py
           python scripts/generate_spline_dataset.py
 
       - name: Train models (mock/quick)
@@ -47,42 +46,25 @@ jobs:
         run: |
           python -m pytest tests/ -v --tb=short
 
-      - name: Test CLI generation (Bezier - Legacy)
+      - name: Test CLI generation (Spline)
         run: |
-          python scripts/generate_rose_cli.py --size 2.0 --opening 0.8 --layers 2 --output /tmp/test_rose_bezier.cli
-
-          echo "Generated Bezier CLI preview:"
-          head -30 /tmp/test_rose_bezier.cli
-
-          lines=$(wc -l < /tmp/test_rose_bezier.cli)
-          echo "Total lines: $lines"
-
-          if [ $lines -lt 50 ]; then
-            echo "Error: Bezier CLI seems too short"
-            exit 1
-          fi
-
-          echo "✓ Bezier CLI generation test passed"
-
-      - name: Test CLI generation (Spline - New)
-        run: |
-          python scripts/generate_spline_cli.py --size 2.0 --opening 0.8 --layers 2 --output /tmp/test_rose_spline.cli
+          python scripts/generate_spline_cli.py --size 2.0 --opening 0.8 --layers 2 --output /tmp/test_rose.cli
 
           echo "Generated Spline CLI preview:"
-          head -50 /tmp/test_rose_spline.cli
+          head -50 /tmp/test_rose.cli
 
           # Validate spline commands exist
-          if ! grep -q "spline" /tmp/test_rose_spline.cli; then
+          if ! grep -q "spline" /tmp/test_rose.cli; then
             echo "Error: No spline commands found"
             exit 1
           fi
 
-          if ! grep -q "wing_flap" /tmp/test_rose_spline.cli; then
+          if ! grep -q "wing_flap" /tmp/test_rose.cli; then
             echo "Error: No wing_flap commands found"
             exit 1
           fi
 
-          lines=$(wc -l < /tmp/test_rose_spline.cli)
+          lines=$(wc -l < /tmp/test_rose.cli)
           echo "Total lines: $lines"
 
           if [ $lines -lt 50 ]; then

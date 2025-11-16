@@ -36,7 +36,7 @@ class RoseSRTrainer:
     def __init__(self, config_path: str = None):
         """Initialize trainer with configuration."""
         if config_path is None:
-            config_path = Path(__file__).parent.parent / "configs" / "sr_config.yaml"
+            config_path = Path(__file__).parent.parent / "configs" / "sr_config_spline.yaml"
 
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
@@ -50,9 +50,9 @@ class RoseSRTrainer:
         data_dir = Path(__file__).parent.parent / "data" / "processed"
 
         file_map = {
-            'petal_geometry': 'petal_geometry.csv',
-            'bone_rigging': 'bone_rigging.csv',
-            'animation_params': 'animation_params.csv',
+            'petal_spline': 'petal_spline.csv',
+            'bone_rigging_v2': 'bone_rigging_v2.csv',
+            'animation_wingflap': 'animation_wingflap.csv',
         }
 
         if category not in file_map:
@@ -179,26 +179,34 @@ class RoseSRTrainer:
         x = [f"x{i}" for i in range(len(features))]
 
         mock_formulas = {
-            'base_width': f"0.3 * {x[0]} * (0.7 + {x[1]} * 0.1)",
-            'length': f"0.8 * {x[0]} * (0.3 + {x[1]} * 0.233)",
-            'curvature': f"(1.2 - {x[1]} * 0.3) * (1 - {x[3]} * 0.3)",
-            'twist_angle': f"137.5 * {x[2]} / ({x[1]} * 2 + 3)",
-            'thickness': f"0.02 * {x[0]} * (1 + sqrt({x[1]}/3) * 0.5)",
-            'bone_count': f"ceil(3.0 * {x[0]} * {x[2]})",
-            'bone_length': f"{x[0]} / (3.0 * {x[0]} * {x[2]} + 1) * 0.9",
-            'joint_spacing': f"{x[0]} / ceil(3.0 * {x[0]} * {x[2]})",
+            # Spline petal targets
+            'tip_x': f"{x[0]} * 0.1 * ({x[1]} - 1) * {x[3]}",
+            'tip_y': f"{x[0]} * (0.4 + {x[1]} * 0.2) * (1.2 - {x[3]} * 0.3)",
+            'tip_z': f"{x[0]} * 0.1 * (0.4 + {x[1]} * 0.2) * (1 - {x[3]} * 0.5)",
+            'base_spread': f"{x[0]} * 0.3 * (0.4 + {x[1]} * 0.2) * (1 + {x[3]} * 0.2)",
+            'base_z_offset': f"{x[0]} * 0.05 * (3 - {x[1]}) / 3",
+            'extrude_depth': f"{x[0]} * 0.01 * (1 + {x[1]} * 0.1)",
+            'rotation_angle': f"137.5 * {x[2]}",
+            # Bone rigging v2 targets
+            'bone_count': f"ceil(2.0 * {x[0]} * {x[2]})",
+            'bone_start_y': "0.0",
+            'bone_end_y': f"{x[0]} * 0.4",
+            'bone_segment_length': f"{x[0]} / ceil(2.0 * {x[0]} * {x[2]})",
             'bind_weight': f"{x[2]} * (0.5 + {x[3]} * 0.5)",
-            'frequency': f"2.0 * sqrt({x[3]} / ({x[1]} + 0.01)) * (1 + {x[2]} * 0.1)",
-            'amplitude': f"{x[2]} * {x[3]} * 5.0 / sqrt({x[1]} + 0.1)",
-            'phase_offset': "2.1415",  # Random constant
-            'damping_factor': f"0.1 * {x[1]} / ({x[3]} + 0.01)",
+            # Animation wingflap targets
+            'frequency': f"10.0 * sqrt({x[3]} / ({x[1]} + 0.01))",
+            'amplitude': f"{x[2]} * {x[3]} * 3.0",
+            'axis_x': f"-1 * ({x[4]} > 1)",
+            'axis_y': "-1",
+            'axis_z': "0",
+            'phase_offset': f"{x[3]} * 6.28",
         }
 
         return mock_formulas.get(target, f"{x[0]} * 0.5 + {x[1]} * 0.3")
 
     def train_all(self, max_iterations: int = None):
         """Train SR models for all categories."""
-        categories = ['petal_geometry', 'bone_rigging', 'animation_params']
+        categories = ['petal_spline', 'bone_rigging_v2', 'animation_wingflap']
 
         for category in categories:
             try:
