@@ -33,6 +33,7 @@ jobs:
       - name: Generate test dataset
         run: |
           python scripts/generate_rose_dataset.py
+          python scripts/generate_spline_dataset.py
 
       - name: Train models (mock/quick)
         run: |
@@ -46,23 +47,50 @@ jobs:
         run: |
           python -m pytest tests/ -v --tb=short
 
-      - name: Test CLI generation
+      - name: Test CLI generation (Bezier - Legacy)
         run: |
-          python scripts/generate_rose_cli.py --size 2.0 --opening 0.8 --layers 2 --output /tmp/test_rose.cli
+          python scripts/generate_rose_cli.py --size 2.0 --opening 0.8 --layers 2 --output /tmp/test_rose_bezier.cli
 
-          echo "Generated CLI preview:"
-          head -50 /tmp/test_rose.cli
+          echo "Generated Bezier CLI preview:"
+          head -30 /tmp/test_rose_bezier.cli
 
-          # Basic validation
-          lines=$(wc -l < /tmp/test_rose.cli)
+          lines=$(wc -l < /tmp/test_rose_bezier.cli)
           echo "Total lines: $lines"
 
           if [ $lines -lt 50 ]; then
-            echo "Error: CLI seems too short"
+            echo "Error: Bezier CLI seems too short"
             exit 1
           fi
 
-          echo "✓ CLI generation test passed"
+          echo "✓ Bezier CLI generation test passed"
+
+      - name: Test CLI generation (Spline - New)
+        run: |
+          python scripts/generate_spline_cli.py --size 2.0 --opening 0.8 --layers 2 --output /tmp/test_rose_spline.cli
+
+          echo "Generated Spline CLI preview:"
+          head -50 /tmp/test_rose_spline.cli
+
+          # Validate spline commands exist
+          if ! grep -q "spline" /tmp/test_rose_spline.cli; then
+            echo "Error: No spline commands found"
+            exit 1
+          fi
+
+          if ! grep -q "wing_flap" /tmp/test_rose_spline.cli; then
+            echo "Error: No wing_flap commands found"
+            exit 1
+          fi
+
+          lines=$(wc -l < /tmp/test_rose_spline.cli)
+          echo "Total lines: $lines"
+
+          if [ $lines -lt 50 ]; then
+            echo "Error: Spline CLI seems too short"
+            exit 1
+          fi
+
+          echo "✓ Spline CLI generation test passed"
 
       - name: Validate generated code syntax
         run: |
