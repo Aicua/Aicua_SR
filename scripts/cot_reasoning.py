@@ -259,13 +259,14 @@ class CoTReasoner:
                 (half_width, 0.0),
             ]
         elif cp_count == 5:
-            # Petal with curve controls
+            # Petal with MIDDLE-WIDE shape (V2)
+            # Base narrow (1/4 spread), Mid widest (1/2 spread)
             cps = [
-                (-half_width, 0.0),  # base_left
-                (-half_width * 0.6, height * 0.4),  # left_curve
-                (tip_offset, height),  # tip
-                (half_width * 0.6, height * 0.4),  # right_curve
-                (half_width, 0.0),  # base_right
+                (-half_width / 2, 0.0),  # base_left (narrow)
+                (-half_width, height * 0.4),  # left_curve (WIDEST)
+                (tip_offset, height),  # tip (pointed)
+                (half_width, height * 0.4),  # right_curve (WIDEST)
+                (half_width / 2, 0.0),  # base_right (narrow)
             ]
         elif cp_count == 6:
             # More detailed petal/leaf
