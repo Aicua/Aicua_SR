@@ -77,19 +77,28 @@ jobs:
           mkdir -p data/cli_samples
 
           # Generate samples for different rose configurations
-          for base_size in 2.0 3.0 4.0; do
+          for size in 2.0 3.0 4.0; do
             for opening in 0.0 0.5 1.0; do
-              echo "Generating: base_size=$base_size, opening=$opening"
+              echo "Generating: size=$size, opening=$opening"
               python scripts/generate_spline_cli.py \
-                --base-size $base_size \
+                --size $size \
                 --opening $opening \
-                --output data/cli_samples/rose_${base_size}_${opening}.json \
-                2>/dev/null || echo "  (using fallback formulas)"
+                --output data/cli_samples/rose_${size}_${opening}.txt \
+                --verbose \
+                2>&1 | head -20
             done
           done
 
+          echo ""
           echo "Generated CLI samples:"
           ls -la data/cli_samples/ || echo "No samples generated"
+
+          # Show sample output
+          if [ -f "data/cli_samples/rose_3.0_0.5.txt" ]; then
+            echo ""
+            echo "Sample CLI (rose_3.0_0.5.txt - first 30 lines):"
+            head -30 data/cli_samples/rose_3.0_0.5.txt
+          fi
 
       - name: Run tests
         run: |
