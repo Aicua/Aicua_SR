@@ -3,8 +3,20 @@ name: Test Pipeline
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'scripts/**'
+      - 'tests/**'
+      - 'configs/**'
+      - 'requirements.txt'
+      - '.github/workflows/**'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'scripts/**'
+      - 'tests/**'
+      - 'configs/**'
+      - 'requirements.txt'
+      - '.github/workflows/**'
 
 jobs:
   test:
@@ -30,9 +42,10 @@ jobs:
           pip install flake8
           flake8 scripts/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
 
-      - name: Generate test dataset
+      - name: Generate test datasets (v2)
         run: |
-          python scripts/generate_spline_dataset.py
+          python scripts/generate_petal_spline_v2.py
+          python scripts/generate_bone_rigging_v4.py
 
       - name: Generate CoT dataset
         run: |
