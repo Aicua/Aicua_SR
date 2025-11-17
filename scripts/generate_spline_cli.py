@@ -67,25 +67,30 @@ class SplineRoseCLIGenerator:
                 'extrude_depth': self.petal_mod.compute_extrude_depth(base_size, layer_idx, petal_idx, opening_degree),
             }
         else:
-            # Fallback formulas (2D spline control points)
-            layer_factor = [0.6, 0.8, 1.0][layer_idx - 1]
+            # Fallback formulas (2D spline control points) - V2 MIDDLE-WIDE SHAPE
+            # Continuous layer factor: layer_idx is 1-based here
+            layer_factor = 0.8 + 0.1 * (layer_idx - 1)  # [0.8, 0.9, 1.0]
 
             base_spread = base_size * 0.3 * layer_factor * (1 + opening_degree * 0.2)
             petal_height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
-            tip_x_offset = base_size * 0.05 * (layer_idx - 1) * opening_degree
+            tip_x_offset = base_size * 0.02 * (layer_idx - 1) * opening_degree
 
+            # MIDDLE-WIDE SHAPE:
+            # CP1/CP5: Base narrow (±1/4 spread)
+            # CP2/CP4: Middle widest (±1/2 spread)
             return {
-                'cp1_x': -base_spread / 2,
+                'cp1_x': -base_spread / 4,  # Narrow base
                 'cp1_y': 0.0,
-                'cp2_x': -base_spread / 3,
+                'cp2_x': -base_spread / 2,  # WIDEST middle
                 'cp2_y': petal_height * 0.4,
                 'cp3_x': tip_x_offset,
                 'cp3_y': petal_height,
-                'cp4_x': base_spread / 3,
+                'cp4_x': base_spread / 2,   # WIDEST middle (symmetric)
                 'cp4_y': petal_height * 0.4,
-                'cp5_x': base_spread / 2,
+                'cp5_x': base_spread / 4,   # Narrow base (symmetric)
                 'cp5_y': 0.0,
-                'extrude_depth': base_size * 0.01 * (1 + layer_idx * 0.1),
+                # ULTRA-THIN THICKNESS
+                'extrude_depth': max(0.001, base_size * 0.005 * (1 - (layer_idx - 1) * 0.1) * (1 - opening_degree * 0.3)),
             }
 
     def compute_bone_params_v4(self, petal_height, petal_width, opening_degree, layer_idx, curvature_intensity=1.0):
@@ -194,9 +199,10 @@ class SplineRoseCLIGenerator:
         ]
 
         # Generate bone rigging with v4 branching structure
-        # Use cp3_y as petal height, calculate petal_width from cp1_x and cp5_x
+        # Use cp3_y as petal height, use MID-CURVE width (widest part)
         petal_height = sp['cp3_y']
-        petal_width = sp['cp5_x'] - sp['cp1_x']
+        # For middle-wide shape: cp4_x - cp2_x is the widest part
+        petal_width = sp['cp4_x'] - sp['cp2_x']  # Mid-curve width (widest)
         curvature_intensity = 1.0  # Default curvature
 
         # layer_idx is 1-based, convert to 0-based for v4

@@ -28,8 +28,8 @@ def generate_bone_rigging_v4(n_samples: int = 500) -> pd.DataFrame:
     - bone_right: Right branch (controls right side opening)
 
     Features:
-        - petal_height: Vertical extent of petal (y-axis)
-        - petal_width: Horizontal width (x-axis)
+        - petal_height: Vertical extent of petal (y-axis) - LARGER RANGE
+        - petal_width: Horizontal width (x-axis) - middle-wide shape
         - opening_degree: How open the flower is (0=closed, 1=open)
         - layer_index: Which layer (0=inner, 1=middle, 2=outer)
         - curvature_intensity: How curved the petal is
@@ -44,29 +44,29 @@ def generate_bone_rigging_v4(n_samples: int = 500) -> pd.DataFrame:
 
     for _ in range(n_samples):
         # === FEATURES ===
-        petal_height = np.random.uniform(0.5, 4.0)
-        petal_width = np.random.uniform(0.2, 1.5)
+        # LARGER petal size range to create bigger bones
+        petal_height = np.random.uniform(1.5, 9.6)  # 8.0 * 1.2 max
+        petal_width = np.random.uniform(0.4, 3.0)   # Wider for middle-wide shape
         opening_degree = np.random.uniform(0.0, 1.0)
         layer_index = np.random.randint(0, 3)  # 0, 1, 2
         curvature_intensity = np.random.uniform(0.5, 1.5)
 
         # === BONE STRUCTURE (2D coordinates) ===
 
-        # Layer factors affect bone positions
-        layer_factor = [0.8, 0.9, 1.0][layer_index]
+        # Continuous layer factor: 0.8, 0.9, 1.0
+        layer_factor = 0.8 + 0.1 * layer_index
 
         # --- BONE ROOT ---
-        # From center bottom, goes up along main axis
+        # From center bottom, goes up along main axis (30% of height)
         root_start_x = 0.0
         root_start_y = 0.0
         root_end_x = 0.0
         root_end_y = petal_height * 0.3 * layer_factor
 
         # --- BONE MIDDLE ---
-        # Continues from root, main axis of petal
+        # Continues from root to 65% of petal height
         middle_start_x = root_end_x
         middle_start_y = root_end_y
-        # Middle bone goes up to about 60-70% of petal height
         middle_end_x = 0.0
         middle_end_y = petal_height * 0.65 * layer_factor
 
@@ -74,26 +74,25 @@ def generate_bone_rigging_v4(n_samples: int = 500) -> pd.DataFrame:
         # Branches from middle, controls left side
         left_start_x = middle_end_x
         left_start_y = middle_end_y
-        # Left bone extends outward and upward
-        # Opening degree affects how far it spreads
-        left_spread = petal_width * 0.4 * (0.5 + opening_degree * 0.5)
+        # Left bone spreads outward based on petal width and opening
+        # Use middle-wide ratio: spread = width * 0.5 (half of mid-curve width)
+        left_spread = petal_width * 0.5 * (0.5 + opening_degree * 0.5)
         left_end_x = -left_spread
         left_end_y = petal_height * 0.9 * layer_factor
 
         # --- BONE RIGHT ---
-        # Branches from middle, controls right side (symmetric to left)
+        # Symmetric to left
         right_start_x = middle_end_x
         right_start_y = middle_end_y
         right_end_x = left_spread  # Symmetric
         right_end_y = petal_height * 0.9 * layer_factor
 
         # Apply curvature intensity to bone positions
-        # Higher curvature = bones spread more outward
         curvature_factor = curvature_intensity * 0.1
         left_end_x *= (1 + curvature_factor)
         right_end_x *= (1 + curvature_factor)
 
-        # Add realistic noise
+        # Add realistic noise (3%)
         noise = 0.03
         root_end_y *= (1 + np.random.normal(0, noise))
         middle_end_y *= (1 + np.random.normal(0, noise))
