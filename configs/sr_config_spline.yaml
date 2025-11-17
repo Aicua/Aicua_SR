@@ -16,17 +16,17 @@ categories:
       - petal_index
       - opening_degree
     targets:
-      - cp1_x          # Base left X
-      - cp1_y          # Base left Y
-      - cp2_x          # Mid-left curve X
-      - cp2_y          # Mid-left curve Y
-      - cp3_x          # Tip X
-      - cp3_y          # Tip Y (height)
-      - cp4_x          # Mid-right curve X
-      - cp4_y          # Mid-right curve Y
-      - cp5_x          # Base right X
-      - cp5_y          # Base right Y
-      - extrude_depth  # Petal thickness
+      - cp1_x
+      - cp1_y
+      - cp2_x
+      - cp2_y
+      - cp3_x
+      - cp3_y
+      - cp4_x
+      - cp4_y
+      - cp5_x
+      - cp5_y
+      - extrude_depth
     operators:
       binary: ["+", "-", "*", "/"]
       unary: ["sqrt", "log", "sin", "cos"]
@@ -50,6 +50,32 @@ categories:
       unary: ["sqrt", "log", "ceil", "floor"]
     constraints:
       maxsize: 15
+
+  bone_rigging_v3:
+    features:
+      - petal_height
+      - petal_width
+      - opening_degree
+      - layer_index
+      - curvature_intensity
+    targets:
+      - bone_0_y_start
+      - bone_0_y_end
+      - bone_0_rot_x
+      - bone_1_y_start
+      - bone_1_y_end
+      - bone_1_rot_x
+      - bone_2_y_start
+      - bone_2_y_end
+      - bone_2_rot_x
+      - bone_3_y_start
+      - bone_3_y_end
+      - bone_3_rot_x
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "sin", "cos"]
+    constraints:
+      maxsize: 18
 
   animation_wingflap:
     features:
@@ -97,29 +123,3 @@ constraints:
   amplitude:
     min: 5.0
     max: 90.0
-
-  bone_rigging_v3:
-    features:
-      - petal_height
-      - petal_width
-      - opening_degree
-      - layer_index
-      - curvature_intensity
-    targets:
-      - bone_0_y_start
-      - bone_0_y_end
-      - bone_0_rot_x
-      - bone_1_y_start
-      - bone_1_y_end
-      - bone_1_rot_x
-      - bone_2_y_start
-      - bone_2_y_end
-      - bone_2_rot_x
-      - bone_3_y_start
-      - bone_3_y_end
-      - bone_3_rot_x
-    operators:
-      binary: ["+", "-", "*", "/"]
-      unary: ["sqrt", "log", "sin", "cos"]
-    constraints:
-      maxsize: 18
