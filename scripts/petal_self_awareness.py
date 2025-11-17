@@ -79,6 +79,50 @@ class TransformationKnowledge:
 
 
 @dataclass
+class RelationshipInfo:
+    """Information about relationship with another object."""
+    other_id: str
+    other_type: str  # "petal", "stem", "leaf", "center"
+    relationship_type: str  # "sibling", "neighbor", "parent", "child"
+    spatial_relation: str  # "adjacent", "above", "below", "inside", "outside"
+    reasoning: List[str]
+
+
+@dataclass
+class CompositionKnowledge:
+    """Knowledge about how the petal composes with other objects."""
+
+    # Relationships with other objects
+    relationships: List[RelationshipInfo]
+
+    # Group membership
+    group_id: str  # e.g., "rose_flower_1"
+    group_role: str  # e.g., "petal_layer_2"
+
+    # Spatial awareness
+    position_in_spiral: int
+    angular_position: float  # degrees from reference
+    radial_distance: float  # distance from center
+
+    # Coordination capabilities
+    coordination_reasoning: List[str]
+    synchronization_reasoning: List[str]
+    hierarchy_reasoning: List[str]
+
+    # Composition patterns
+    available_patterns: List[str]  # ["spiral", "radial", "layered", "clustered"]
+    current_pattern: str
+
+    # Interaction constraints
+    collision_avoidance: Dict[str, float]  # min distance to other objects
+    overlap_rules: Dict[str, bool]  # can overlap with object types
+
+    # Group harmony
+    harmony_score: float  # 0-1, how well petal fits in composition
+    cooperation_confidence: float  # 0-1, confidence in group coordination
+
+
+@dataclass
 class SelfAwarePetal:
     """A petal that understands itself."""
 
@@ -98,6 +142,9 @@ class SelfAwarePetal:
 
     # Transformation knowledge
     transformation: Optional[TransformationKnowledge] = None
+
+    # Composition knowledge
+    composition: Optional[CompositionKnowledge] = None
 
     # Reasoning history
     thought_history: List[str] = field(default_factory=list)
@@ -1113,6 +1160,559 @@ class TransformationReasoner:
         return "\n".join(report)
 
 
+class CompositionReasoner:
+    """
+    Reasons about how petals compose with other objects.
+
+    Enables petals to understand:
+    - Their relationships with other petals
+    - How they fit into larger structures (flowers)
+    - Coordination and synchronization with neighbors
+    """
+
+    def __init__(self):
+        """Initialize composition reasoner."""
+        self.genesis_reasoner = GenesisReasoner()
+        self.golden_angle = 137.5  # Fibonacci spiral angle
+
+        # Object type knowledge
+        self.object_relationships = {
+            "petal": {
+                "same_layer": "sibling",
+                "different_layer": "cousin",
+                "adjacent": "neighbor",
+            },
+            "stem": "parent",
+            "leaf": "sibling",
+            "center": "reference_point",
+        }
+
+        # Spatial rules
+        self.layer_spacing = {
+            1: 0.2,  # Inner layer close to center
+            2: 0.5,  # Middle layer
+            3: 0.8,  # Outer layer far from center
+        }
+
+    def reason_about_composition(
+        self,
+        petal: SelfAwarePetal,
+        other_petals: List[SelfAwarePetal] = None,
+        group_config: Dict[str, Any] = None,
+    ) -> CompositionKnowledge:
+        """
+        Generate composition knowledge for a petal.
+
+        Args:
+            petal: The petal to reason about
+            other_petals: Other petals in the composition
+            group_config: Configuration of the flower/group
+        """
+        if petal.genesis is None:
+            petal.genesis = self.genesis_reasoner.reason_about_genesis(petal)
+
+        if other_petals is None:
+            other_petals = []
+
+        if group_config is None:
+            group_config = {
+                "type": "rose",
+                "petals_per_layer": 5,
+                "num_layers": 3,
+            }
+
+        relationships = []
+        coordination_reasoning = []
+        synchronization_reasoning = []
+        hierarchy_reasoning = []
+
+        # === SPATIAL POSITIONING ===
+        position_in_spiral = petal.layer * group_config["petals_per_layer"] + petal.position_in_layer
+        angular_position = petal.position_in_layer * self.golden_angle
+        radial_distance = self.layer_spacing.get(petal.layer, 0.5)
+
+        # === RELATIONSHIP REASONING ===
+
+        # Reason about center relationship
+        center_rel = self._reason_center_relationship(petal, radial_distance)
+        relationships.append(center_rel)
+        hierarchy_reasoning.extend(center_rel.reasoning)
+
+        # Reason about stem relationship
+        stem_rel = self._reason_stem_relationship(petal)
+        relationships.append(stem_rel)
+        hierarchy_reasoning.extend(stem_rel.reasoning)
+
+        # Reason about relationships with other petals
+        for other in other_petals:
+            if other.name != petal.name:
+                petal_rel = self._reason_petal_relationship(petal, other)
+                relationships.append(petal_rel)
+                coordination_reasoning.extend(petal_rel.reasoning)
+
+        # If no other petals provided, reason about hypothetical neighbors
+        if not other_petals:
+            hypothetical_rels = self._reason_hypothetical_neighbors(petal, group_config)
+            relationships.extend(hypothetical_rels)
+            for rel in hypothetical_rels:
+                coordination_reasoning.extend(rel.reasoning)
+
+        # === SYNCHRONIZATION REASONING ===
+        sync_reasoning = self._reason_synchronization(petal, other_petals, group_config)
+        synchronization_reasoning.extend(sync_reasoning)
+
+        # === PATTERN REASONING ===
+        available_patterns = ["spiral", "radial", "layered", "clustered"]
+        current_pattern = "spiral"  # Default for rose
+
+        if petal.layer == 1:
+            coordination_reasoning.append(
+                "As inner layer, I form the protective core of the spiral"
+            )
+        elif petal.layer == 2:
+            coordination_reasoning.append(
+                "As middle layer, I bridge inner and outer petals in the spiral"
+            )
+        else:
+            coordination_reasoning.append(
+                "As outer layer, I complete the visual spiral pattern"
+            )
+
+        # === COLLISION AVOIDANCE ===
+        collision_avoidance = self._calculate_collision_avoidance(petal, group_config)
+
+        # === OVERLAP RULES ===
+        overlap_rules = {
+            "petal_same_layer": True,  # Can partially overlap
+            "petal_different_layer": True,  # Natural layering
+            "stem": False,  # Should not overlap
+            "center": False,  # Should not overlap
+            "leaf": True,  # Can overlap slightly
+        }
+
+        # === HARMONY SCORE ===
+        harmony_score = self._calculate_harmony_score(petal, group_config)
+        cooperation_confidence = self._calculate_cooperation_confidence(
+            petal, relationships
+        )
+
+        # === GROUP IDENTITY ===
+        group_id = f"rose_flower_{group_config.get('id', 1)}"
+        group_role = f"petal_layer_{petal.layer}_pos_{petal.position_in_layer}"
+
+        return CompositionKnowledge(
+            relationships=relationships,
+            group_id=group_id,
+            group_role=group_role,
+            position_in_spiral=position_in_spiral,
+            angular_position=angular_position,
+            radial_distance=radial_distance,
+            coordination_reasoning=coordination_reasoning,
+            synchronization_reasoning=synchronization_reasoning,
+            hierarchy_reasoning=hierarchy_reasoning,
+            available_patterns=available_patterns,
+            current_pattern=current_pattern,
+            collision_avoidance=collision_avoidance,
+            overlap_rules=overlap_rules,
+            harmony_score=harmony_score,
+            cooperation_confidence=cooperation_confidence,
+        )
+
+    def _reason_center_relationship(
+        self, petal: SelfAwarePetal, radial_distance: float
+    ) -> RelationshipInfo:
+        """Reason about relationship to flower center."""
+        reasoning = []
+
+        reasoning.append(
+            f"I am positioned {radial_distance:.2f} units from the center"
+        )
+
+        if petal.layer == 1:
+            spatial = "inside"
+            reasoning.append(
+                "As inner layer, I am closest to and protect the center"
+            )
+        elif petal.layer == 3:
+            spatial = "outside"
+            reasoning.append(
+                "As outer layer, I am farthest from center, providing visibility"
+            )
+        else:
+            spatial = "adjacent"
+            reasoning.append(
+                "As middle layer, I surround the inner petals"
+            )
+
+        return RelationshipInfo(
+            other_id="flower_center",
+            other_type="center",
+            relationship_type="child",
+            spatial_relation=spatial,
+            reasoning=reasoning,
+        )
+
+    def _reason_stem_relationship(self, petal: SelfAwarePetal) -> RelationshipInfo:
+        """Reason about relationship to stem."""
+        reasoning = []
+
+        reasoning.append(
+            "The stem is my structural parent - it provides support"
+        )
+        reasoning.append(
+            f"My base attaches to the stem's top via bone hierarchy"
+        )
+
+        if petal.layer == 1:
+            reasoning.append(
+                "As inner layer, my attachment is most secure and direct"
+            )
+        else:
+            reasoning.append(
+                f"As layer {petal.layer}, I attach through the bone chain"
+            )
+
+        return RelationshipInfo(
+            other_id="main_stem",
+            other_type="stem",
+            relationship_type="parent",
+            spatial_relation="above",
+            reasoning=reasoning,
+        )
+
+    def _reason_petal_relationship(
+        self, petal: SelfAwarePetal, other: SelfAwarePetal
+    ) -> RelationshipInfo:
+        """Reason about relationship to another petal."""
+        reasoning = []
+
+        if petal.layer == other.layer:
+            relationship = "sibling"
+            reasoning.append(
+                f"'{other.name}' is my sibling in layer {petal.layer}"
+            )
+
+            # Position difference
+            pos_diff = abs(petal.position_in_layer - other.position_in_layer)
+            if pos_diff == 1 or pos_diff >= 4:  # Adjacent in circular arrangement
+                spatial = "adjacent"
+                reasoning.append(
+                    f"We are adjacent in the spiral (position difference: {pos_diff})"
+                )
+            else:
+                spatial = "same_layer"
+                reasoning.append(
+                    f"We are separated by {pos_diff-1} petals in our layer"
+                )
+
+            # Synchronization potential
+            reasoning.append(
+                "We should bloom and animate in coordination for visual harmony"
+            )
+
+        else:
+            relationship = "cousin"
+            if petal.layer < other.layer:
+                spatial = "inside"
+                reasoning.append(
+                    f"'{other.name}' is in outer layer {other.layer}, I am inner"
+                )
+                reasoning.append(
+                    "I may be partially covered by outer layer petals"
+                )
+            else:
+                spatial = "outside"
+                reasoning.append(
+                    f"'{other.name}' is in inner layer {other.layer}, I am outer"
+                )
+                reasoning.append(
+                    "I provide visual coverage for inner layer petals"
+                )
+
+        return RelationshipInfo(
+            other_id=other.name,
+            other_type="petal",
+            relationship_type=relationship,
+            spatial_relation=spatial,
+            reasoning=reasoning,
+        )
+
+    def _reason_hypothetical_neighbors(
+        self, petal: SelfAwarePetal, group_config: Dict[str, Any]
+    ) -> List[RelationshipInfo]:
+        """Reason about neighbors that should exist."""
+        relationships = []
+        petals_per_layer = group_config.get("petals_per_layer", 5)
+
+        # Previous neighbor in same layer
+        prev_pos = (petal.position_in_layer - 1) % petals_per_layer
+        prev_name = f"petal_L{petal.layer}_P{prev_pos}"
+
+        prev_reasoning = [
+            f"'{prev_name}' should be my previous sibling in layer {petal.layer}",
+            f"It is positioned at {prev_pos * self.golden_angle:.1f}° in the spiral",
+            "We should coordinate our bloom timing for smooth progression",
+        ]
+
+        relationships.append(
+            RelationshipInfo(
+                other_id=prev_name,
+                other_type="petal",
+                relationship_type="sibling",
+                spatial_relation="adjacent",
+                reasoning=prev_reasoning,
+            )
+        )
+
+        # Next neighbor in same layer
+        next_pos = (petal.position_in_layer + 1) % petals_per_layer
+        next_name = f"petal_L{petal.layer}_P{next_pos}"
+
+        next_reasoning = [
+            f"'{next_name}' should be my next sibling in layer {petal.layer}",
+            f"It is positioned at {next_pos * self.golden_angle:.1f}° in the spiral",
+            "Our tips should not collide during bloom animation",
+        ]
+
+        relationships.append(
+            RelationshipInfo(
+                other_id=next_name,
+                other_type="petal",
+                relationship_type="sibling",
+                spatial_relation="adjacent",
+                reasoning=next_reasoning,
+            )
+        )
+
+        # Petal in different layer (if exists)
+        if petal.layer > 1:
+            inner_name = f"petal_L{petal.layer-1}_P{petal.position_in_layer}"
+            inner_reasoning = [
+                f"'{inner_name}' is my inner layer counterpart",
+                "I should cover part of it when fully bloomed",
+                "Our bloom timings should be staggered for natural appearance",
+            ]
+
+            relationships.append(
+                RelationshipInfo(
+                    other_id=inner_name,
+                    other_type="petal",
+                    relationship_type="cousin",
+                    spatial_relation="outside",
+                    reasoning=inner_reasoning,
+                )
+            )
+
+        if petal.layer < group_config.get("num_layers", 3):
+            outer_name = f"petal_L{petal.layer+1}_P{petal.position_in_layer}"
+            outer_reasoning = [
+                f"'{outer_name}' is my outer layer counterpart",
+                "It will partially cover me when fully bloomed",
+                "I should complete my bloom before it starts",
+            ]
+
+            relationships.append(
+                RelationshipInfo(
+                    other_id=outer_name,
+                    other_type="petal",
+                    relationship_type="cousin",
+                    spatial_relation="inside",
+                    reasoning=outer_reasoning,
+                )
+            )
+
+        return relationships
+
+    def _reason_synchronization(
+        self,
+        petal: SelfAwarePetal,
+        other_petals: List[SelfAwarePetal],
+        group_config: Dict[str, Any],
+    ) -> List[str]:
+        """Reason about synchronization with group."""
+        reasoning = []
+
+        # Bloom synchronization
+        if petal.layer == 1:
+            reasoning.append(
+                "I should bloom first (inner layer) to protect the center"
+            )
+        elif petal.layer == 2:
+            reasoning.append(
+                "I should bloom after inner layer but before outer"
+            )
+        else:
+            reasoning.append(
+                "I should bloom last (outer layer) for maximum visual effect"
+            )
+
+        # Position-based timing
+        delay_ms = petal.position_in_layer * 200  # 200ms delay per position
+        reasoning.append(
+            f"My bloom should start after {delay_ms}ms delay "
+            f"(position {petal.position_in_layer} in layer)"
+        )
+
+        # Wind animation coordination
+        reasoning.append(
+            "Wind animation should have slight phase offset from neighbors"
+        )
+        phase_offset = petal.position_in_layer * 0.2  # 0.2 radians per position
+        reasoning.append(
+            f"My wind phase offset: {phase_offset:.2f} radians"
+        )
+
+        # Group coordination
+        reasoning.append(
+            f"Total petals in my layer: {group_config.get('petals_per_layer', 5)}"
+        )
+        reasoning.append(
+            f"Total layers in flower: {group_config.get('num_layers', 3)}"
+        )
+
+        return reasoning
+
+    def _calculate_collision_avoidance(
+        self, petal: SelfAwarePetal, group_config: Dict[str, Any]
+    ) -> Dict[str, float]:
+        """Calculate minimum distances to avoid collisions."""
+        collision_avoidance = {}
+
+        # Same layer petals - based on width
+        same_layer_dist = petal.width * 0.3  # Allow 30% overlap
+        collision_avoidance["petal_same_layer"] = same_layer_dist
+
+        # Different layer petals - minimal distance (natural overlap)
+        collision_avoidance["petal_different_layer"] = petal.width * 0.1
+
+        # Stem - must not touch
+        collision_avoidance["stem"] = petal.width * 0.5
+
+        # Center - based on layer
+        if petal.layer == 1:
+            collision_avoidance["center"] = petal.height * 0.2
+        else:
+            collision_avoidance["center"] = petal.height * 0.5
+
+        return collision_avoidance
+
+    def _calculate_harmony_score(
+        self, petal: SelfAwarePetal, group_config: Dict[str, Any]
+    ) -> float:
+        """Calculate how well petal fits in composition."""
+        score = 0.7  # Base score
+
+        # Layer-appropriate size bonus
+        if petal.layer == 1 and petal.width < 0.4:
+            score += 0.1  # Inner should be small
+        elif petal.layer == 3 and petal.width > 0.5:
+            score += 0.1  # Outer should be large
+
+        # Position alignment bonus
+        if petal.position_in_layer < group_config.get("petals_per_layer", 5):
+            score += 0.05  # Valid position
+
+        # Opening degree harmony
+        if petal.layer == 1 and petal.opening_degree < 0.7:
+            score += 0.05  # Inner less open
+        elif petal.layer == 3 and petal.opening_degree > 0.7:
+            score += 0.05  # Outer more open
+
+        return min(1.0, score)
+
+    def _calculate_cooperation_confidence(
+        self,
+        petal: SelfAwarePetal,
+        relationships: List[RelationshipInfo],
+    ) -> float:
+        """Calculate confidence in group cooperation."""
+        if not relationships:
+            return 0.5
+
+        # More relationships = better understanding
+        relationship_bonus = min(0.3, len(relationships) * 0.05)
+
+        # Genesis understanding contributes
+        if petal.genesis:
+            genesis_bonus = petal.genesis.self_understanding * 0.2
+        else:
+            genesis_bonus = 0.0
+
+        # Base confidence
+        base_confidence = 0.5
+
+        return min(1.0, base_confidence + relationship_bonus + genesis_bonus)
+
+    def generate_composition_report(
+        self,
+        petal: SelfAwarePetal,
+        other_petals: List[SelfAwarePetal] = None,
+        group_config: Dict[str, Any] = None,
+    ) -> str:
+        """Generate a report of composition knowledge."""
+        if petal.composition is None:
+            petal.composition = self.reason_about_composition(
+                petal, other_petals, group_config
+            )
+
+        comp = petal.composition
+        report = []
+
+        report.append("=== COMPOSITION KNOWLEDGE ===\n")
+
+        # Group identity
+        report.append("MY PLACE IN THE FLOWER:")
+        report.append(f"  • Group: {comp.group_id}")
+        report.append(f"  • Role: {comp.group_role}")
+        report.append(f"  • Position in spiral: #{comp.position_in_spiral}")
+        report.append(f"  • Angular position: {comp.angular_position:.1f}°")
+        report.append(f"  • Distance from center: {comp.radial_distance:.2f}")
+        report.append("")
+
+        # Relationships
+        report.append("MY RELATIONSHIPS:")
+        for rel in comp.relationships:
+            report.append(
+                f"  • {rel.other_id} ({rel.other_type}): "
+                f"{rel.relationship_type}, {rel.spatial_relation}"
+            )
+            for reason in rel.reasoning[:2]:  # Show first 2 reasons
+                report.append(f"      - {reason}")
+        report.append("")
+
+        # Coordination
+        report.append("HOW I COORDINATE:")
+        for line in comp.coordination_reasoning[:5]:
+            report.append(f"  • {line}")
+        report.append("")
+
+        # Synchronization
+        report.append("HOW I SYNCHRONIZE:")
+        for line in comp.synchronization_reasoning[:4]:
+            report.append(f"  • {line}")
+        report.append("")
+
+        # Hierarchy
+        report.append("MY HIERARCHY:")
+        for line in comp.hierarchy_reasoning[:4]:
+            report.append(f"  • {line}")
+        report.append("")
+
+        # Collision rules
+        report.append("COLLISION AVOIDANCE:")
+        for obj_type, min_dist in comp.collision_avoidance.items():
+            report.append(f"  • Min distance to {obj_type}: {min_dist:.3f}")
+        report.append("")
+
+        # Harmony
+        report.append("GROUP HARMONY:")
+        report.append(f"  • Harmony score: {comp.harmony_score:.1%}")
+        report.append(f"  • Cooperation confidence: {comp.cooperation_confidence:.1%}")
+        report.append(f"  • Current pattern: {comp.current_pattern}")
+
+        return "\n".join(report)
+
+
 def demo_genesis_reasoning():
     """Demonstrate genesis reasoning for different petals."""
 
@@ -1155,11 +1755,79 @@ def demo_transformation_reasoning():
         print()
 
 
+def demo_composition_reasoning():
+    """Demonstrate composition reasoning for petals."""
+
+    genesis_reasoner = GenesisReasoner()
+    comp_reasoner = CompositionReasoner()
+
+    # Create petals with different configurations
+    test_cases = [
+        ("petal_L1_P0", 1, 0, 0.3, 0.9, 0.6, "low"),
+        ("petal_L2_P2", 2, 2, 0.4, 1.2, 0.8, "medium"),
+        ("petal_L3_P4", 3, 4, 0.6, 1.5, 0.9, "high"),
+    ]
+
+    for name, layer, pos, w, h, opening, detail in test_cases:
+        print("=" * 70)
+        petal = genesis_reasoner.create_aware_petal(name, layer, pos, w, h, opening, detail)
+        comp_report = comp_reasoner.generate_composition_report(petal)
+        print(f"PETAL: {name}")
+        print(comp_report)
+        print()
+
+
+def demo_multi_petal_composition():
+    """Demonstrate composition with multiple petals interacting."""
+
+    genesis_reasoner = GenesisReasoner()
+    comp_reasoner = CompositionReasoner()
+
+    # Create multiple petals
+    petals = []
+    for layer in range(1, 4):
+        for pos in range(3):  # 3 petals per layer for demo
+            petal = genesis_reasoner.create_aware_petal(
+                f"petal_L{layer}_P{pos}",
+                layer,
+                pos,
+                0.3 + layer * 0.1,
+                0.8 + layer * 0.3,
+                0.5 + layer * 0.15,
+                ["low", "medium", "high"][layer - 1],
+            )
+            petals.append(petal)
+
+    print("=" * 70)
+    print("MULTI-PETAL COMPOSITION DEMONSTRATION")
+    print("=" * 70)
+    print(f"Total petals created: {len(petals)}")
+    print()
+
+    # Show composition for middle layer petal with awareness of others
+    target_petal = petals[4]  # Layer 2, position 1
+    print(f"Analyzing: {target_petal.name}")
+    print()
+
+    comp_report = comp_reasoner.generate_composition_report(
+        target_petal,
+        other_petals=petals,
+        group_config={
+            "type": "rose",
+            "petals_per_layer": 3,
+            "num_layers": 3,
+            "id": 1,
+        },
+    )
+    print(comp_report)
+
+
 def demo_full_self_awareness():
-    """Demonstrate complete self-awareness (genesis + transformation)."""
+    """Demonstrate complete self-awareness (genesis + transformation + composition)."""
 
     genesis_reasoner = GenesisReasoner()
     trans_reasoner = TransformationReasoner()
+    comp_reasoner = CompositionReasoner()
 
     # Create a single petal with full awareness
     petal = genesis_reasoner.create_aware_petal(
@@ -1181,15 +1849,41 @@ def demo_full_self_awareness():
     print(trans_report)
     print()
 
+    # Composition report
+    comp_report = comp_reasoner.generate_composition_report(petal)
+    print(comp_report)
+    print()
+
     # Summary
     print("=" * 70)
-    print("SELF-AWARENESS SUMMARY")
+    print("COMPLETE SELF-AWARENESS SUMMARY")
     print("=" * 70)
     print(f"Petal: {petal.name}")
-    print(f"Genesis Understanding: {petal.genesis.self_understanding:.1%}")
-    print(f"Structural Confidence: {petal.genesis.structural_confidence:.1%}")
-    print(f"Transformation Confidence: {petal.transformation.morph_confidence:.1%}")
-    print(f"Total Capabilities: {len(petal.transformation.capabilities)}")
+    print()
+    print("GENESIS:")
+    print(f"  • Self Understanding: {petal.genesis.self_understanding:.1%}")
+    print(f"  • Structural Confidence: {petal.genesis.structural_confidence:.1%}")
+    print(f"  • Control Points: {petal.genesis.cp_count}")
+    print()
+    print("TRANSFORMATION:")
+    print(f"  • Morph Confidence: {petal.transformation.morph_confidence:.1%}")
+    print(f"  • Total Capabilities: {len(petal.transformation.capabilities)}")
+    print()
+    print("COMPOSITION:")
+    print(f"  • Harmony Score: {petal.composition.harmony_score:.1%}")
+    print(f"  • Cooperation Confidence: {petal.composition.cooperation_confidence:.1%}")
+    print(f"  • Relationships: {len(petal.composition.relationships)}")
+    print(f"  • Pattern: {petal.composition.current_pattern}")
+    print()
+
+    # Overall awareness score
+    overall_awareness = (
+        petal.genesis.self_understanding * 0.3
+        + petal.transformation.morph_confidence * 0.3
+        + petal.composition.harmony_score * 0.2
+        + petal.composition.cooperation_confidence * 0.2
+    )
+    print(f"OVERALL SELF-AWARENESS: {overall_awareness:.1%}")
     print()
 
     # Thought history
@@ -1206,10 +1900,14 @@ if __name__ == "__main__":
             demo_genesis_reasoning()
         elif sys.argv[1] == "transform":
             demo_transformation_reasoning()
+        elif sys.argv[1] == "compose":
+            demo_composition_reasoning()
+        elif sys.argv[1] == "multi":
+            demo_multi_petal_composition()
         elif sys.argv[1] == "full":
             demo_full_self_awareness()
         else:
-            print("Usage: python petal_self_awareness.py [genesis|transform|full]")
+            print("Usage: python petal_self_awareness.py [genesis|transform|compose|multi|full]")
     else:
         # Default: show full demo
         demo_full_self_awareness()
