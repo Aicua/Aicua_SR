@@ -94,6 +94,36 @@ categories:
     constraints:
       maxsize: 18
 
+  bone_rigging_v4:
+    features:
+      - petal_height
+      - petal_width
+      - opening_degree
+      - layer_index
+      - curvature_intensity
+    targets:
+      - bone_root_start_x
+      - bone_root_start_y
+      - bone_root_end_x
+      - bone_root_end_y
+      - bone_middle_start_x
+      - bone_middle_start_y
+      - bone_middle_end_x
+      - bone_middle_end_y
+      - bone_left_start_x
+      - bone_left_start_y
+      - bone_left_end_x
+      - bone_left_end_y
+      - bone_right_start_x
+      - bone_right_start_y
+      - bone_right_end_x
+      - bone_right_end_y
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "sin", "cos"]
+    constraints:
+      maxsize: 18
+
   animation_wingflap:
     features:
       - base_size

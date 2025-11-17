@@ -31,12 +31,13 @@ class CoTRoseCLIGenerator:
 
         petal_name = f"petal_L{layer_idx}_P{petal_idx}"
 
-        # Calculate dimensions based on layer
-        layer_factor = [0.6, 0.8, 1.0][layer_idx - 1]
+        # Calculate dimensions based on layer (V2: continuous layer factor)
+        layer_factor = 0.8 + 0.1 * (layer_idx - 1)  # [0.8, 0.9, 1.0]
         width = base_size * 0.3 * layer_factor * (1 + opening_degree * 0.2)
         height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
-        tip_offset = base_size * 0.05 * (layer_idx - 1) * opening_degree
-        extrude_depth = base_size * 0.01 * (1 + layer_idx * 0.1)
+        tip_offset = base_size * 0.02 * (layer_idx - 1) * opening_degree
+        # Ultra-thin thickness
+        extrude_depth = max(0.001, base_size * 0.005 * (1 - (layer_idx - 1) * 0.1) * (1 - opening_degree * 0.3))
 
         # Use CoT reasoning to determine CP count and positions
         cot_result = self.reasoner.reason_and_generate(
@@ -68,69 +69,83 @@ class CoTRoseCLIGenerator:
         # Get petal height from control points
         cps = cot_result["control_points"]
         petal_height = max(cp[1] for cp in cps)
-        base_spread = max(cp[0] for cp in cps) - min(cp[0] for cp in cps)
+        petal_width = max(cp[0] for cp in cps) - min(cp[0] for cp in cps)
 
-        # Generate bone rigging
-        flexibility = 0.5 + (3 - layer_idx) * 0.15
-        bone_count = max(2, min(4, int(petal_height * flexibility * 2)))
-
+        # Generate bone rigging (V4: 4 bones branching structure)
         rig_name = f"{petal_name}_rig"
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name}",
+            f"# Rigging for {petal_name} (v4 branching structure)",
             f"create_armature {rig_name};",
         ]
 
-        bone_segment = petal_height / bone_count
-        for i in range(bone_count):
-            bone_name = f"bone_{i}"
-            start_y = i * bone_segment
-            end_y = (i + 1) * bone_segment
-            rigging_cli.append(
-                f"add_bone {rig_name} {bone_name} 0 {start_y:.4f} 0 0 {end_y:.4f} 0;"
-            )
+        # Calculate bone positions (0-based layer index for calculations)
+        layer_idx_0based = layer_idx - 1
+        layer_factor_bone = 0.8 + 0.1 * layer_idx_0based
+        curvature_intensity = 1.0
 
-        for i in range(1, bone_count):
-            rigging_cli.append(f"parent_bone {rig_name} bone_{i} bone_{i-1};")
+        # Bone root: 0 to 30% height
+        root_end_y = petal_height * 0.3 * layer_factor_bone
+
+        # Bone middle: 30% to 65% height
+        middle_end_y = petal_height * 0.65 * layer_factor_bone
+
+        # Bone left/right: branches from middle, spread outward
+        left_spread = petal_width * 0.5 * (0.5 + opening_degree * 0.5)
+        curvature_factor = curvature_intensity * 0.1
+        left_end_x = -left_spread * (1 + curvature_factor)
+        right_end_x = left_spread * (1 + curvature_factor)
+        branch_end_y = petal_height * 0.9 * layer_factor_bone
+
+        # Add 4 bones with branching structure
+        rigging_cli.append(f"add_bone {rig_name} bone_root 0 0 0 0 {root_end_y:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_middle 0 {root_end_y:.4f} 0 0 {middle_end_y:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_left 0 {middle_end_y:.4f} 0 {left_end_x:.4f} {branch_end_y:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_right 0 {middle_end_y:.4f} 0 {right_end_x:.4f} {branch_end_y:.4f} 0;")
+
+        # Parent bones in branching structure
+        rigging_cli.append(f"parent_bone {rig_name} bone_middle bone_root;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_left bone_middle;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_right bone_middle;")
 
         rigging_cli.append(f"finalize_bones {rig_name};")
+        flexibility = 0.5 + (3 - layer_idx) * 0.15
         bind_weight = flexibility * [1.0, 1.5, 2.0][layer_idx - 1]
         rigging_cli.append(f"bind_armature {rig_name} {petal_name} {bind_weight:.4f};")
 
-        # Rotate petal into position using root bone (bone_0)
-        # rotate_bone on root bone rotates entire object
+        # Rotate petal into position using root bone
         if rotation_angle > 0:
             rigging_cli.append(f"")
             rigging_cli.append(f"# Position petal in spiral arrangement (rotate root bone)")
-            rigging_cli.append(f"rotate_bone {rig_name} bone_0 0 0 {rotation_angle:.2f};")
+            rigging_cli.append(f"rotate_bone {rig_name} bone_root 0 0 {rotation_angle:.2f};")
 
-        # Generate animation
-        petal_mass = base_size * base_spread * petal_height * 0.01
+        # Generate animation (symmetric for left/right branches)
+        petal_mass = base_size * petal_width * petal_height * 0.01
         wind_speed = 3.0
         frequency = 10.0 * math.sqrt(flexibility / (petal_mass + 0.01))
         frequency = max(5.0, min(30.0, frequency))
         amplitude = wind_speed * flexibility * 3.0
         amplitude = max(10.0, min(60.0, amplitude))
-        axis_x = -1 if layer_idx > 1 else 0
 
-        last_bone = f"bone_{bone_count-1}"
         animation_cli = [
             f"",
             f"# Animation for {petal_name}",
-            f"wing_flap {rig_name} {last_bone} {frequency:.0f} {amplitude:.1f} {axis_x} -1 0 0;",
+            f"# bone_middle controls overall bend",
+            f"wing_flap {rig_name} bone_middle {frequency:.0f} {amplitude:.1f} 0 -1 0 0;",
+            f"# bone_left and bone_right create symmetric opening",
+            f"wing_flap {rig_name} bone_left {frequency:.0f} {amplitude * 0.5:.1f} -1 0 0 0.25;",
+            f"wing_flap {rig_name} bone_right {frequency:.0f} {amplitude * 0.5:.1f} 1 0 0 0.25;",
         ]
 
         # Add bloom animation if requested (auto_rotate for smooth opening)
         if bloom_animation:
             # Calculate bloom angle based on layer (outer layers open more)
             bloom_angle = 15.0 + (layer_idx - 1) * 10.0  # L1: 15°, L2: 25°, L3: 35°
-            # Stagger timing: outer petals start later
-            delay_offset = petal_idx * 200  # 200ms between each petal
 
             animation_cli.append(f"")
             animation_cli.append(f"# Bloom animation (smooth opening)")
             animation_cli.append(
-                f"auto_rotate {rig_name} {last_bone} 1 0 0 {bloom_angle:.1f} {bloom_duration} smooth;"
+                f"auto_rotate {rig_name} bone_middle 1 0 0 {bloom_angle:.1f} {bloom_duration} smooth;"
             )
 
         return {
