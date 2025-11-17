@@ -1,0 +1,66 @@
+# Rose Petal with Branching Bone Structure (V4)
+# 4 Bones: Root + Middle + Left + Right
+# All coordinates are 2D (x, y) - petal is extruded from 2D spline
+
+# === PETAL GEOMETRY ===
+# Create 2D spline petal
+2d;
+obj petal_L1_P0;
+
+# Spline control points (5 points, closed curve)
+# Format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5 x6 y6
+spline -0.25 0.0 -0.167 1.0 0.0 2.5 0.167 1.0 0.25 0.0 -0.25 0.0;
+exit;
+
+# Extrude to give thickness
+sketch_extrude petal_L1_P0 0.022;
+
+# === BONE RIGGING (BRANCHING STRUCTURE) ===
+# Structure:
+#    bone_left      bone_right
+#         \           /
+#          bone_middle
+#               |
+#          bone_root
+
+create_armature petal_L1_P0_rig;
+
+# Bone Root: Base of petal (anchored point)
+# From (0, 0) to (0, 0.75) - 30% of petal height
+add_bone petal_L1_P0_rig bone_root 0.0 0.0 0 0.0 0.75 0;
+
+# Bone Middle: Main axis (controls overall bend)
+# From (0, 0.75) to (0, 1.625) - 35% of petal height
+add_bone petal_L1_P0_rig bone_middle 0.0 0.75 0 0.0 1.625 0;
+
+# Bone Left: Left branch (controls left side opening)
+# From (0, 1.625) to (-0.3, 2.25) - branches outward and upward
+add_bone petal_L1_P0_rig bone_left 0.0 1.625 0 -0.3 2.25 0;
+
+# Bone Right: Right branch (symmetric to left)
+# From (0, 1.625) to (0.3, 2.25) - branches outward and upward
+add_bone petal_L1_P0_rig bone_right 0.0 1.625 0 0.3 2.25 0;
+
+# === PARENT RELATIONSHIPS ===
+# Create branching hierarchy
+parent_bone petal_L1_P0_rig bone_middle bone_root;
+parent_bone petal_L1_P0_rig bone_left bone_middle;
+parent_bone petal_L1_P0_rig bone_right bone_middle;
+
+finalize_bones petal_L1_P0_rig;
+bind_armature petal_L1_P0_rig petal_L1_P0 0.8;
+
+# === ANIMATION ===
+# Animate bone_middle for overall petal movement
+wing_flap petal_L1_P0_rig bone_middle 15 10.0 0 -1 0 0;
+
+# Animate bone_left and bone_right for opening/closing motion
+# These create the symmetric "butterfly" opening effect
+wing_flap petal_L1_P0_rig bone_left 20 15.0 -1 0 0 0.25;
+wing_flap petal_L1_P0_rig bone_right 20 15.0 1 0 0 0.25;
+
+# === BENEFITS OF BRANCHING STRUCTURE ===
+# 1. Symmetric deformation: bone_left and bone_right create mirror-image movements
+# 2. Independent control: Each side can open/close separately
+# 3. Natural petal shape: Mimics real flower petal structure
+# 4. Better animation: Root stays fixed, middle bends, sides open
