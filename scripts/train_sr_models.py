@@ -52,6 +52,7 @@ class RoseSRTrainer:
         file_map = {
             'petal_spline': 'petal_spline.csv',
             'bone_rigging_v2': 'bone_rigging_v2.csv',
+            'bone_rigging_v3': 'bone_rigging_v3.csv',
             'animation_wingflap': 'animation_wingflap.csv',
         }
 
@@ -211,7 +212,7 @@ class RoseSRTrainer:
 
     def train_all(self, max_iterations: int = None):
         """Train SR models for all categories."""
-        categories = ['petal_spline', 'bone_rigging_v2', 'animation_wingflap']
+        categories = ['petal_spline', 'bone_rigging_v3', 'animation_wingflap']
 
         for category in categories:
             try:
