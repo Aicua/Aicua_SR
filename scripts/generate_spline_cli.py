@@ -22,22 +22,37 @@ class SplineRoseCLIGenerator:
 
     def __init__(self):
         """Initialize with formula modules."""
+        self.use_sr_petal = False
+        self.use_sr_bone = False
+        self.use_sr_anim = False
+
         try:
-            # Try to load SR-discovered formulas
             import petal_spline_formulas as petal
-            import bone_rigging_v3_formulas as bone
-            import animation_wingflap_formulas as anim
             self.petal_mod = petal
-            self.bone_mod = bone
-            self.anim_mod = anim
-            self.use_sr = True
+            self.use_sr_petal = True
         except ImportError:
-            print("SR formulas not found. Using fallback formulas.")
-            self.use_sr = False
+            print("Petal SR formulas not found. Using fallback.")
+
+        try:
+            import bone_rigging_v4_formulas as bone
+            self.bone_mod = bone
+            self.use_sr_bone = True
+        except ImportError:
+            print("Bone rigging v4 SR formulas not found. Using fallback.")
+
+        try:
+            import animation_wingflap_formulas as anim
+            self.anim_mod = anim
+            self.use_sr_anim = True
+        except ImportError:
+            print("Animation SR formulas not found. Using fallback.")
+
+        # Legacy compatibility
+        self.use_sr = self.use_sr_petal and self.use_sr_bone and self.use_sr_anim
 
     def compute_spline_params(self, base_size, layer_idx, petal_idx, opening_degree):
         """Compute 2D spline control points using SR formulas or fallback."""
-        if self.use_sr:
+        if self.use_sr_petal:
             return {
                 'cp1_x': self.petal_mod.compute_cp1_x(base_size, layer_idx, petal_idx, opening_degree),
                 'cp1_y': self.petal_mod.compute_cp1_y(base_size, layer_idx, petal_idx, opening_degree),
@@ -73,25 +88,68 @@ class SplineRoseCLIGenerator:
                 'extrude_depth': base_size * 0.01 * (1 + layer_idx * 0.1),
             }
 
-    def compute_bone_params(self, tip_y, base_spread, flexibility, layer_idx):
-        """Compute bone rigging parameters."""
-        if self.use_sr:
+    def compute_bone_params_v4(self, petal_height, petal_width, opening_degree, layer_idx, curvature_intensity=1.0):
+        """Compute bone rigging parameters for v4 branching structure."""
+        if self.use_sr_bone:
             return {
-                'bone_count': int(self.bone_mod.compute_bone_count(tip_y, base_spread, flexibility, layer_idx)),
-                'bone_end_y': self.bone_mod.compute_bone_end_y(tip_y, base_spread, flexibility, layer_idx),
-                'bind_weight': self.bone_mod.compute_bind_weight(tip_y, base_spread, flexibility, layer_idx),
+                'bone_root_start_x': self.bone_mod.compute_bone_root_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_root_start_y': self.bone_mod.compute_bone_root_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_root_end_x': self.bone_mod.compute_bone_root_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_root_end_y': self.bone_mod.compute_bone_root_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_middle_start_x': self.bone_mod.compute_bone_middle_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_middle_start_y': self.bone_mod.compute_bone_middle_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_middle_end_x': self.bone_mod.compute_bone_middle_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_middle_end_y': self.bone_mod.compute_bone_middle_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_start_x': self.bone_mod.compute_bone_left_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_start_y': self.bone_mod.compute_bone_left_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_end_x': self.bone_mod.compute_bone_left_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_end_y': self.bone_mod.compute_bone_left_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_start_x': self.bone_mod.compute_bone_right_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_start_y': self.bone_mod.compute_bone_right_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_end_x': self.bone_mod.compute_bone_right_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_end_y': self.bone_mod.compute_bone_right_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
             }
         else:
-            bone_count = max(2, min(4, int(tip_y * flexibility * 2)))
+            # Fallback formulas for v4 branching structure
+            layer_factor = [0.8, 0.9, 1.0][layer_idx]
+
+            # Bone root: base to 30% height
+            root_end_y = petal_height * 0.3 * layer_factor
+
+            # Bone middle: 30% to 65% height
+            middle_end_y = petal_height * 0.65 * layer_factor
+
+            # Bone left/right: branches from middle, spread outward
+            left_spread = petal_width * 0.4 * (0.5 + opening_degree * 0.5)
+            branch_end_y = petal_height * 0.9 * layer_factor
+
+            # Apply curvature
+            curvature_factor = curvature_intensity * 0.1
+            left_end_x = -left_spread * (1 + curvature_factor)
+            right_end_x = left_spread * (1 + curvature_factor)
+
             return {
-                'bone_count': bone_count,
-                'bone_end_y': tip_y * 0.4,
-                'bind_weight': flexibility * [1.0, 1.5, 2.0][layer_idx - 1],
+                'bone_root_start_x': 0.0,
+                'bone_root_start_y': 0.0,
+                'bone_root_end_x': 0.0,
+                'bone_root_end_y': root_end_y,
+                'bone_middle_start_x': 0.0,
+                'bone_middle_start_y': root_end_y,
+                'bone_middle_end_x': 0.0,
+                'bone_middle_end_y': middle_end_y,
+                'bone_left_start_x': 0.0,
+                'bone_left_start_y': middle_end_y,
+                'bone_left_end_x': left_end_x,
+                'bone_left_end_y': branch_end_y,
+                'bone_right_start_x': 0.0,
+                'bone_right_start_y': middle_end_y,
+                'bone_right_end_x': right_end_x,
+                'bone_right_end_y': branch_end_y,
             }
 
     def compute_anim_params(self, base_size, petal_mass, wind_speed, flexibility, layer_idx):
         """Compute animation parameters for wing_flap."""
-        if self.use_sr:
+        if self.use_sr_anim:
             return {
                 'frequency': self.anim_mod.compute_frequency(base_size, petal_mass, wind_speed, flexibility, layer_idx),
                 'amplitude': self.anim_mod.compute_amplitude(base_size, petal_mass, wind_speed, flexibility, layer_idx),
@@ -135,59 +193,74 @@ class SplineRoseCLIGenerator:
             f"sketch_extrude {petal_name} {sp['extrude_depth']:.4f};",
         ]
 
-        # Generate bone rigging
-        flexibility = 0.5 + (3 - layer_idx) * 0.15
-        # Use cp3_y as petal height, calculate base_spread from cp1_x and cp5_x
+        # Generate bone rigging with v4 branching structure
+        # Use cp3_y as petal height, calculate petal_width from cp1_x and cp5_x
         petal_height = sp['cp3_y']
-        base_spread = sp['cp5_x'] - sp['cp1_x']
-        bp = self.compute_bone_params(petal_height, base_spread, flexibility, layer_idx)
+        petal_width = sp['cp5_x'] - sp['cp1_x']
+        curvature_intensity = 1.0  # Default curvature
+
+        # layer_idx is 1-based, convert to 0-based for v4
+        layer_idx_0based = layer_idx - 1
+        bp = self.compute_bone_params_v4(petal_height, petal_width, opening_degree, layer_idx_0based, curvature_intensity)
 
         rig_name = f"{petal_name}_rig"
 
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name}",
+            f"# Rigging for {petal_name} (v4 branching structure)",
             f"create_armature {rig_name};",
         ]
 
-        # Generate bones along petal (2D: x=0, y=height, z=0)
-        bone_segment = petal_height / bp['bone_count']
+        # Generate 4 bones with branching structure (2D coords, z=0)
+        # Bone root
+        rigging_cli.append(
+            f"add_bone {rig_name} bone_root {bp['bone_root_start_x']:.4f} {bp['bone_root_start_y']:.4f} 0 {bp['bone_root_end_x']:.4f} {bp['bone_root_end_y']:.4f} 0;"
+        )
+        # Bone middle
+        rigging_cli.append(
+            f"add_bone {rig_name} bone_middle {bp['bone_middle_start_x']:.4f} {bp['bone_middle_start_y']:.4f} 0 {bp['bone_middle_end_x']:.4f} {bp['bone_middle_end_y']:.4f} 0;"
+        )
+        # Bone left
+        rigging_cli.append(
+            f"add_bone {rig_name} bone_left {bp['bone_left_start_x']:.4f} {bp['bone_left_start_y']:.4f} 0 {bp['bone_left_end_x']:.4f} {bp['bone_left_end_y']:.4f} 0;"
+        )
+        # Bone right
+        rigging_cli.append(
+            f"add_bone {rig_name} bone_right {bp['bone_right_start_x']:.4f} {bp['bone_right_start_y']:.4f} 0 {bp['bone_right_end_x']:.4f} {bp['bone_right_end_y']:.4f} 0;"
+        )
 
-        for i in range(bp['bone_count']):
-            bone_name = f"bone_{i}"
-            start_y = i * bone_segment
-            end_y = (i + 1) * bone_segment
+        # Parent bones in branching structure
+        rigging_cli.append(f"parent_bone {rig_name} bone_middle bone_root;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_left bone_middle;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_right bone_middle;")
 
-            rigging_cli.append(
-                f"add_bone {rig_name} {bone_name} 0 {start_y:.4f} 0 0 {end_y:.4f} 0;"
-            )
-
-        # Parent bones
-        for i in range(1, bp['bone_count']):
-            rigging_cli.append(f"parent_bone {rig_name} bone_{i} bone_{i-1};")
+        # Calculate bind weight based on flexibility
+        flexibility = 0.5 + (3 - layer_idx) * 0.15
+        bind_weight = flexibility * [1.0, 1.5, 2.0][layer_idx - 1]
 
         rigging_cli.append(f"finalize_bones {rig_name};")
-        rigging_cli.append(f"bind_armature {rig_name} {petal_name} {bp['bind_weight']:.4f};")
+        rigging_cli.append(f"bind_armature {rig_name} {petal_name} {bind_weight:.4f};")
 
-        # Rotate petal into position using root bone (bone_0)
-        # rotate_bone on root bone rotates entire object
+        # Rotate petal into position using root bone
         if rotation_angle > 0:
             rigging_cli.append(f"")
             rigging_cli.append(f"# Position petal in spiral arrangement (rotate root bone)")
-            rigging_cli.append(f"rotate_bone {rig_name} bone_0 0 0 {rotation_angle:.2f};")
+            rigging_cli.append(f"rotate_bone {rig_name} bone_root 0 0 {rotation_angle:.2f};")
 
         # Generate animation (wing_flap style)
-        petal_mass = base_size * base_spread * petal_height * 0.01
+        petal_mass = base_size * petal_width * petal_height * 0.01
         wind_speed = 3.0  # Default
 
         ap = self.compute_anim_params(base_size, petal_mass, wind_speed, flexibility, layer_idx)
 
-        last_bone = f"bone_{bp['bone_count']-1}"
-
         animation_cli = [
             f"",
             f"# Animation for {petal_name}",
-            f"wing_flap {rig_name} {last_bone} {ap['frequency']:.0f} {ap['amplitude']:.1f} {ap['axis_x']} {ap['axis_y']} {ap['axis_z']} 0;",
+            f"# bone_middle controls overall bend",
+            f"wing_flap {rig_name} bone_middle {ap['frequency']:.0f} {ap['amplitude']:.1f} 0 -1 0 0;",
+            f"# bone_left and bone_right create symmetric opening",
+            f"wing_flap {rig_name} bone_left {ap['frequency']:.0f} {ap['amplitude'] * 0.5:.1f} -1 0 0 0.25;",
+            f"wing_flap {rig_name} bone_right {ap['frequency']:.0f} {ap['amplitude'] * 0.5:.1f} 1 0 0 0.25;",
         ]
 
         return {
