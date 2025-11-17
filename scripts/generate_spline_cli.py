@@ -25,7 +25,7 @@ class SplineRoseCLIGenerator:
         try:
             # Try to load SR-discovered formulas
             import petal_spline_formulas as petal
-            import bone_rigging_v2_formulas as bone
+            import bone_rigging_v3_formulas as bone
             import animation_wingflap_formulas as anim
             self.petal_mod = petal
             self.bone_mod = bone
