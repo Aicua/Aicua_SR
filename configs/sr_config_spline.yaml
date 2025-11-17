@@ -97,3 +97,29 @@ constraints:
   amplitude:
     min: 5.0
     max: 90.0
+
+  bone_rigging_v3:
+    features:
+      - petal_height
+      - petal_width
+      - opening_degree
+      - layer_index
+      - curvature_intensity
+    targets:
+      - bone_0_y_start
+      - bone_0_y_end
+      - bone_0_rot_x
+      - bone_1_y_start
+      - bone_1_y_end
+      - bone_1_rot_x
+      - bone_2_y_start
+      - bone_2_y_end
+      - bone_2_rot_x
+      - bone_3_y_start
+      - bone_3_y_end
+      - bone_3_rot_x
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "sin", "cos"]
+    constraints:
+      maxsize: 18
