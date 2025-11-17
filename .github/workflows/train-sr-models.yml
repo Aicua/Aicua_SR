@@ -71,6 +71,26 @@ jobs:
           echo "Generating Python code..."
           python scripts/codegen_formulas.py
 
+      - name: Generate CLI samples from discovered formulas
+        run: |
+          echo "Generating CLI samples..."
+          mkdir -p data/cli_samples
+
+          # Generate samples for different rose configurations
+          for base_size in 2.0 3.0 4.0; do
+            for opening in 0.0 0.5 1.0; do
+              echo "Generating: base_size=$base_size, opening=$opening"
+              python scripts/generate_spline_cli.py \
+                --base-size $base_size \
+                --opening $opening \
+                --output data/cli_samples/rose_${base_size}_${opening}.json \
+                2>/dev/null || echo "  (using fallback formulas)"
+            done
+          done
+
+          echo "Generated CLI samples:"
+          ls -la data/cli_samples/ || echo "No samples generated"
+
       - name: Run tests
         run: |
           echo "Running tests on discovered formulas..."
@@ -83,6 +103,7 @@ jobs:
           path: |
             data/models/
             data/generated/
+            data/cli_samples/
           retention-days: 90
 
       - name: Create Pull Request
@@ -99,6 +120,7 @@ jobs:
             ### Changes:
             - Updated formulas in `data/models/`
             - Auto-generated Python code in `data/generated/`
+            - CLI samples in `data/cli_samples/`
 
             ### Training Parameters:
             - Iterations: ${{ github.event.inputs.iterations }}
@@ -107,8 +129,8 @@ jobs:
             ### Review Checklist:
             - [ ] Check R² scores in formula JSONs
             - [ ] Review generated Python code
+            - [ ] Test CLI samples with Blender/rendering
             - [ ] Run integration tests
-            - [ ] Test CLI generation with new formulas
 
           branch: automated/sr-formulas-update
           delete-branch: true
