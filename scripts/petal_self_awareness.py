@@ -44,6 +44,41 @@ class GenesisKnowledge:
 
 
 @dataclass
+class TransformationCapability:
+    """A single transformation the petal can perform."""
+    name: str
+    description: str
+    parameters: Dict[str, Tuple[float, float]]  # param -> (min, max)
+    risk_level: float  # 0-1 (0=safe, 1=destructive)
+    reversible: bool
+    reasoning: List[str]
+
+
+@dataclass
+class TransformationKnowledge:
+    """Knowledge about how the petal can transform."""
+
+    # Available transformations
+    capabilities: List[TransformationCapability]
+
+    # Current state awareness
+    current_state: Dict[str, float]
+
+    # Transformation history
+    transformation_history: List[Dict[str, Any]]
+
+    # Morphing understanding
+    morph_reasoning: List[str]
+    scale_reasoning: List[str]
+    deform_reasoning: List[str]
+    animate_reasoning: List[str]
+
+    # Confidence in transformation ability
+    morph_confidence: float
+    structural_stability: float  # How stable after transformation
+
+
+@dataclass
 class SelfAwarePetal:
     """A petal that understands itself."""
 
@@ -60,6 +95,9 @@ class SelfAwarePetal:
 
     # Genesis knowledge
     genesis: Optional[GenesisKnowledge] = None
+
+    # Transformation knowledge
+    transformation: Optional[TransformationKnowledge] = None
 
     # Reasoning history
     thought_history: List[str] = field(default_factory=list)
@@ -474,6 +512,607 @@ class GenesisReasoner:
         return petal
 
 
+class TransformationReasoner:
+    """
+    Reasons about transformation capabilities of a petal.
+
+    Enables petals to understand:
+    - What transformations they can perform
+    - How each transformation affects their structure
+    - Risks and reversibility of transformations
+    """
+
+    def __init__(self):
+        """Initialize transformation reasoner."""
+        self.genesis_reasoner = GenesisReasoner()
+
+        # Define transformation templates
+        self.transformation_templates = {
+            "bloom": {
+                "description": "Open petal by rotating around base bone",
+                "params": {"angle": (0, 90), "duration_ms": (500, 5000)},
+                "risk": 0.1,
+                "reversible": True,
+            },
+            "wilt": {
+                "description": "Close/droop petal by negative rotation",
+                "params": {"angle": (-45, 0), "droop_factor": (0.5, 1.0)},
+                "risk": 0.2,
+                "reversible": True,
+            },
+            "scale_uniform": {
+                "description": "Scale entire petal uniformly",
+                "params": {"factor": (0.5, 2.0)},
+                "risk": 0.3,
+                "reversible": True,
+            },
+            "scale_width": {
+                "description": "Scale petal width only (change aspect ratio)",
+                "params": {"factor": (0.5, 2.0)},
+                "risk": 0.4,
+                "reversible": True,
+            },
+            "scale_height": {
+                "description": "Scale petal height only",
+                "params": {"factor": (0.6, 1.5)},
+                "risk": 0.3,
+                "reversible": True,
+            },
+            "bend_tip": {
+                "description": "Bend petal tip in direction",
+                "params": {"angle": (-30, 30), "curvature": (0.1, 0.9)},
+                "risk": 0.5,
+                "reversible": True,
+            },
+            "twist": {
+                "description": "Twist petal around vertical axis",
+                "params": {"degrees": (-180, 180)},
+                "risk": 0.4,
+                "reversible": True,
+            },
+            "wave": {
+                "description": "Add wave deformation to edges",
+                "params": {"amplitude": (0.01, 0.1), "frequency": (1, 5)},
+                "risk": 0.6,
+                "reversible": True,
+            },
+            "add_cp": {
+                "description": "Add control point for more detail",
+                "params": {"position": (0.0, 1.0)},
+                "risk": 0.7,
+                "reversible": False,  # Structural change
+            },
+            "remove_cp": {
+                "description": "Remove control point to simplify",
+                "params": {"cp_index": (1, 7)},
+                "risk": 0.8,
+                "reversible": False,  # Structural change
+            },
+            "morph_to_leaf": {
+                "description": "Transform petal shape towards leaf",
+                "params": {"morph_factor": (0.0, 1.0)},
+                "risk": 0.9,
+                "reversible": False,  # Identity change
+            },
+        }
+
+    def reason_about_transformations(
+        self, petal: SelfAwarePetal
+    ) -> TransformationKnowledge:
+        """
+        Generate transformation knowledge for a petal.
+
+        Petal learns what it can do and what risks are involved.
+        """
+        if petal.genesis is None:
+            petal.genesis = self.genesis_reasoner.reason_about_genesis(petal)
+
+        capabilities = []
+        morph_reasoning = []
+        scale_reasoning = []
+        deform_reasoning = []
+        animate_reasoning = []
+
+        # === ANALYZE BLOOM CAPABILITY ===
+        bloom_cap = self._reason_bloom_capability(petal)
+        capabilities.append(bloom_cap)
+        animate_reasoning.extend(bloom_cap.reasoning)
+
+        # === ANALYZE WILT CAPABILITY ===
+        wilt_cap = self._reason_wilt_capability(petal)
+        capabilities.append(wilt_cap)
+        animate_reasoning.extend(wilt_cap.reasoning)
+
+        # === ANALYZE SCALE CAPABILITIES ===
+        scale_caps = self._reason_scale_capabilities(petal)
+        capabilities.extend(scale_caps)
+        for cap in scale_caps:
+            scale_reasoning.extend(cap.reasoning)
+
+        # === ANALYZE DEFORMATION CAPABILITIES ===
+        deform_caps = self._reason_deform_capabilities(petal)
+        capabilities.extend(deform_caps)
+        for cap in deform_caps:
+            deform_reasoning.extend(cap.reasoning)
+
+        # === ANALYZE MORPHING CAPABILITIES ===
+        morph_caps = self._reason_morph_capabilities(petal)
+        capabilities.extend(morph_caps)
+        for cap in morph_caps:
+            morph_reasoning.extend(cap.reasoning)
+
+        # Calculate confidence scores
+        morph_confidence = self._calculate_morph_confidence(petal, capabilities)
+        structural_stability = petal.genesis.structural_confidence
+
+        # Current state
+        current_state = {
+            "width": petal.width,
+            "height": petal.height,
+            "opening": petal.opening_degree,
+            "cp_count": petal.genesis.cp_count,
+            "rotation": 0.0,
+            "scale": 1.0,
+        }
+
+        return TransformationKnowledge(
+            capabilities=capabilities,
+            current_state=current_state,
+            transformation_history=[],
+            morph_reasoning=morph_reasoning,
+            scale_reasoning=scale_reasoning,
+            deform_reasoning=deform_reasoning,
+            animate_reasoning=animate_reasoning,
+            morph_confidence=morph_confidence,
+            structural_stability=structural_stability,
+        )
+
+    def _reason_bloom_capability(
+        self, petal: SelfAwarePetal
+    ) -> TransformationCapability:
+        """Reason about bloom (opening) capability."""
+        reasoning = []
+
+        # Base capability from template
+        template = self.transformation_templates["bloom"]
+
+        # Adjust based on layer
+        if petal.layer == 1:
+            max_angle = 45  # Inner petals open less
+            reasoning.append(
+                f"As inner layer petal, my maximum bloom angle is {max_angle}° "
+                "(limited by structural role)"
+            )
+        elif petal.layer == 2:
+            max_angle = 60
+            reasoning.append(
+                f"As middle layer petal, I can bloom up to {max_angle}° "
+                "(moderate opening)"
+            )
+        else:
+            max_angle = 90
+            reasoning.append(
+                f"As outer layer petal, I can bloom fully to {max_angle}° "
+                "(maximum visibility)"
+            )
+
+        # Adjust based on opening degree
+        current_bloom = petal.opening_degree * max_angle
+        remaining = max_angle - current_bloom
+        reasoning.append(
+            f"Currently at {petal.opening_degree:.0%} bloom ({current_bloom:.1f}°), "
+            f"can open {remaining:.1f}° more"
+        )
+
+        # Duration based on size
+        base_duration = 1000 + (petal.height * 500)
+        reasoning.append(
+            f"Bloom animation should take {base_duration:.0f}ms "
+            f"(based on my height {petal.height:.2f})"
+        )
+
+        return TransformationCapability(
+            name="bloom",
+            description=f"Open petal up to {max_angle}°",
+            parameters={
+                "angle": (0, max_angle),
+                "duration_ms": (500, base_duration * 2),
+            },
+            risk_level=0.1,
+            reversible=True,
+            reasoning=reasoning,
+        )
+
+    def _reason_wilt_capability(
+        self, petal: SelfAwarePetal
+    ) -> TransformationCapability:
+        """Reason about wilting capability."""
+        reasoning = []
+
+        # Wilting depends on current state
+        if petal.opening_degree > 0.5:
+            wilt_range = (-45, 0)
+            reasoning.append(
+                "I am currently open, can wilt by closing and drooping"
+            )
+        else:
+            wilt_range = (-30, 0)
+            reasoning.append(
+                "I am already partially closed, limited wilting possible"
+            )
+
+        # Droop factor based on organic nature
+        droop_factor = 0.8 if petal.genesis.cp_count >= 5 else 0.6
+        reasoning.append(
+            f"With {petal.genesis.cp_count} CPs, my droop factor is {droop_factor:.1f} "
+            "(more CPs = smoother droop)"
+        )
+
+        return TransformationCapability(
+            name="wilt",
+            description="Close and droop petal",
+            parameters={
+                "angle": wilt_range,
+                "droop_factor": (0.5, droop_factor),
+            },
+            risk_level=0.2,
+            reversible=True,
+            reasoning=reasoning,
+        )
+
+    def _reason_scale_capabilities(
+        self, petal: SelfAwarePetal
+    ) -> List[TransformationCapability]:
+        """Reason about scaling capabilities."""
+        capabilities = []
+
+        # UNIFORM SCALE
+        uniform_reasoning = []
+        min_scale = 0.5
+        max_scale = 2.0
+
+        # Adjust based on layer constraints
+        if petal.layer == 1:
+            max_scale = 1.5  # Inner shouldn't grow too big
+            uniform_reasoning.append(
+                f"As inner layer, max uniform scale is {max_scale}x "
+                "(must stay smaller than middle layer)"
+            )
+        elif petal.layer == 3:
+            min_scale = 0.7  # Outer shouldn't shrink too much
+            uniform_reasoning.append(
+                f"As outer layer, min scale is {min_scale}x "
+                "(must maintain visibility)"
+            )
+        else:
+            uniform_reasoning.append(
+                f"Middle layer allows full scaling range {min_scale}x to {max_scale}x"
+            )
+
+        capabilities.append(
+            TransformationCapability(
+                name="scale_uniform",
+                description=f"Scale uniformly between {min_scale}x and {max_scale}x",
+                parameters={"factor": (min_scale, max_scale)},
+                risk_level=0.3,
+                reversible=True,
+                reasoning=uniform_reasoning,
+            )
+        )
+
+        # WIDTH SCALE
+        width_reasoning = []
+        width_min = petal.genesis.deformation_limits["width"][0] / petal.width
+        width_max = petal.genesis.deformation_limits["width"][1] / petal.width
+
+        width_reasoning.append(
+            f"My width can scale from {width_min:.2f}x to {width_max:.2f}x "
+            f"(current width: {petal.width:.3f})"
+        )
+
+        if petal.genesis.aspect_ratio > 2.5:
+            width_reasoning.append(
+                "Warning: I am already narrow, reducing width may make me unstable"
+            )
+
+        capabilities.append(
+            TransformationCapability(
+                name="scale_width",
+                description="Adjust petal width (changes aspect ratio)",
+                parameters={"factor": (width_min, width_max)},
+                risk_level=0.4,
+                reversible=True,
+                reasoning=width_reasoning,
+            )
+        )
+
+        # HEIGHT SCALE
+        height_reasoning = []
+        height_min = petal.genesis.deformation_limits["height"][0] / petal.height
+        height_max = petal.genesis.deformation_limits["height"][1] / petal.height
+
+        height_reasoning.append(
+            f"My height can scale from {height_min:.2f}x to {height_max:.2f}x "
+            f"(current height: {petal.height:.3f})"
+        )
+
+        capabilities.append(
+            TransformationCapability(
+                name="scale_height",
+                description="Adjust petal height",
+                parameters={"factor": (height_min, height_max)},
+                risk_level=0.3,
+                reversible=True,
+                reasoning=height_reasoning,
+            )
+        )
+
+        return capabilities
+
+    def _reason_deform_capabilities(
+        self, petal: SelfAwarePetal
+    ) -> List[TransformationCapability]:
+        """Reason about deformation capabilities."""
+        capabilities = []
+
+        # BEND TIP
+        bend_reasoning = []
+        if petal.genesis.cp_count >= 5:
+            max_bend = 30
+            bend_reasoning.append(
+                f"With {petal.genesis.cp_count} CPs, I can bend my tip up to {max_bend}°"
+            )
+        else:
+            max_bend = 15
+            bend_reasoning.append(
+                f"With only {petal.genesis.cp_count} CPs, tip bending limited to {max_bend}°"
+            )
+
+        bend_reasoning.append(
+            "Bending changes my tip direction while maintaining base position"
+        )
+
+        capabilities.append(
+            TransformationCapability(
+                name="bend_tip",
+                description=f"Bend tip up to {max_bend}°",
+                parameters={
+                    "angle": (-max_bend, max_bend),
+                    "curvature": (0.1, 0.9),
+                },
+                risk_level=0.5,
+                reversible=True,
+                reasoning=bend_reasoning,
+            )
+        )
+
+        # TWIST
+        twist_reasoning = []
+        twist_reasoning.append(
+            "I can twist around my vertical axis for 3D effect"
+        )
+        if petal.detail_level == "high":
+            twist_reasoning.append(
+                "High detail level allows full 360° twist capability"
+            )
+            max_twist = 180
+        else:
+            twist_reasoning.append(
+                f"{petal.detail_level} detail limits twist to avoid distortion"
+            )
+            max_twist = 90
+
+        capabilities.append(
+            TransformationCapability(
+                name="twist",
+                description=f"Twist around axis (±{max_twist}°)",
+                parameters={"degrees": (-max_twist, max_twist)},
+                risk_level=0.4,
+                reversible=True,
+                reasoning=twist_reasoning,
+            )
+        )
+
+        # WAVE (edge deformation)
+        wave_reasoning = []
+        if petal.genesis.cp_count >= 6:
+            max_amp = 0.1
+            wave_reasoning.append(
+                f"With {petal.genesis.cp_count} CPs, I can create edge waves "
+                f"(amplitude up to {max_amp})"
+            )
+        else:
+            max_amp = 0.05
+            wave_reasoning.append(
+                f"Limited CPs restrict wave amplitude to {max_amp}"
+            )
+
+        capabilities.append(
+            TransformationCapability(
+                name="wave",
+                description="Add wave pattern to edges",
+                parameters={
+                    "amplitude": (0.01, max_amp),
+                    "frequency": (1, 5),
+                },
+                risk_level=0.6,
+                reversible=True,
+                reasoning=wave_reasoning,
+            )
+        )
+
+        return capabilities
+
+    def _reason_morph_capabilities(
+        self, petal: SelfAwarePetal
+    ) -> List[TransformationCapability]:
+        """Reason about morphing (shape change) capabilities."""
+        capabilities = []
+
+        # ADD CP
+        add_cp_reasoning = []
+        if petal.genesis.cp_count < petal.genesis.max_viable_cps:
+            can_add = petal.genesis.max_viable_cps - petal.genesis.cp_count
+            add_cp_reasoning.append(
+                f"I can add up to {can_add} more CPs "
+                f"(current: {petal.genesis.cp_count}, max: {petal.genesis.max_viable_cps})"
+            )
+            add_cp_reasoning.append(
+                "Adding CPs increases my detail but changes my identity"
+            )
+            add_cp_reasoning.append(
+                "WARNING: This is irreversible - I will become a different petal"
+            )
+
+            capabilities.append(
+                TransformationCapability(
+                    name="add_cp",
+                    description=f"Add control point (can add {can_add} more)",
+                    parameters={"position": (0.0, 1.0)},
+                    risk_level=0.7,
+                    reversible=False,
+                    reasoning=add_cp_reasoning,
+                )
+            )
+
+        # REMOVE CP
+        remove_cp_reasoning = []
+        if petal.genesis.cp_count > petal.genesis.min_viable_cps:
+            can_remove = petal.genesis.cp_count - petal.genesis.min_viable_cps
+            remove_cp_reasoning.append(
+                f"I can remove up to {can_remove} CPs "
+                f"(current: {petal.genesis.cp_count}, min: {petal.genesis.min_viable_cps})"
+            )
+            remove_cp_reasoning.append(
+                "Removing CPs simplifies my form but loses detail"
+            )
+            remove_cp_reasoning.append(
+                "WARNING: This permanently changes my structure"
+            )
+
+            capabilities.append(
+                TransformationCapability(
+                    name="remove_cp",
+                    description=f"Remove control point (can remove {can_remove})",
+                    parameters={"cp_index": (1, petal.genesis.cp_count - 1)},
+                    risk_level=0.8,
+                    reversible=False,
+                    reasoning=remove_cp_reasoning,
+                )
+            )
+
+        # MORPH TO LEAF
+        morph_reasoning = []
+        morph_reasoning.append(
+            "I can morph towards leaf shape by adjusting my proportions"
+        )
+        morph_reasoning.append(
+            "Morphing factor: 0.0 = pure petal, 1.0 = pure leaf"
+        )
+
+        # Check compatibility
+        if petal.genesis.aspect_ratio > 2.0:
+            morph_reasoning.append(
+                f"My aspect ratio ({petal.genesis.aspect_ratio:.2f}) is compatible "
+                "with leaf morphing"
+            )
+            risk = 0.7
+        else:
+            morph_reasoning.append(
+                f"My aspect ratio ({petal.genesis.aspect_ratio:.2f}) requires "
+                "significant change for leaf form"
+            )
+            risk = 0.9
+
+        morph_reasoning.append(
+            "WARNING: Full morph changes my identity from petal to leaf"
+        )
+
+        capabilities.append(
+            TransformationCapability(
+                name="morph_to_leaf",
+                description="Transform shape towards leaf",
+                parameters={"morph_factor": (0.0, 1.0)},
+                risk_level=risk,
+                reversible=False,
+                reasoning=morph_reasoning,
+            )
+        )
+
+        return capabilities
+
+    def _calculate_morph_confidence(
+        self,
+        petal: SelfAwarePetal,
+        capabilities: List[TransformationCapability]
+    ) -> float:
+        """Calculate overall confidence in morphing abilities."""
+        if not capabilities:
+            return 0.5
+
+        # Average of (1 - risk) for all capabilities
+        total_safety = sum(1 - cap.risk_level for cap in capabilities)
+        avg_safety = total_safety / len(capabilities)
+
+        # Bonus for structural confidence
+        structural_bonus = petal.genesis.structural_confidence * 0.1
+
+        return min(1.0, avg_safety + structural_bonus)
+
+    def generate_transformation_report(self, petal: SelfAwarePetal) -> str:
+        """Generate a report of transformation capabilities."""
+        if petal.transformation is None:
+            petal.transformation = self.reason_about_transformations(petal)
+
+        trans = petal.transformation
+        report = []
+
+        report.append("=== TRANSFORMATION CAPABILITIES ===\n")
+
+        # Summary
+        report.append("WHAT I CAN DO:")
+        for cap in trans.capabilities:
+            risk_desc = "safe" if cap.risk_level < 0.3 else (
+                "moderate" if cap.risk_level < 0.6 else "risky"
+            )
+            reversible_desc = "reversible" if cap.reversible else "PERMANENT"
+            report.append(
+                f"  • {cap.name}: {cap.description} [{risk_desc}, {reversible_desc}]"
+            )
+        report.append("")
+
+        # Animation reasoning
+        report.append("HOW I CAN ANIMATE:")
+        for line in trans.animate_reasoning:
+            report.append(f"  • {line}")
+        report.append("")
+
+        # Scale reasoning
+        report.append("HOW I CAN SCALE:")
+        for line in trans.scale_reasoning:
+            report.append(f"  • {line}")
+        report.append("")
+
+        # Deform reasoning
+        report.append("HOW I CAN DEFORM:")
+        for line in trans.deform_reasoning:
+            report.append(f"  • {line}")
+        report.append("")
+
+        # Morph reasoning
+        report.append("HOW I CAN MORPH (IDENTITY CHANGE):")
+        for line in trans.morph_reasoning:
+            report.append(f"  • {line}")
+        report.append("")
+
+        # Confidence
+        report.append("MY TRANSFORMATION CONFIDENCE:")
+        report.append(f"  • Morph confidence: {trans.morph_confidence:.1%}")
+        report.append(f"  • Structural stability: {trans.structural_stability:.1%}")
+
+        return "\n".join(report)
+
+
 def demo_genesis_reasoning():
     """Demonstrate genesis reasoning for different petals."""
 
@@ -494,5 +1133,83 @@ def demo_genesis_reasoning():
         print()
 
 
+def demo_transformation_reasoning():
+    """Demonstrate transformation reasoning for different petals."""
+
+    genesis_reasoner = GenesisReasoner()
+    trans_reasoner = TransformationReasoner()
+
+    # Create petals with different configurations
+    test_cases = [
+        ("petal_L1_P0", 1, 0, 0.3, 0.9, 0.6, "low"),
+        ("petal_L2_P1", 2, 1, 0.4, 1.2, 0.8, "medium"),
+        ("petal_L3_P2", 3, 2, 0.6, 1.5, 0.9, "high"),
+    ]
+
+    for name, layer, pos, w, h, opening, detail in test_cases:
+        print("=" * 70)
+        petal = genesis_reasoner.create_aware_petal(name, layer, pos, w, h, opening, detail)
+        trans_report = trans_reasoner.generate_transformation_report(petal)
+        print(f"PETAL: {name}")
+        print(trans_report)
+        print()
+
+
+def demo_full_self_awareness():
+    """Demonstrate complete self-awareness (genesis + transformation)."""
+
+    genesis_reasoner = GenesisReasoner()
+    trans_reasoner = TransformationReasoner()
+
+    # Create a single petal with full awareness
+    petal = genesis_reasoner.create_aware_petal(
+        "petal_L2_P0", 2, 0, 0.4, 1.2, 0.8, "medium"
+    )
+
+    print("=" * 70)
+    print("COMPLETE PETAL SELF-AWARENESS DEMONSTRATION")
+    print("=" * 70)
+    print()
+
+    # Genesis report
+    genesis_report = genesis_reasoner.generate_self_description(petal)
+    print(genesis_report)
+    print()
+
+    # Transformation report
+    trans_report = trans_reasoner.generate_transformation_report(petal)
+    print(trans_report)
+    print()
+
+    # Summary
+    print("=" * 70)
+    print("SELF-AWARENESS SUMMARY")
+    print("=" * 70)
+    print(f"Petal: {petal.name}")
+    print(f"Genesis Understanding: {petal.genesis.self_understanding:.1%}")
+    print(f"Structural Confidence: {petal.genesis.structural_confidence:.1%}")
+    print(f"Transformation Confidence: {petal.transformation.morph_confidence:.1%}")
+    print(f"Total Capabilities: {len(petal.transformation.capabilities)}")
+    print()
+
+    # Thought history
+    print("THOUGHT HISTORY:")
+    for thought in petal.thought_history:
+        print(f"  • {thought}")
+
+
 if __name__ == "__main__":
-    demo_genesis_reasoning()
+    import sys
+
+    if len(sys.argv) > 1:
+        if sys.argv[1] == "genesis":
+            demo_genesis_reasoning()
+        elif sys.argv[1] == "transform":
+            demo_transformation_reasoning()
+        elif sys.argv[1] == "full":
+            demo_full_self_awareness()
+        else:
+            print("Usage: python petal_self_awareness.py [genesis|transform|full]")
+    else:
+        # Default: show full demo
+        demo_full_self_awareness()
