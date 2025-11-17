@@ -1,4 +1,5 @@
-# Symbolic Regression Configuration - SPLINE VERSION
+# Symbolic Regression Configuration - FINAL VERSION
+# Only uses latest datasets: petal_spline_v2, bone_rigging_v4, animation_wingflap
 
 general:
   niterations: 100
@@ -7,9 +8,9 @@ general:
   model_selection: "best"
   verbosity: 1
 
-# Category-specific configurations for SPLINE-based geometry
+# Category-specific configurations
 categories:
-  petal_spline:
+  petal_spline_v2:
     features:
       - base_size
       - layer_index
@@ -32,50 +33,6 @@ categories:
       unary: ["sqrt", "log", "sin", "cos"]
     constraints:
       maxsize: 20
-
-  bone_rigging_v2:
-    features:
-      - petal_tip_y
-      - petal_base_spread
-      - flexibility_factor
-      - layer_index
-    targets:
-      - bone_count
-      - bone_start_y
-      - bone_end_y
-      - bone_segment_length
-      - bind_weight
-    operators:
-      binary: ["+", "-", "*", "/"]
-      unary: ["sqrt", "log", "ceil", "floor"]
-    constraints:
-      maxsize: 15
-
-  bone_rigging_v3:
-    features:
-      - petal_height
-      - petal_width
-      - opening_degree
-      - layer_index
-      - curvature_intensity
-    targets:
-      - bone_0_y_start
-      - bone_0_y_end
-      - bone_0_rot_x
-      - bone_1_y_start
-      - bone_1_y_end
-      - bone_1_rot_x
-      - bone_2_y_start
-      - bone_2_y_end
-      - bone_2_rot_x
-      - bone_3_y_start
-      - bone_3_y_end
-      - bone_3_rot_x
-    operators:
-      binary: ["+", "-", "*", "/"]
-      unary: ["sqrt", "log", "sin", "cos"]
-    constraints:
-      maxsize: 18
 
   bone_rigging_v4:
     features:
@@ -144,9 +101,6 @@ constraints:
   extrude_depth:
     min: 0.001
     max: 0.5
-  bone_count:
-    min: 2
-    max: 8
   frequency:
     min: 1.0
     max: 50.0
