@@ -1,0 +1,222 @@
+# Petal Self-Awareness - Chain-of-Thought Examples
+# Demonstrates how petals understand themselves through CoT reasoning
+
+# ============================================================
+# Example 1: Genesis Reasoning - Inner Layer Petal
+# ============================================================
+
+Petal: petal_L1_P0 (Layer 1, Position 0)
+Physical: width=0.35, height=1.2, opening=15.0°, detail=medium
+
+Genesis Knowledge:
+  Identity Reasoning:
+    - I am 'petal_L1_P0', a petal in layer 1, position 0
+    - My layer purpose: inner layer - protects center, small and curved inward
+    - My position role: leading petal in arrangement
+
+  Structural Reasoning:
+    - My width is 0.350 (medium): standard petal form
+    - My height is 1.200 (medium): mature petal
+    - My aspect ratio is 3.43 (narrow): slender, elegant petal
+    - My control points: 5 (standard): smooth curves with detail
+
+  Self-Understanding: 77%
+  Structural Confidence: 98%
+
+Generated CoT:
+  Step 1: Object type 'petal' suggests 5 CPs (range: 4-8)
+  Step 2: Bilateral symmetry → prefer odd CP count → 5 CPs
+  Step 3: Smooth curvature → keep 5 CPs
+  Step 4: Medium detail → keep 5 CPs
+  Step 5: Organic shape → ensure curve control → 5 CPs
+  Final: Optimal CP count = 5
+
+
+# ============================================================
+# Example 2: Transformation Reasoning - Middle Layer Petal
+# ============================================================
+
+Petal: petal_L2_P3 (Layer 2, Position 3)
+Genesis Self-Understanding: 78%
+
+Transformation Capabilities:
+  1. bloom (animate)
+     - Max angle: 60° (middle layer = moderate opening)
+     - Risk: 0.10 (very safe)
+     - Reversible: Yes
+     - Reasoning: "As middle layer petal, I can bloom up to 60°"
+
+  2. scale_uniform (scale)
+     - Factor range: 0.5x - 2.0x
+     - Risk: 0.30 (low-medium)
+     - Reversible: Yes
+     - Reasoning: "I can scale uniformly without losing identity"
+
+  3. bend_tip (deform)
+     - Angle: -30° to +30°
+     - Risk: 0.50 (medium)
+     - Reversible: Yes
+     - Reasoning: "I can curve my tip to follow wind or growth patterns"
+
+  4. morph_to_leaf (morph)
+     - Complexity: 0.87
+     - Risk: 0.70 (high)
+     - Reversible: No
+     - Reasoning: "I share similar structure with leaf, morphing is possible"
+
+Transformation Metrics:
+  - Morph Confidence: 65%
+  - Structural Stability: 98%
+  - Total Capabilities: 11
+  - Average Risk: 0.45
+
+
+# ============================================================
+# Example 3: Composition Reasoning - Multi-Petal Group
+# ============================================================
+
+Group: 5 petals in layers 1, 2, 3
+Target Petal: petal_L2_P0 (middle layer)
+
+Relationships:
+  1. petal_L2_P1 (sibling)
+     - Same layer, adjacent position
+     - Spatial: adjacent (at 137.5°)
+     - Reasoning: "We share the same layer and should coordinate bloom"
+
+  2. petal_L1_P0 (cousin)
+     - Different layer (inner)
+     - Spatial: below me radially
+     - Reasoning: "Inner layer petal, I must open around it"
+
+  3. petal_L3_P0 (cousin)
+     - Different layer (outer)
+     - Spatial: above me radially
+     - Reasoning: "Outer layer petal, it opens wider than me"
+
+Composition Metrics:
+  - Harmony Score: 78%
+  - Cooperation Confidence: 95%
+  - Siblings: 1 (same layer)
+  - Cousins: 3 (different layers)
+
+Coordination Rules:
+  - Follow golden angle (137.5°) spacing
+  - Synchronize bloom animation with siblings
+  - Maintain radial distance based on layer
+
+
+# ============================================================
+# Example 4: Full Self-Awareness Demo
+# ============================================================
+
+Petal: petal_L3_P2 (Outer Layer)
+
+GENESIS (How was I created?):
+  "I am an outer layer petal, designed for maximum visibility.
+   My 6 control points give me a complex organic form.
+   My aspect ratio of 2.8 makes me slender and elegant."
+  Self-Understanding: 85%
+
+TRANSFORMATION (What can I become?):
+  "As outer layer petal, I can:
+   - Bloom fully to 90° (maximum exposure)
+   - Scale up to 2x without structural damage
+   - Bend tip up to 30° for dynamic movement
+   - Morph partially to other organic shapes"
+  Morph Confidence: 68%
+  Total Capabilities: 11
+
+COMPOSITION (How do I fit with others?):
+  "I have 1 sibling and 4 cousins in my group.
+   I am positioned at 275.0° from reference.
+   I coordinate bloom timing with my layer siblings.
+   I maintain spacing to avoid overlap with inner petals."
+  Harmony Score: 79%
+  Cooperation Confidence: 96%
+
+OVERALL SELF-AWARENESS: 77.3%
+
+CLI Commands Generated:
+  obj petal_L3_P2;
+  spline -0.30 0.00 -0.24 0.42 -0.12 1.18 0.00 1.68 0.12 1.18 0.30 0.00 -0.30 0.00;
+  auto_rotate petal_L3_P2_rig bone_1 1 0 0 90.0 3000 smooth;
+
+
+# ============================================================
+# SR Training Datasets Summary
+# ============================================================
+
+1. sa_genesis_dataset.csv (500 samples)
+   Features: layer, petal_idx, width, height, aspect_ratio, detail_code, opening_degree
+   Targets: cp_count, self_understanding, structural_confidence, is_inner_layer, is_outer_layer
+
+   SR can learn:
+   - Predict CP count from physical properties
+   - Estimate self-understanding score
+   - Classify layer position (inner/outer)
+
+2. sa_transformation_dataset.csv (500 samples)
+   Features: layer, width, height, opening_degree, cp_count, self_understanding
+   Targets: morph_confidence, structural_stability, num_capabilities, avg_risk_level, num_reversible
+
+   SR can learn:
+   - Predict morphing ability from structure
+   - Estimate transformation risk
+   - Calculate number of safe operations
+
+3. sa_composition_dataset.csv (2120 samples)
+   Features: layer, petal_idx, group_size, same_layer_count, adjacent_layer_count, self_understanding
+   Targets: harmony_score, cooperation_confidence, sibling_count, cousin_count
+
+   SR can learn:
+   - Predict group harmony from configuration
+   - Estimate cooperation ability
+   - Understand relationship patterns
+
+
+# ============================================================
+# Usage Example - Python API
+# ============================================================
+
+from petal_self_awareness import (
+    SelfAwarePetal,
+    GenesisReasoner,
+    TransformationReasoner,
+    CompositionReasoner
+)
+
+# Create a petal
+petal = SelfAwarePetal(
+    name="petal_L2_P0",
+    layer=2,
+    position_in_layer=0,
+    width=0.4,
+    height=1.3,
+    opening_degree=30.0,
+    detail_level="medium"
+)
+
+# Genesis: Understand creation
+genesis_reasoner = GenesisReasoner()
+petal.genesis = genesis_reasoner.reason_about_genesis(petal)
+print(f"Self-Understanding: {petal.genesis.self_understanding:.0%}")
+
+# Transformation: Understand capabilities
+transform_reasoner = TransformationReasoner()
+petal.transformation = transform_reasoner.reason_about_transformations(petal)
+print(f"Morph Confidence: {petal.transformation.morph_confidence:.0%}")
+
+# Composition: Understand relationships
+other_petals = [...]  # Other petals in the flower
+composition_reasoner = CompositionReasoner()
+petal.composition = composition_reasoner.reason_about_composition(petal, other_petals)
+print(f"Harmony Score: {petal.composition.harmony_score:.0%}")
+
+# Overall self-awareness
+overall = (
+    petal.genesis.self_understanding * 0.4 +
+    petal.transformation.morph_confidence * 0.3 +
+    petal.composition.harmony_score * 0.3
+)
+print(f"Overall Self-Awareness: {overall:.1%}")
