@@ -12,30 +12,44 @@ general:
 # Category-specific configurations
 categories:
   petal_spline_v3:
-    description: "8 Control Points - Heart-shaped tip with notch"
+    description: "15 Control Points - Rose petal shape with widest at 62%"
     features:
       - base_size
       - layer_index
       - petal_index
       - opening_degree
     targets:
-      # 8 Control Points (16 values)
-      - cp1_x  # base_left
+      # 15 Control Points (30 values)
+      - cp1_x   # base center
       - cp1_y
-      - cp2_x  # lower_left
+      - cp2_x   # base left (5%)
       - cp2_y
-      - cp3_x  # upper_left
+      - cp3_x   # lower left (25%)
       - cp3_y
-      - cp4_x  # tip_left
+      - cp4_x   # mid-low left (45%)
       - cp4_y
-      - cp5_x  # tip_center
+      - cp5_x   # upper-mid left (62% - WIDEST)
       - cp5_y
-      - cp6_x  # tip_right
+      - cp6_x   # upper left (78%)
       - cp6_y
-      - cp7_x  # upper_right
+      - cp7_x   # near-tip left (92%)
       - cp7_y
-      - cp8_x  # lower_right
+      - cp8_x   # tip center
       - cp8_y
+      - cp9_x   # near-tip right (92%)
+      - cp9_y
+      - cp10_x  # upper right (78%)
+      - cp10_y
+      - cp11_x  # upper-mid right (62% - WIDEST)
+      - cp11_y
+      - cp12_x  # mid-low right (45%)
+      - cp12_y
+      - cp13_x  # lower right (25%)
+      - cp13_y
+      - cp14_x  # base right (5%)
+      - cp14_y
+      - cp15_x  # close spline (back to base)
+      - cp15_y
       - extrude_depth
     operators:
       binary: ["+", "-", "*", "/"]
@@ -44,41 +58,61 @@ categories:
       maxsize: 20
 
   bone_rigging_v5:
-    description: "7 Bones - Fishbone structure (3 spine + 4 ribs)"
+    description: "12 Bones - Fishbone structure (4 spine + 8 ribs) matching petal_spline_v3"
     features:
-      - petal_height
-      - petal_width
-      - opening_degree
+      - base_size
       - layer_index
+      - petal_index
+      - opening_degree
       - curvature_intensity
     targets:
-      # Central Spine (3 bones)
+      # Central Spine (4 bones)
       - bone_root_start_x
       - bone_root_start_y
       - bone_root_end_x
       - bone_root_end_y
-      - bone_middle_start_x
-      - bone_middle_start_y
-      - bone_middle_end_x
-      - bone_middle_end_y
+      - bone_lower_mid_start_x
+      - bone_lower_mid_start_y
+      - bone_lower_mid_end_x
+      - bone_lower_mid_end_y
+      - bone_upper_mid_start_x
+      - bone_upper_mid_start_y
+      - bone_upper_mid_end_x
+      - bone_upper_mid_end_y
       - bone_tip_start_x
       - bone_tip_start_y
       - bone_tip_end_x
       - bone_tip_end_y
-      # Left Ribs (2 bones)
+      # Left Ribs (4 bones)
       - bone_left_lower_start_x
       - bone_left_lower_start_y
       - bone_left_lower_end_x
       - bone_left_lower_end_y
+      - bone_left_mid_lower_start_x
+      - bone_left_mid_lower_start_y
+      - bone_left_mid_lower_end_x
+      - bone_left_mid_lower_end_y
+      - bone_left_mid_upper_start_x
+      - bone_left_mid_upper_start_y
+      - bone_left_mid_upper_end_x
+      - bone_left_mid_upper_end_y
       - bone_left_upper_start_x
       - bone_left_upper_start_y
       - bone_left_upper_end_x
       - bone_left_upper_end_y
-      # Right Ribs (2 bones)
+      # Right Ribs (4 bones)
       - bone_right_lower_start_x
       - bone_right_lower_start_y
       - bone_right_lower_end_x
       - bone_right_lower_end_y
+      - bone_right_mid_lower_start_x
+      - bone_right_mid_lower_start_y
+      - bone_right_mid_lower_end_x
+      - bone_right_mid_lower_end_y
+      - bone_right_mid_upper_start_x
+      - bone_right_mid_upper_start_y
+      - bone_right_mid_upper_end_x
+      - bone_right_mid_upper_end_y
       - bone_right_upper_start_x
       - bone_right_upper_start_y
       - bone_right_upper_end_x
@@ -137,7 +171,8 @@ constraints:
 
 # V3 specific notes
 notes:
-  - "8 CPs capture realistic rose petal shape from reference image"
-  - "Heart-shaped tip with notch (CP4, CP5, CP6)"
-  - "Undulating edges for organic look (CP2, CP3, CP7, CP8)"
-  - "Narrow base for natural stem attachment (CP1)"
+  - "15 CPs capture realistic rose petal shape from rose_petals_ok.jpg"
+  - "Base narrow like a point (CP2/CP14 at 5%)"
+  - "Widest at 62% height (CP5/CP11), not 50%"
+  - "Ribs at 25%, 45%, 62%, 78% match CP positions"
+  - "12 bones (4 spine + 8 ribs) align with 15 CPs"
