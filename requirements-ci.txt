@@ -1,0 +1,19 @@
+# CI dependencies - excludes pysr for fast testing
+# pysr requires Julia compilation which takes 30+ minutes
+
+# Core dependencies
+numpy>=1.21.0
+pandas>=1.3.0
+pyyaml>=6.0
+
+# Symbolic math (for formula parsing, not training)
+sympy>=1.11.0
+
+# Visualization (optional)
+matplotlib>=3.5.0
+
+# Testing
+pytest>=7.0.0
+
+# Code generation
+jinja2>=3.0.0

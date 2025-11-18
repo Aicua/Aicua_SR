@@ -119,99 +119,136 @@ class SplineRoseCLIGenerator:
             }
 
     def compute_bone_params_v5(self, petal_height, petal_width, opening_degree, layer_idx, curvature_intensity=1.0):
-        """Compute bone rigging parameters for v5 branching structure (7 bones)."""
+        """Compute bone rigging parameters for v5 fishbone structure (12 bones)."""
         if self.use_sr_bone:
             return {
+                # Central Spine (4 bones)
                 'bone_root_start_x': self.bone_mod.compute_bone_root_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_root_start_y': self.bone_mod.compute_bone_root_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_root_end_x': self.bone_mod.compute_bone_root_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_root_end_y': self.bone_mod.compute_bone_root_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
-                'bone_middle_start_x': self.bone_mod.compute_bone_middle_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
-                'bone_middle_start_y': self.bone_mod.compute_bone_middle_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
-                'bone_middle_end_x': self.bone_mod.compute_bone_middle_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
-                'bone_middle_end_y': self.bone_mod.compute_bone_middle_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_lower_mid_start_x': self.bone_mod.compute_bone_lower_mid_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_lower_mid_start_y': self.bone_mod.compute_bone_lower_mid_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_lower_mid_end_x': self.bone_mod.compute_bone_lower_mid_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_lower_mid_end_y': self.bone_mod.compute_bone_lower_mid_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_upper_mid_start_x': self.bone_mod.compute_bone_upper_mid_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_upper_mid_start_y': self.bone_mod.compute_bone_upper_mid_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_upper_mid_end_x': self.bone_mod.compute_bone_upper_mid_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_upper_mid_end_y': self.bone_mod.compute_bone_upper_mid_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_tip_start_x': self.bone_mod.compute_bone_tip_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_tip_start_y': self.bone_mod.compute_bone_tip_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_tip_end_x': self.bone_mod.compute_bone_tip_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_tip_end_y': self.bone_mod.compute_bone_tip_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                # Left Ribs (4 bones)
                 'bone_left_lower_start_x': self.bone_mod.compute_bone_left_lower_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_left_lower_start_y': self.bone_mod.compute_bone_left_lower_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_left_lower_end_x': self.bone_mod.compute_bone_left_lower_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_left_lower_end_y': self.bone_mod.compute_bone_left_lower_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_mid_lower_start_x': self.bone_mod.compute_bone_left_mid_lower_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_mid_lower_start_y': self.bone_mod.compute_bone_left_mid_lower_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_mid_lower_end_x': self.bone_mod.compute_bone_left_mid_lower_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_mid_lower_end_y': self.bone_mod.compute_bone_left_mid_lower_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_mid_upper_start_x': self.bone_mod.compute_bone_left_mid_upper_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_mid_upper_start_y': self.bone_mod.compute_bone_left_mid_upper_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_mid_upper_end_x': self.bone_mod.compute_bone_left_mid_upper_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_left_mid_upper_end_y': self.bone_mod.compute_bone_left_mid_upper_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_left_upper_start_x': self.bone_mod.compute_bone_left_upper_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_left_upper_start_y': self.bone_mod.compute_bone_left_upper_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_left_upper_end_x': self.bone_mod.compute_bone_left_upper_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_left_upper_end_y': self.bone_mod.compute_bone_left_upper_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                # Right Ribs (4 bones)
                 'bone_right_lower_start_x': self.bone_mod.compute_bone_right_lower_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_right_lower_start_y': self.bone_mod.compute_bone_right_lower_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_right_lower_end_x': self.bone_mod.compute_bone_right_lower_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_right_lower_end_y': self.bone_mod.compute_bone_right_lower_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_mid_lower_start_x': self.bone_mod.compute_bone_right_mid_lower_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_mid_lower_start_y': self.bone_mod.compute_bone_right_mid_lower_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_mid_lower_end_x': self.bone_mod.compute_bone_right_mid_lower_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_mid_lower_end_y': self.bone_mod.compute_bone_right_mid_lower_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_mid_upper_start_x': self.bone_mod.compute_bone_right_mid_upper_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_mid_upper_start_y': self.bone_mod.compute_bone_right_mid_upper_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_mid_upper_end_x': self.bone_mod.compute_bone_right_mid_upper_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
+                'bone_right_mid_upper_end_y': self.bone_mod.compute_bone_right_mid_upper_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_right_upper_start_x': self.bone_mod.compute_bone_right_upper_start_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_right_upper_start_y': self.bone_mod.compute_bone_right_upper_start_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_right_upper_end_x': self.bone_mod.compute_bone_right_upper_end_x(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
                 'bone_right_upper_end_y': self.bone_mod.compute_bone_right_upper_end_y(petal_height, petal_width, opening_degree, layer_idx, curvature_intensity),
             }
         else:
-            # Fallback formulas for v5 branching structure (7 bones)
+            # Fallback formulas for v5 fishbone structure (12 bones)
             layer_factor = [0.8, 0.9, 1.0][layer_idx]
 
-            # Bone root: base to 25% height
+            # Central Spine heights (matching config)
+            # bone_root: 0% → 25%
             root_end_y = petal_height * 0.25 * layer_factor
-
-            # Bone middle: 25% to 55% height
-            middle_end_y = petal_height * 0.55 * layer_factor
-
-            # Bone tip: 55% to 100% height
+            # bone_lower_mid: 25% → 45%
+            lower_mid_end_y = petal_height * 0.45 * layer_factor
+            # bone_upper_mid: 45% → 62%
+            upper_mid_end_y = petal_height * 0.62 * layer_factor
+            # bone_tip: 62% → 100%
             tip_end_y = petal_height * layer_factor
-
-            # Branch spread based on opening degree
-            lower_spread = petal_width * 0.3 * (0.5 + opening_degree * 0.5)
-            upper_spread = petal_width * 0.5 * (0.5 + opening_degree * 0.5)
 
             # Apply curvature
             curvature_factor = curvature_intensity * 0.1
 
-            # Lower branches: from root end outward
-            left_lower_end_x = -lower_spread * (1 + curvature_factor)
-            left_lower_end_y = petal_height * 0.35 * layer_factor
-            right_lower_end_x = lower_spread * (1 + curvature_factor)
-            right_lower_end_y = petal_height * 0.35 * layer_factor
-
-            # Upper branches: from middle end outward
-            left_upper_end_x = -upper_spread * (1 + curvature_factor)
-            left_upper_end_y = petal_height * 0.85 * layer_factor
-            right_upper_end_x = upper_spread * (1 + curvature_factor)
-            right_upper_end_y = petal_height * 0.85 * layer_factor
+            # Rib widths at different heights (matching config width_factors)
+            lower_width = petal_width * 0.525 * (0.5 + opening_degree * 0.5)  # 25% height, factor 1.05
+            mid_low_width = petal_width * 0.7 * (0.5 + opening_degree * 0.5)  # 45% height, factor 1.4
+            mid_up_width = petal_width * 0.8 * (0.5 + opening_degree * 0.5)   # 62% height, factor 1.6 (WIDEST)
+            upper_width = petal_width * 0.65 * (0.5 + opening_degree * 0.5)   # 78% height, factor 1.3
 
             return {
+                # Central Spine (4 bones)
                 'bone_root_start_x': 0.0,
                 'bone_root_start_y': 0.0,
                 'bone_root_end_x': 0.0,
                 'bone_root_end_y': root_end_y,
-                'bone_middle_start_x': 0.0,
-                'bone_middle_start_y': root_end_y,
-                'bone_middle_end_x': 0.0,
-                'bone_middle_end_y': middle_end_y,
+                'bone_lower_mid_start_x': 0.0,
+                'bone_lower_mid_start_y': root_end_y,
+                'bone_lower_mid_end_x': 0.0,
+                'bone_lower_mid_end_y': lower_mid_end_y,
+                'bone_upper_mid_start_x': 0.0,
+                'bone_upper_mid_start_y': lower_mid_end_y,
+                'bone_upper_mid_end_x': 0.0,
+                'bone_upper_mid_end_y': upper_mid_end_y,
                 'bone_tip_start_x': 0.0,
-                'bone_tip_start_y': middle_end_y,
+                'bone_tip_start_y': upper_mid_end_y,
                 'bone_tip_end_x': 0.0,
                 'bone_tip_end_y': tip_end_y,
+                # Left Ribs (4 bones)
                 'bone_left_lower_start_x': 0.0,
                 'bone_left_lower_start_y': root_end_y,
-                'bone_left_lower_end_x': left_lower_end_x,
-                'bone_left_lower_end_y': left_lower_end_y,
+                'bone_left_lower_end_x': -lower_width * (1 + curvature_factor),
+                'bone_left_lower_end_y': root_end_y,
+                'bone_left_mid_lower_start_x': 0.0,
+                'bone_left_mid_lower_start_y': lower_mid_end_y,
+                'bone_left_mid_lower_end_x': -mid_low_width * (1 + curvature_factor),
+                'bone_left_mid_lower_end_y': lower_mid_end_y,
+                'bone_left_mid_upper_start_x': 0.0,
+                'bone_left_mid_upper_start_y': upper_mid_end_y,
+                'bone_left_mid_upper_end_x': -mid_up_width * (1 + curvature_factor),
+                'bone_left_mid_upper_end_y': upper_mid_end_y,
                 'bone_left_upper_start_x': 0.0,
-                'bone_left_upper_start_y': middle_end_y,
-                'bone_left_upper_end_x': left_upper_end_x,
-                'bone_left_upper_end_y': left_upper_end_y,
+                'bone_left_upper_start_y': petal_height * 0.78 * layer_factor,
+                'bone_left_upper_end_x': -upper_width * (1 + curvature_factor),
+                'bone_left_upper_end_y': petal_height * 0.78 * layer_factor,
+                # Right Ribs (4 bones)
                 'bone_right_lower_start_x': 0.0,
                 'bone_right_lower_start_y': root_end_y,
-                'bone_right_lower_end_x': right_lower_end_x,
-                'bone_right_lower_end_y': right_lower_end_y,
+                'bone_right_lower_end_x': lower_width * (1 + curvature_factor),
+                'bone_right_lower_end_y': root_end_y,
+                'bone_right_mid_lower_start_x': 0.0,
+                'bone_right_mid_lower_start_y': lower_mid_end_y,
+                'bone_right_mid_lower_end_x': mid_low_width * (1 + curvature_factor),
+                'bone_right_mid_lower_end_y': lower_mid_end_y,
+                'bone_right_mid_upper_start_x': 0.0,
+                'bone_right_mid_upper_start_y': upper_mid_end_y,
+                'bone_right_mid_upper_end_x': mid_up_width * (1 + curvature_factor),
+                'bone_right_mid_upper_end_y': upper_mid_end_y,
                 'bone_right_upper_start_x': 0.0,
-                'bone_right_upper_start_y': middle_end_y,
-                'bone_right_upper_end_x': right_upper_end_x,
-                'bone_right_upper_end_y': right_upper_end_y,
+                'bone_right_upper_start_y': petal_height * 0.78 * layer_factor,
+                'bone_right_upper_end_x': upper_width * (1 + curvature_factor),
+                'bone_right_upper_end_y': petal_height * 0.78 * layer_factor,
             }
 
     def compute_anim_params(self, base_size, petal_mass, wind_speed, flexibility, layer_idx):
@@ -261,7 +298,7 @@ class SplineRoseCLIGenerator:
             f"sketch_extrude {petal_name} {sp['extrude_depth']:.4f};",
         ]
 
-        # Generate bone rigging with v5 branching structure (7 bones)
+        # Generate bone rigging with v5 fishbone structure (12 bones)
         # Use cp6_y as petal height (tip), use MID-CURVE width (widest part at cp4/cp8)
         petal_height = sp['cp6_y']
         # For hemispherical shape: cp8_x - cp4_x is the widest part
@@ -276,43 +313,66 @@ class SplineRoseCLIGenerator:
 
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name} (v5 branching structure - 7 bones)",
+            f"# Rigging for {petal_name} (v5 fishbone structure - 12 bones)",
             f"create_armature {rig_name};",
         ]
 
-        # Generate 7 bones with v5 branching structure (2D coords, z=0)
-        # Central spine: root → middle → tip
+        # Generate 12 bones with v5 fishbone structure (2D coords, z=0)
+        # Central spine: root → lower_mid → upper_mid → tip
         rigging_cli.append(
             f"add_bone {rig_name} bone_root {bp['bone_root_start_x']:.4f} {bp['bone_root_start_y']:.4f} 0 {bp['bone_root_end_x']:.4f} {bp['bone_root_end_y']:.4f} 0;"
         )
         rigging_cli.append(
-            f"add_bone {rig_name} bone_middle {bp['bone_middle_start_x']:.4f} {bp['bone_middle_start_y']:.4f} 0 {bp['bone_middle_end_x']:.4f} {bp['bone_middle_end_y']:.4f} 0;"
+            f"add_bone {rig_name} bone_lower_mid {bp['bone_lower_mid_start_x']:.4f} {bp['bone_lower_mid_start_y']:.4f} 0 {bp['bone_lower_mid_end_x']:.4f} {bp['bone_lower_mid_end_y']:.4f} 0;"
+        )
+        rigging_cli.append(
+            f"add_bone {rig_name} bone_upper_mid {bp['bone_upper_mid_start_x']:.4f} {bp['bone_upper_mid_start_y']:.4f} 0 {bp['bone_upper_mid_end_x']:.4f} {bp['bone_upper_mid_end_y']:.4f} 0;"
         )
         rigging_cli.append(
             f"add_bone {rig_name} bone_tip {bp['bone_tip_start_x']:.4f} {bp['bone_tip_start_y']:.4f} 0 {bp['bone_tip_end_x']:.4f} {bp['bone_tip_end_y']:.4f} 0;"
         )
-        # Lower branches: from root
+        # Left ribs (4 bones): from spine at different heights
         rigging_cli.append(
             f"add_bone {rig_name} bone_left_lower {bp['bone_left_lower_start_x']:.4f} {bp['bone_left_lower_start_y']:.4f} 0 {bp['bone_left_lower_end_x']:.4f} {bp['bone_left_lower_end_y']:.4f} 0;"
         )
         rigging_cli.append(
-            f"add_bone {rig_name} bone_right_lower {bp['bone_right_lower_start_x']:.4f} {bp['bone_right_lower_start_y']:.4f} 0 {bp['bone_right_lower_end_x']:.4f} {bp['bone_right_lower_end_y']:.4f} 0;"
+            f"add_bone {rig_name} bone_left_mid_lower {bp['bone_left_mid_lower_start_x']:.4f} {bp['bone_left_mid_lower_start_y']:.4f} 0 {bp['bone_left_mid_lower_end_x']:.4f} {bp['bone_left_mid_lower_end_y']:.4f} 0;"
         )
-        # Upper branches: from middle
+        rigging_cli.append(
+            f"add_bone {rig_name} bone_left_mid_upper {bp['bone_left_mid_upper_start_x']:.4f} {bp['bone_left_mid_upper_start_y']:.4f} 0 {bp['bone_left_mid_upper_end_x']:.4f} {bp['bone_left_mid_upper_end_y']:.4f} 0;"
+        )
         rigging_cli.append(
             f"add_bone {rig_name} bone_left_upper {bp['bone_left_upper_start_x']:.4f} {bp['bone_left_upper_start_y']:.4f} 0 {bp['bone_left_upper_end_x']:.4f} {bp['bone_left_upper_end_y']:.4f} 0;"
+        )
+        # Right ribs (4 bones): symmetric to left
+        rigging_cli.append(
+            f"add_bone {rig_name} bone_right_lower {bp['bone_right_lower_start_x']:.4f} {bp['bone_right_lower_start_y']:.4f} 0 {bp['bone_right_lower_end_x']:.4f} {bp['bone_right_lower_end_y']:.4f} 0;"
+        )
+        rigging_cli.append(
+            f"add_bone {rig_name} bone_right_mid_lower {bp['bone_right_mid_lower_start_x']:.4f} {bp['bone_right_mid_lower_start_y']:.4f} 0 {bp['bone_right_mid_lower_end_x']:.4f} {bp['bone_right_mid_lower_end_y']:.4f} 0;"
+        )
+        rigging_cli.append(
+            f"add_bone {rig_name} bone_right_mid_upper {bp['bone_right_mid_upper_start_x']:.4f} {bp['bone_right_mid_upper_start_y']:.4f} 0 {bp['bone_right_mid_upper_end_x']:.4f} {bp['bone_right_mid_upper_end_y']:.4f} 0;"
         )
         rigging_cli.append(
             f"add_bone {rig_name} bone_right_upper {bp['bone_right_upper_start_x']:.4f} {bp['bone_right_upper_start_y']:.4f} 0 {bp['bone_right_upper_end_x']:.4f} {bp['bone_right_upper_end_y']:.4f} 0;"
         )
 
-        # Parent bones in v5 branching structure
-        rigging_cli.append(f"parent_bone {rig_name} bone_middle bone_root;")
-        rigging_cli.append(f"parent_bone {rig_name} bone_tip bone_middle;")
+        # Parent bones in v5 fishbone structure
+        # Spine hierarchy
+        rigging_cli.append(f"parent_bone {rig_name} bone_lower_mid bone_root;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_upper_mid bone_lower_mid;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_tip bone_upper_mid;")
+        # Left ribs parent to spine
         rigging_cli.append(f"parent_bone {rig_name} bone_left_lower bone_root;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_left_mid_lower bone_lower_mid;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_left_mid_upper bone_upper_mid;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_left_upper bone_upper_mid;")
+        # Right ribs parent to spine
         rigging_cli.append(f"parent_bone {rig_name} bone_right_lower bone_root;")
-        rigging_cli.append(f"parent_bone {rig_name} bone_left_upper bone_middle;")
-        rigging_cli.append(f"parent_bone {rig_name} bone_right_upper bone_middle;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_right_mid_lower bone_lower_mid;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_right_mid_upper bone_upper_mid;")
+        rigging_cli.append(f"parent_bone {rig_name} bone_right_upper bone_upper_mid;")
 
         # Calculate bind weight based on flexibility
         flexibility = 0.5 + (3 - layer_idx) * 0.15
@@ -335,16 +395,23 @@ class SplineRoseCLIGenerator:
 
         animation_cli = [
             f"",
-            f"# Animation for {petal_name} (v5 - 7 bones)",
-            f"# bone_middle controls overall bend, bone_tip adds tip flutter",
-            f"wing_flap {rig_name} bone_middle {ap['frequency']:.0f} {ap['amplitude']:.1f} 0 -1 0 0;",
+            f"# Animation for {petal_name} (v5 - 12 bones)",
+            f"# Spine bones control overall petal movement",
+            f"wing_flap {rig_name} bone_lower_mid {ap['frequency']:.0f} {ap['amplitude'] * 0.5:.1f} 0 -1 0 0;",
+            f"wing_flap {rig_name} bone_upper_mid {ap['frequency']:.0f} {ap['amplitude']:.1f} 0 -1 0 0.05;",
             f"wing_flap {rig_name} bone_tip {ap['frequency'] * 1.5:.0f} {ap['amplitude'] * 0.3:.1f} 0 -1 0 0.1;",
-            f"# Lower branches: subtle base movement",
-            f"wing_flap {rig_name} bone_left_lower {ap['frequency']:.0f} {ap['amplitude'] * 0.3:.1f} -1 0 0 0.15;",
-            f"wing_flap {rig_name} bone_right_lower {ap['frequency']:.0f} {ap['amplitude'] * 0.3:.1f} 1 0 0 0.15;",
-            f"# Upper branches: main symmetric opening",
-            f"wing_flap {rig_name} bone_left_upper {ap['frequency']:.0f} {ap['amplitude'] * 0.5:.1f} -1 0 0 0.25;",
-            f"wing_flap {rig_name} bone_right_upper {ap['frequency']:.0f} {ap['amplitude'] * 0.5:.1f} 1 0 0 0.25;",
+            f"# Lower ribs: subtle base movement (25% height)",
+            f"wing_flap {rig_name} bone_left_lower {ap['frequency']:.0f} {ap['amplitude'] * 0.2:.1f} -1 0 0 0.15;",
+            f"wing_flap {rig_name} bone_right_lower {ap['frequency']:.0f} {ap['amplitude'] * 0.2:.1f} 1 0 0 0.15;",
+            f"# Mid-lower ribs: moderate movement (45% height)",
+            f"wing_flap {rig_name} bone_left_mid_lower {ap['frequency']:.0f} {ap['amplitude'] * 0.4:.1f} -1 0 0 0.2;",
+            f"wing_flap {rig_name} bone_right_mid_lower {ap['frequency']:.0f} {ap['amplitude'] * 0.4:.1f} 1 0 0 0.2;",
+            f"# Mid-upper ribs: main opening (62% height - WIDEST)",
+            f"wing_flap {rig_name} bone_left_mid_upper {ap['frequency']:.0f} {ap['amplitude'] * 0.6:.1f} -1 0 0 0.25;",
+            f"wing_flap {rig_name} bone_right_mid_upper {ap['frequency']:.0f} {ap['amplitude'] * 0.6:.1f} 1 0 0 0.25;",
+            f"# Upper ribs: tip area movement (78% height)",
+            f"wing_flap {rig_name} bone_left_upper {ap['frequency']:.0f} {ap['amplitude'] * 0.4:.1f} -1 0 0 0.3;",
+            f"wing_flap {rig_name} bone_right_upper {ap['frequency']:.0f} {ap['amplitude'] * 0.4:.1f} 1 0 0 0.3;",
         ]
 
         return {
