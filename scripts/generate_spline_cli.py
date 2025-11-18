@@ -54,6 +54,7 @@ class SplineRoseCLIGenerator:
         """Compute 2D spline control points using SR formulas or fallback."""
         if self.use_sr_petal:
             return {
+                # 15 Control Points matching config
                 'cp1_x': self.petal_mod.compute_cp1_x(base_size, layer_idx, petal_idx, opening_degree),
                 'cp1_y': self.petal_mod.compute_cp1_y(base_size, layer_idx, petal_idx, opening_degree),
                 'cp2_x': self.petal_mod.compute_cp2_x(base_size, layer_idx, petal_idx, opening_degree),
@@ -64,56 +65,83 @@ class SplineRoseCLIGenerator:
                 'cp4_y': self.petal_mod.compute_cp4_y(base_size, layer_idx, petal_idx, opening_degree),
                 'cp5_x': self.petal_mod.compute_cp5_x(base_size, layer_idx, petal_idx, opening_degree),
                 'cp5_y': self.petal_mod.compute_cp5_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp6_x': self.petal_mod.compute_cp6_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp6_y': self.petal_mod.compute_cp6_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp7_x': self.petal_mod.compute_cp7_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp7_y': self.petal_mod.compute_cp7_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp8_x': self.petal_mod.compute_cp8_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp8_y': self.petal_mod.compute_cp8_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp9_x': self.petal_mod.compute_cp9_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp9_y': self.petal_mod.compute_cp9_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp10_x': self.petal_mod.compute_cp10_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp10_y': self.petal_mod.compute_cp10_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp11_x': self.petal_mod.compute_cp11_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp11_y': self.petal_mod.compute_cp11_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp12_x': self.petal_mod.compute_cp12_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp12_y': self.petal_mod.compute_cp12_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp13_x': self.petal_mod.compute_cp13_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp13_y': self.petal_mod.compute_cp13_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp14_x': self.petal_mod.compute_cp14_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp14_y': self.petal_mod.compute_cp14_y(base_size, layer_idx, petal_idx, opening_degree),
+                'cp15_x': self.petal_mod.compute_cp15_x(base_size, layer_idx, petal_idx, opening_degree),
+                'cp15_y': self.petal_mod.compute_cp15_y(base_size, layer_idx, petal_idx, opening_degree),
                 'extrude_depth': self.petal_mod.compute_extrude_depth(base_size, layer_idx, petal_idx, opening_degree),
             }
         else:
-            # Fallback formulas (2D spline control points) - V3 HEMISPHERICAL SHAPE
-            # Continuous layer factor: layer_idx is 1-based here
+            # Fallback formulas (2D spline control points) - V3 with 15 CPs
+            # Matching config: sr_config_spline_v3.yaml
             layer_factor = 0.8 + 0.1 * (layer_idx - 1)  # [0.8, 0.9, 1.0]
 
             base_spread = base_size * 0.3 * layer_factor * (1 + opening_degree * 0.2)
             petal_height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
             tip_x_offset = base_size * 0.02 * (layer_idx - 1) * opening_degree
 
-            # HEMISPHERICAL DISTRIBUTION (9 CPs):
-            # Points follow sin curve for dome-like rose petal shape
-            # Y values: 0 → sin(15°)h → sin(35°)h → sin(60°)h → sin(80°)h → h → sin(80°)h → sin(60°)h → sin(35°)h → sin(15°)h → 0
-            # X values: bulge outward following cos pattern
-
-            # Angles for hemispherical distribution (radians)
+            # 15 CPs with Y positions from config:
+            # cp1: 0%, cp2: 5%, cp3: 25%, cp4: 45%, cp5: 62% (WIDEST), cp6: 78%, cp7: 92%, cp8: 100% (tip)
+            # cp9-cp14: mirror, cp15: close
             import math
-            angles = [0, 15, 35, 60, 80, 90, 80, 60, 35, 15, 0]  # degrees
 
-            # Convert to normalized Y positions (sin distribution)
-            y_factors = [math.sin(math.radians(a)) for a in angles]
+            # Y positions (percentage of petal height)
+            y_positions = [0.0, 0.05, 0.25, 0.45, 0.62, 0.78, 0.92, 1.0, 0.92, 0.78, 0.62, 0.45, 0.25, 0.05, 0.0]
 
-            # X spread follows inverse pattern (wider at middle height)
-            # Base narrow, middle widest, tip narrow
-            x_factors = [0.25, 0.45, 0.65, 0.85, 0.6, 0.0, 0.6, 0.85, 0.65, 0.45, 0.25]
+            # X width factors (base narrow, widest at 62%, tip narrow)
+            # Follows rose petal shape: point at base, bulge at middle, point at tip
+            x_factors = [0.0, 0.15, 0.45, 0.70, 0.85, 0.65, 0.30, 0.0, 0.30, 0.65, 0.85, 0.70, 0.45, 0.15, 0.0]
 
             return {
-                'cp1_x': -base_spread * x_factors[0],   # base_left
-                'cp1_y': petal_height * y_factors[0],
-                'cp2_x': -base_spread * x_factors[1],   # lower_left
-                'cp2_y': petal_height * y_factors[1],
-                'cp3_x': -base_spread * x_factors[2],   # mid_lower_left
-                'cp3_y': petal_height * y_factors[2],
-                'cp4_x': -base_spread * x_factors[3],   # mid_upper_left
-                'cp4_y': petal_height * y_factors[3],
-                'cp5_x': -base_spread * x_factors[4] + tip_x_offset,  # near_tip_left
-                'cp5_y': petal_height * y_factors[4],
-                'cp6_x': tip_x_offset,                  # tip
-                'cp6_y': petal_height * y_factors[5],
-                'cp7_x': base_spread * x_factors[6] + tip_x_offset,   # near_tip_right
-                'cp7_y': petal_height * y_factors[6],
-                'cp8_x': base_spread * x_factors[7],    # mid_upper_right
-                'cp8_y': petal_height * y_factors[7],
-                'cp9_x': base_spread * x_factors[8],    # mid_lower_right
-                'cp9_y': petal_height * y_factors[8],
-                'cp10_x': base_spread * x_factors[9],   # lower_right
-                'cp10_y': petal_height * y_factors[9],
-                'cp11_x': base_spread * x_factors[10],  # base_right
-                'cp11_y': petal_height * y_factors[10],
+                # Left side (cp1-cp7): negative X
+                'cp1_x': 0.0,                                      # base center
+                'cp1_y': petal_height * y_positions[0],
+                'cp2_x': -base_spread * x_factors[1],              # base left (5%)
+                'cp2_y': petal_height * y_positions[1],
+                'cp3_x': -base_spread * x_factors[2],              # lower left (25%)
+                'cp3_y': petal_height * y_positions[2],
+                'cp4_x': -base_spread * x_factors[3],              # mid-low left (45%)
+                'cp4_y': petal_height * y_positions[3],
+                'cp5_x': -base_spread * x_factors[4],              # upper-mid left (62% - WIDEST)
+                'cp5_y': petal_height * y_positions[4],
+                'cp6_x': -base_spread * x_factors[5] + tip_x_offset,  # upper left (78%)
+                'cp6_y': petal_height * y_positions[5],
+                'cp7_x': -base_spread * x_factors[6] + tip_x_offset,  # near-tip left (92%)
+                'cp7_y': petal_height * y_positions[6],
+                # Tip (cp8)
+                'cp8_x': tip_x_offset,                             # tip center (100%)
+                'cp8_y': petal_height * y_positions[7],
+                # Right side (cp9-cp14): positive X (mirror of left)
+                'cp9_x': base_spread * x_factors[8] + tip_x_offset,   # near-tip right (92%)
+                'cp9_y': petal_height * y_positions[8],
+                'cp10_x': base_spread * x_factors[9] + tip_x_offset,  # upper right (78%)
+                'cp10_y': petal_height * y_positions[9],
+                'cp11_x': base_spread * x_factors[10],             # upper-mid right (62% - WIDEST)
+                'cp11_y': petal_height * y_positions[10],
+                'cp12_x': base_spread * x_factors[11],             # mid-low right (45%)
+                'cp12_y': petal_height * y_positions[11],
+                'cp13_x': base_spread * x_factors[12],             # lower right (25%)
+                'cp13_y': petal_height * y_positions[12],
+                'cp14_x': base_spread * x_factors[13],             # base right (5%)
+                'cp14_y': petal_height * y_positions[13],
+                'cp15_x': 0.0,                                     # close spline (back to base)
+                'cp15_y': petal_height * y_positions[14],
                 # ULTRA-THIN THICKNESS
                 'extrude_depth': max(0.001, base_size * 0.005 * (1 - (layer_idx - 1) * 0.1) * (1 - opening_degree * 0.3)),
             }
@@ -287,22 +315,22 @@ class SplineRoseCLIGenerator:
         rotation_angle = (petal_idx * golden_angle) % 360
 
         # Generate geometry CLI with 2D spline (x y pairs)
-        # Format: spline x1 y1 x2 y2 ... (closed curve - last point = first point)
-        # V3 Hemispherical: 11 CPs for dome-like rose petal shape
+        # Format: spline x1 y1 x2 y2 ... (closed curve)
+        # V3: 15 CPs for realistic rose petal shape
         geometry_cli = [
             f"# {petal_name} - Layer {layer_idx}, Petal {petal_idx}",
             f"2d;",
             f"obj {petal_name};",
-            f"spline {sp['cp1_x']:.4f} {sp['cp1_y']:.4f} {sp['cp2_x']:.4f} {sp['cp2_y']:.4f} {sp['cp3_x']:.4f} {sp['cp3_y']:.4f} {sp['cp4_x']:.4f} {sp['cp4_y']:.4f} {sp['cp5_x']:.4f} {sp['cp5_y']:.4f} {sp['cp6_x']:.4f} {sp['cp6_y']:.4f} {sp['cp7_x']:.4f} {sp['cp7_y']:.4f} {sp['cp8_x']:.4f} {sp['cp8_y']:.4f} {sp['cp9_x']:.4f} {sp['cp9_y']:.4f} {sp['cp10_x']:.4f} {sp['cp10_y']:.4f} {sp['cp11_x']:.4f} {sp['cp11_y']:.4f} {sp['cp1_x']:.4f} {sp['cp1_y']:.4f};",
+            f"spline {sp['cp1_x']:.4f} {sp['cp1_y']:.4f} {sp['cp2_x']:.4f} {sp['cp2_y']:.4f} {sp['cp3_x']:.4f} {sp['cp3_y']:.4f} {sp['cp4_x']:.4f} {sp['cp4_y']:.4f} {sp['cp5_x']:.4f} {sp['cp5_y']:.4f} {sp['cp6_x']:.4f} {sp['cp6_y']:.4f} {sp['cp7_x']:.4f} {sp['cp7_y']:.4f} {sp['cp8_x']:.4f} {sp['cp8_y']:.4f} {sp['cp9_x']:.4f} {sp['cp9_y']:.4f} {sp['cp10_x']:.4f} {sp['cp10_y']:.4f} {sp['cp11_x']:.4f} {sp['cp11_y']:.4f} {sp['cp12_x']:.4f} {sp['cp12_y']:.4f} {sp['cp13_x']:.4f} {sp['cp13_y']:.4f} {sp['cp14_x']:.4f} {sp['cp14_y']:.4f} {sp['cp15_x']:.4f} {sp['cp15_y']:.4f};",
             f"exit;",
             f"sketch_extrude {petal_name} {sp['extrude_depth']:.4f};",
         ]
 
         # Generate bone rigging with v5 fishbone structure (12 bones)
-        # Use cp6_y as petal height (tip), use MID-CURVE width (widest part at cp4/cp8)
-        petal_height = sp['cp6_y']
-        # For hemispherical shape: cp8_x - cp4_x is the widest part
-        petal_width = sp['cp8_x'] - sp['cp4_x']  # Mid-curve width (widest)
+        # Use cp8_y as petal height (tip at 100%), use WIDEST width at cp5/cp11 (62% height)
+        petal_height = sp['cp8_y']
+        # For V3 shape: cp11_x - cp5_x is the widest part (at 62% height)
+        petal_width = sp['cp11_x'] - sp['cp5_x']  # Width at 62% (WIDEST)
         curvature_intensity = 1.0  # Default curvature
 
         # layer_idx is 1-based, convert to 0-based for v5
