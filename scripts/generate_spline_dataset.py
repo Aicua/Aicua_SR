@@ -19,15 +19,18 @@ def generate_spline_petal_dataset(n_samples: int = 100) -> pd.DataFrame:
     """
     Generate dataset for petal geometry using SPLINE control points.
 
-    Spline format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5 ...
+    Spline format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5 x6 y6 x7 y7 x8 y8 ...
     (2D coordinates only - pairs of x,y)
 
-    For rose petal, we use 5 control points:
-    - CP1: Base left
-    - CP2: Mid-left (curve control)
-    - CP3: Tip (top)
-    - CP4: Mid-right (curve control)
-    - CP5: Base right
+    For rose petal, we use 8 control points (realistic shape from rose_petals.jpg):
+    - CP1: Base left (narrow)
+    - CP2: Lower left curve
+    - CP3: Upper left curve (widest)
+    - CP4: Tip left (before notch)
+    - CP5: Tip center
+    - CP6: Tip right (after notch)
+    - CP7: Upper right curve (widest)
+    - CP8: Lower right curve
 
     Features:
         - base_size: Overall rose size
@@ -35,12 +38,15 @@ def generate_spline_petal_dataset(n_samples: int = 100) -> pd.DataFrame:
         - petal_index: Position within layer
         - opening_degree: 0.0 (closed) to 1.0 (fully open)
 
-    Targets (Spline 2D Control Points):
+    Targets (Spline 2D Control Points - 8 CPs):
         - cp1_x, cp1_y: Base left
-        - cp2_x, cp2_y: Mid-left curve
-        - cp3_x, cp3_y: Tip
-        - cp4_x, cp4_y: Mid-right curve
-        - cp5_x, cp5_y: Base right
+        - cp2_x, cp2_y: Lower left curve
+        - cp3_x, cp3_y: Upper left curve
+        - cp4_x, cp4_y: Tip left
+        - cp5_x, cp5_y: Tip center
+        - cp6_x, cp6_y: Tip right
+        - cp7_x, cp7_y: Upper right curve
+        - cp8_x, cp8_y: Lower right curve
         - extrude_depth: Thickness when extruded
     """
     data = []
@@ -48,65 +54,96 @@ def generate_spline_petal_dataset(n_samples: int = 100) -> pd.DataFrame:
     petals_per_layer = [5, 8, 13]  # Fibonacci
 
     for _ in range(n_samples):
-        base_size = np.random.uniform(1.0, 5.0)
+        base_size = np.random.uniform(2.0, 8.0)
         opening_degree = np.random.uniform(0.0, 1.0)
 
         for layer_idx in range(1, 4):
             n_petals = petals_per_layer[layer_idx - 1]
 
             for petal_idx in range(n_petals):
-                # === SPLINE 2D PARAMETERS ===
+                # === LAYER FACTOR ===
+                layer_factor = [0.8, 0.9, 1.0][layer_idx - 1]
 
-                layer_factor = [0.6, 0.8, 1.0][layer_idx - 1]
-
-                # Base spread (width at bottom)
-                base_spread = base_size * 0.3 * layer_factor * (1 + opening_degree * 0.2)
+                # === WIDTH CALCULATIONS ===
+                base_spread = base_size * 0.35 * layer_factor * (1 + opening_degree * 0.2)
+                mid_width = base_spread * 0.7
+                upper_width = base_spread * 0.5
 
                 # Petal height
                 petal_height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
 
-                # Tip x offset (for asymmetry/tilt)
-                tip_x_offset = base_size * 0.05 * (layer_idx - 1) * opening_degree
+                # Tip notch (heart-shape)
+                notch_depth = petal_height * 0.05 * (1 - (layer_idx - 1) * 0.3)
+                notch_width = base_spread * 0.15
 
-                # Control points (2D: x, y)
-                # CP1: Base left
-                cp1_x = -base_spread / 2
+                # Tip x offset (for asymmetry/tilt)
+                tip_x_offset = base_size * 0.02 * (layer_idx - 1) * opening_degree
+
+                # === 8 CONTROL POINTS ===
+                # CP1: Base left (narrow)
+                cp1_x = -base_spread / 4
                 cp1_y = 0.0
 
-                # CP2: Mid-left curve (creates curvature)
-                cp2_x = -base_spread / 3
-                cp2_y = petal_height * 0.4
+                # CP2: Lower left curve (at 25% height)
+                cp2_x = -mid_width / 2
+                cp2_y = petal_height * 0.25
 
-                # CP3: Tip
-                cp3_x = tip_x_offset
-                cp3_y = petal_height
+                # CP3: Upper left curve (widest at 60% height)
+                cp3_x = -upper_width / 2
+                cp3_y = petal_height * 0.6
 
-                # CP4: Mid-right curve
-                cp4_x = base_spread / 3
-                cp4_y = petal_height * 0.4
+                # CP4: Tip left (before notch)
+                cp4_x = -notch_width
+                cp4_y = petal_height - notch_depth
 
-                # CP5: Base right
-                cp5_x = base_spread / 2
-                cp5_y = 0.0
+                # CP5: Tip center
+                cp5_x = tip_x_offset
+                cp5_y = petal_height
 
-                # Extrude depth (thickness)
-                extrude_depth = base_size * 0.01 * (1 + layer_idx * 0.1)
+                # CP6: Tip right (after notch)
+                cp6_x = notch_width
+                cp6_y = petal_height - notch_depth
+
+                # CP7: Upper right curve (widest)
+                cp7_x = upper_width / 2
+                cp7_y = petal_height * 0.6
+
+                # CP8: Lower right curve
+                cp8_x = mid_width / 2
+                cp8_y = petal_height * 0.25
+
+                # Extrude depth (ultra-thin)
+                thickness_base = 0.005
+                extrude_depth = (
+                    thickness_base * base_size *
+                    (1 - (layer_idx - 1) * 0.1) *
+                    (1 - opening_degree * 0.3)
+                )
+                extrude_depth = max(0.001, extrude_depth)
 
                 # Rotation angle for spiral arrangement
                 golden_angle = 137.5
                 rotation_angle = (petal_idx * golden_angle) % 360
 
-                # Add noise
+                # Add noise (3%)
                 noise = 0.03
                 cp1_x *= (1 + np.random.normal(0, noise))
                 cp2_x *= (1 + np.random.normal(0, noise))
                 cp2_y *= (1 + np.random.normal(0, noise))
-                cp3_x += np.random.normal(0, noise * base_size * 0.1)
+                cp3_x *= (1 + np.random.normal(0, noise))
                 cp3_y *= (1 + np.random.normal(0, noise))
                 cp4_x *= (1 + np.random.normal(0, noise))
                 cp4_y *= (1 + np.random.normal(0, noise))
-                cp5_x *= (1 + np.random.normal(0, noise))
+                cp5_x += np.random.normal(0, noise * base_size * 0.05)
+                cp5_y *= (1 + np.random.normal(0, noise))
+                cp6_x *= (1 + np.random.normal(0, noise))
+                cp6_y *= (1 + np.random.normal(0, noise))
+                cp7_x *= (1 + np.random.normal(0, noise))
+                cp7_y *= (1 + np.random.normal(0, noise))
+                cp8_x *= (1 + np.random.normal(0, noise))
+                cp8_y *= (1 + np.random.normal(0, noise))
                 extrude_depth *= (1 + np.random.normal(0, noise))
+                extrude_depth = max(0.001, extrude_depth)
 
                 data.append({
                     # Features
@@ -115,7 +152,7 @@ def generate_spline_petal_dataset(n_samples: int = 100) -> pd.DataFrame:
                     'petal_index': petal_idx,
                     'opening_degree': round(opening_degree, 4),
 
-                    # Targets (2D Spline control points)
+                    # Targets (8 Spline control points)
                     'cp1_x': round(cp1_x, 6),
                     'cp1_y': round(cp1_y, 6),
                     'cp2_x': round(cp2_x, 6),
@@ -126,6 +163,12 @@ def generate_spline_petal_dataset(n_samples: int = 100) -> pd.DataFrame:
                     'cp4_y': round(cp4_y, 6),
                     'cp5_x': round(cp5_x, 6),
                     'cp5_y': round(cp5_y, 6),
+                    'cp6_x': round(cp6_x, 6),
+                    'cp6_y': round(cp6_y, 6),
+                    'cp7_x': round(cp7_x, 6),
+                    'cp7_y': round(cp7_y, 6),
+                    'cp8_x': round(cp8_x, 6),
+                    'cp8_y': round(cp8_y, 6),
                     'extrude_depth': round(extrude_depth, 6),
                     'rotation_angle': round(rotation_angle, 4),
                 })
@@ -264,40 +307,46 @@ def generate_spline_cli_example():
     """Generate example CLI showing spline-based petal with rigging."""
 
     example = """
-# Rose Petal using Spline - Layer 1, Petal 0
+# Rose Petal using Spline V3 - 8 Control Points
+# Layer 1, Petal 0
 # Base size: 2.0, Opening: 0.8
 
 # Geometry (Spline - 2D coordinates only)
 2d;
 obj petal_L1_P0;
 
-# Spline control points (5 points + close, 2D: x y pairs)
-# CP1: base_left, CP2: mid_left_curve, CP3: tip, CP4: mid_right_curve, CP5: base_right, CP6: close (=CP1)
-# Format: spline x1 y1 x2 y2 x3 y3 x4 y4 x5 y5 x6 y6 (closed curve)
-spline -0.2088 0.0000 -0.1392 0.4608 0.0000 1.1520 0.1392 0.4608 0.2088 0.0000 -0.2088 0.0000;
+# Spline control points (8 points + close, 2D: x y pairs)
+# CP1: base_left, CP2: lower_left, CP3: upper_left, CP4: tip_left
+# CP5: tip_center, CP6: tip_right, CP7: upper_right, CP8: lower_right
+# Format: spline x1 y1 ... x8 y8 x1 y1 (closed curve)
+spline -0.07 0.0 -0.098 0.288 -0.07 0.691 -0.021 1.095 0.0 1.152 0.021 1.095 0.07 0.691 0.098 0.288 -0.07 0.0;
 exit;
 
 # Extrude to give thickness
-sketch_extrude petal_L1_P0 0.022;
+sketch_extrude petal_L1_P0 0.015;
 
 # Rigging (bones along petal height)
 create_armature petal_L1_P0_rig;
 
-# Bone from base to middle (along Y axis)
-add_bone petal_L1_P0_rig bone_0 0 0.0000 0 0 0.5760 0;
+# Bone from base to lower (25% height)
+add_bone petal_L1_P0_rig bone_0 0 0.0000 0 0 0.288 0;
 
-# Bone from middle to tip
-add_bone petal_L1_P0_rig bone_1 0 0.5760 0 0 1.1520 0;
+# Bone from lower to upper (60% height)
+add_bone petal_L1_P0_rig bone_1 0 0.288 0 0 0.691 0;
+
+# Bone from upper to tip
+add_bone petal_L1_P0_rig bone_2 0 0.691 0 0 1.152 0;
 
 # Parent chain
 parent_bone petal_L1_P0_rig bone_1 bone_0;
+parent_bone petal_L1_P0_rig bone_2 bone_1;
 
 finalize_bones petal_L1_P0_rig;
 bind_armature petal_L1_P0_rig petal_L1_P0 0.8;
 
 # Animation (wing_flap style)
 # wing_flap rig bone freq amp axis_x axis_y axis_z phase
-wing_flap petal_L1_P0_rig bone_1 30 10.0 0 -1 0 0;
+wing_flap petal_L1_P0_rig bone_2 30 10.0 0 -1 0 0;
 """
     return example.strip()
 

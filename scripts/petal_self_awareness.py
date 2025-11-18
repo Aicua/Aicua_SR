@@ -184,7 +184,8 @@ class GenesisReasoner:
             "cp_count": {
                 "minimal": (3, 4, "simple silhouette"),
                 "standard": (5, 6, "smooth curves with detail"),
-                "complex": (7, 8, "intricate organic form"),
+                "complex": (7, 8, "intricate organic form with heart-shaped tip"),
+                "detailed": (9, 10, "highly detailed with undulating edges"),
             },
         }
 
@@ -396,20 +397,33 @@ class GenesisReasoner:
                 return "right base anchor - provides foundation"
             else:
                 return "center base - attachment point"
-        elif norm_y > 0.9:
-            return "tip - defines petal apex and direction"
+        elif norm_y > 0.95:
+            # Tip center
+            return "tip center - defines petal apex"
+        elif norm_y > 0.85:
+            # Tip sides (heart-shape notch area)
+            if norm_x < 0:
+                return "left tip side - creates heart-shaped notch"
+            else:
+                return "right tip side - creates heart-shaped notch"
         elif norm_y > 0.5:
             # Upper curve
             if norm_x < 0:
-                return "left upper curve - shapes top silhouette"
+                return "left upper curve - shapes organic silhouette"
             else:
-                return "right upper curve - shapes top silhouette"
-        else:
-            # Middle curve (widest part)
+                return "right upper curve - shapes organic silhouette"
+        elif norm_y > 0.2:
+            # Lower curve
             if norm_x < 0:
-                return "left widest point - defines petal breadth"
+                return "left lower curve - defines petal breadth"
             else:
-                return "right widest point - defines petal breadth"
+                return "right lower curve - defines petal breadth"
+        else:
+            # Base area
+            if norm_x < 0:
+                return "left base - narrow attachment point"
+            else:
+                return "right base - narrow attachment point"
 
     def _calculate_structural_confidence(
         self,
