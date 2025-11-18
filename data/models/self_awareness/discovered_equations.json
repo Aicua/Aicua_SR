@@ -1,0 +1,134 @@
+{
+  "genesis": {
+    "cp_count": {
+      "name": "cp_count",
+      "equation": "4.8894 - 0.0199*layer - 0.7605*width + 0.3821*height - 0.1633*aspect_ratio + 1.5121*detail_code",
+      "equation_latex": "4.8894 - 0.0199*layer - 0.7605*width + 0.3821*height - 0.1633*aspect_ratio + 1.5121*detail_code",
+      "r2_score": 0.7605021919583536,
+      "complexity": 7,
+      "feature_names": [
+        "layer",
+        "width",
+        "height",
+        "aspect_ratio",
+        "detail_code",
+        "opening_degree"
+      ],
+      "use_pysr": false
+    },
+    "self_understanding": {
+      "name": "self_understanding",
+      "equation": "0.7235 - 0.0010*layer + 0.0432*width - 0.0136*height + 0.0055*aspect_ratio + 0.0407*detail_code",
+      "equation_latex": "0.7235 - 0.0010*layer + 0.0432*width - 0.0136*height + 0.0055*aspect_ratio + 0.0407*detail_code",
+      "r2_score": 0.6486243106847874,
+      "complexity": 7,
+      "feature_names": [
+        "layer",
+        "width",
+        "height",
+        "aspect_ratio",
+        "detail_code",
+        "opening_degree"
+      ],
+      "use_pysr": false
+    },
+    "structural_confidence": {
+      "name": "structural_confidence",
+      "equation": "0.9585 - 0.0101*width + 0.0051*height - 0.0022*aspect_ratio + 0.0202*detail_code",
+      "equation_latex": "0.9585 - 0.0101*width + 0.0051*height - 0.0022*aspect_ratio + 0.0202*detail_code",
+      "r2_score": 0.7605021919583534,
+      "complexity": 7,
+      "feature_names": [
+        "layer",
+        "width",
+        "height",
+        "aspect_ratio",
+        "detail_code",
+        "opening_degree"
+      ],
+      "use_pysr": false
+    }
+  },
+  "transformation": {
+    "morph_confidence": {
+      "name": "morph_confidence",
+      "equation": "0.5861 - 0.0263*width + 0.0139*height + 0.0094*cp_count - 0.0023*self_understanding",
+      "equation_latex": "0.5861 - 0.0263*width + 0.0139*height + 0.0094*cp_count - 0.0023*self_understanding",
+      "r2_score": 0.8759587203435066,
+      "complexity": 7,
+      "feature_names": [
+        "layer",
+        "width",
+        "height",
+        "opening_degree",
+        "cp_count",
+        "self_understanding"
+      ],
+      "use_pysr": false
+    },
+    "avg_risk_level": {
+      "name": "avg_risk_level",
+      "equation": "0.5033 + 0.0263*width - 0.0139*height - 0.0081*cp_count + 0.0023*self_understanding",
+      "equation_latex": "0.5033 + 0.0263*width - 0.0139*height - 0.0081*cp_count + 0.0023*self_understanding",
+      "r2_score": 0.8464992286572227,
+      "complexity": 7,
+      "feature_names": [
+        "layer",
+        "width",
+        "height",
+        "opening_degree",
+        "cp_count",
+        "self_understanding"
+      ],
+      "use_pysr": false
+    },
+    "structural_stability": {
+      "name": "structural_stability",
+      "equation": "0.8933 + 0.0133*cp_count",
+      "equation_latex": "0.8933 + 0.0133*cp_count",
+      "r2_score": 1.0,
+      "complexity": 7,
+      "feature_names": [
+        "layer",
+        "width",
+        "height",
+        "opening_degree",
+        "cp_count",
+        "self_understanding"
+      ],
+      "use_pysr": false
+    }
+  },
+  "composition": {
+    "harmony_score": {
+      "name": "harmony_score",
+      "equation": "0.4132 - 0.0034*layer - 0.0020*group_size + 0.0021*same_layer_count + 0.0030*adjacent_layer_count + 0.4845*self_understanding",
+      "equation_latex": "0.4132 - 0.0034*layer - 0.0020*group_size + 0.0021*same_layer_count + 0.0030*adjacent_layer_count + 0.4845*self_understanding",
+      "r2_score": 0.17691665439496296,
+      "complexity": 6,
+      "feature_names": [
+        "layer",
+        "group_size",
+        "same_layer_count",
+        "adjacent_layer_count",
+        "self_understanding"
+      ],
+      "use_pysr": false
+    },
+    "cooperation_confidence": {
+      "name": "cooperation_confidence",
+      "equation": "0.7454 + 0.0059*group_size + 0.2032*self_understanding",
+      "equation_latex": "0.7454 + 0.0059*group_size + 0.2032*self_understanding",
+      "r2_score": 0.4485138691186097,
+      "complexity": 6,
+      "feature_names": [
+        "layer",
+        "group_size",
+        "same_layer_count",
+        "adjacent_layer_count",
+        "self_understanding"
+      ],
+      "use_pysr": false
+    }
+  }
+}
