@@ -166,9 +166,6 @@ def train_genesis_models(
     - cp_count: Predict control points from dimensions
     - self_understanding: Predict self-awareness score
     - structural_confidence: Predict structural confidence
-        - cp_count: Predict control points from dimensions
-        - self_understanding: Predict self-awareness score
-        - structural_confidence: Predict structural confidence
     """
     print("\n" + "=" * 60)
     print("Training Genesis Models")
@@ -221,9 +218,6 @@ def train_transformation_models(
     - morph_confidence: Predict morphing ability
     - avg_risk_level: Predict transformation risk
     - structural_stability: Predict structural stability
-        - morph_confidence: Predict morphing ability
-        - avg_risk_level: Predict transformation risk
-        - structural_stability: Predict structural stability
     """
     print("\n" + "=" * 60)
     print("Training Transformation Models")
@@ -274,8 +268,6 @@ def train_composition_models(
     Targets:
     - harmony_score: Predict group harmony
     - cooperation_confidence: Predict cooperation ability
-        - harmony_score: Predict group harmony
-        - cooperation_confidence: Predict cooperation ability
     """
     print("\n" + "=" * 60)
     print("Training Composition Models")
