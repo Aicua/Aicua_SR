@@ -43,7 +43,8 @@ categories:
     constraints:
       maxsize: 20
 
-  bone_rigging_v4:
+  bone_rigging_v5:
+    description: "7 Bones - Fishbone structure (3 spine + 4 ribs)"
     features:
       - petal_height
       - petal_width
@@ -51,6 +52,7 @@ categories:
       - layer_index
       - curvature_intensity
     targets:
+      # Central Spine (3 bones)
       - bone_root_start_x
       - bone_root_start_y
       - bone_root_end_x
@@ -59,19 +61,33 @@ categories:
       - bone_middle_start_y
       - bone_middle_end_x
       - bone_middle_end_y
-      - bone_left_start_x
-      - bone_left_start_y
-      - bone_left_end_x
-      - bone_left_end_y
-      - bone_right_start_x
-      - bone_right_start_y
-      - bone_right_end_x
-      - bone_right_end_y
+      - bone_tip_start_x
+      - bone_tip_start_y
+      - bone_tip_end_x
+      - bone_tip_end_y
+      # Left Ribs (2 bones)
+      - bone_left_lower_start_x
+      - bone_left_lower_start_y
+      - bone_left_lower_end_x
+      - bone_left_lower_end_y
+      - bone_left_upper_start_x
+      - bone_left_upper_start_y
+      - bone_left_upper_end_x
+      - bone_left_upper_end_y
+      # Right Ribs (2 bones)
+      - bone_right_lower_start_x
+      - bone_right_lower_start_y
+      - bone_right_lower_end_x
+      - bone_right_lower_end_y
+      - bone_right_upper_start_x
+      - bone_right_upper_start_y
+      - bone_right_upper_end_x
+      - bone_right_upper_end_y
     operators:
       binary: ["+", "-", "*", "/"]
       unary: ["sqrt", "log", "sin", "cos"]
     constraints:
-      maxsize: 18
+      maxsize: 20
 
   animation_wingflap:
     features:
