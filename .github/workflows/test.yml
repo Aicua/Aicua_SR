@@ -1,14 +1,6 @@
 name: Test Pipeline
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - 'scripts/**'
-      - 'tests/**'
-      - 'configs/**'
-      - 'requirements.txt'
-      - '.github/workflows/**'
   pull_request:
     branches: [ main ]
     paths:
