@@ -42,10 +42,10 @@ jobs:
           pip install flake8
           flake8 scripts/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
 
-      - name: Generate test datasets (v2)
+      - name: Generate test datasets (v3)
         run: |
-          python scripts/generate_petal_spline_v2.py
-          python scripts/generate_bone_rigging_v4.py
+          python scripts/generate_petal_spline_v3.py
+          python scripts/generate_bone_rigging_v5.py
 
       - name: Generate CoT dataset
         run: |

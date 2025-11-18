@@ -1,5 +1,5 @@
 # Symbolic Regression Configuration - FINAL VERSION
-# Only uses latest datasets: petal_spline_v2, bone_rigging_v4, animation_wingflap
+# Only uses latest datasets: petal_spline_v3, bone_rigging_v5, animation_wingflap
 
 general:
   niterations: 100
@@ -10,7 +10,7 @@ general:
 
 # Category-specific configurations
 categories:
-  petal_spline_v2:
+  petal_spline_v3:
     features:
       - base_size
       - layer_index
@@ -27,6 +27,12 @@ categories:
       - cp4_y
       - cp5_x
       - cp5_y
+      - cp6_x
+      - cp6_y
+      - cp7_x
+      - cp7_y
+      - cp8_x
+      - cp8_y
       - extrude_depth
     operators:
       binary: ["+", "-", "*", "/"]
@@ -34,7 +40,7 @@ categories:
     constraints:
       maxsize: 20
 
-  bone_rigging_v4:
+  bone_rigging_v5:
     features:
       - petal_height
       - petal_width
@@ -50,14 +56,26 @@ categories:
       - bone_middle_start_y
       - bone_middle_end_x
       - bone_middle_end_y
-      - bone_left_start_x
-      - bone_left_start_y
-      - bone_left_end_x
-      - bone_left_end_y
-      - bone_right_start_x
-      - bone_right_start_y
-      - bone_right_end_x
-      - bone_right_end_y
+      - bone_tip_start_x
+      - bone_tip_start_y
+      - bone_tip_end_x
+      - bone_tip_end_y
+      - bone_left_lower_start_x
+      - bone_left_lower_start_y
+      - bone_left_lower_end_x
+      - bone_left_lower_end_y
+      - bone_left_upper_start_x
+      - bone_left_upper_start_y
+      - bone_left_upper_end_x
+      - bone_left_upper_end_y
+      - bone_right_lower_start_x
+      - bone_right_lower_start_y
+      - bone_right_lower_end_x
+      - bone_right_lower_end_y
+      - bone_right_upper_start_x
+      - bone_right_upper_start_y
+      - bone_right_upper_end_x
+      - bone_right_upper_end_y
     operators:
       binary: ["+", "-", "*", "/"]
       unary: ["sqrt", "log", "sin", "cos"]
