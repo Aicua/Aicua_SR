@@ -36,7 +36,7 @@ class RoseSRTrainer:
     def __init__(self, config_path: str = None):
         """Initialize trainer with configuration."""
         if config_path is None:
-            config_path = Path(__file__).parent.parent / "configs" / "sr_config_spline.yaml"
+            config_path = Path(__file__).parent.parent / "configs" / "sr_config_spline_v3.yaml"
 
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
@@ -50,8 +50,8 @@ class RoseSRTrainer:
         data_dir = Path(__file__).parent.parent / "data" / "processed"
 
         file_map = {
-            'petal_spline_v2': 'petal_spline_v2.csv',
-            'bone_rigging_v4': 'bone_rigging_v4.csv',
+            'petal_spline_v3': 'petal_spline_v3.csv',
+            'bone_rigging_v5': 'bone_rigging_v5.csv',
             'animation_wingflap': 'animation_wingflap.csv',
         }
 
@@ -179,25 +179,53 @@ class RoseSRTrainer:
         x = [f"x{i}" for i in range(len(features))]
 
         mock_formulas = {
-            # Spline 2D control point targets (5 control points for petal shape)
-            'cp1_x': f"-{x[0]} * 0.15 * (0.4 + {x[1]} * 0.2) * (1 + {x[3]} * 0.2)",
+            # Spline V3 - 8 control points (heart-shaped tip)
+            'cp1_x': "0.0",  # base center
             'cp1_y': "0.0",
-            'cp2_x': f"-{x[0]} * 0.1 * (0.4 + {x[1]} * 0.2) * (1 + {x[3]} * 0.2)",
-            'cp2_y': f"{x[0]} * (0.4 + {x[1]} * 0.2) * (1.2 - {x[3]} * 0.3) * 0.4",
-            'cp3_x': f"{x[0]} * 0.05 * ({x[1]} - 1) * {x[3]}",
-            'cp3_y': f"{x[0]} * (0.4 + {x[1]} * 0.2) * (1.2 - {x[3]} * 0.3)",
-            'cp4_x': f"{x[0]} * 0.1 * (0.4 + {x[1]} * 0.2) * (1 + {x[3]} * 0.2)",
-            'cp4_y': f"{x[0]} * (0.4 + {x[1]} * 0.2) * (1.2 - {x[3]} * 0.3) * 0.4",
-            'cp5_x': f"{x[0]} * 0.15 * (0.4 + {x[1]} * 0.2) * (1 + {x[3]} * 0.2)",
-            'cp5_y': "0.0",
+            'cp2_x': f"-{x[0]} * 0.12 * (0.8 + {x[1]} * 0.1)",  # lower_left
+            'cp2_y': f"{x[0]} * 0.25 * (0.8 + {x[1]} * 0.1)",
+            'cp3_x': f"-{x[0]} * 0.15 * (0.8 + {x[1]} * 0.1)",  # upper_left
+            'cp3_y': f"{x[0]} * 0.6 * (0.8 + {x[1]} * 0.1)",
+            'cp4_x': f"-{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",  # tip_left
+            'cp4_y': f"{x[0]} * 0.95 * (0.8 + {x[1]} * 0.1)",
+            'cp5_x': "0.0",  # tip_center (notch)
+            'cp5_y': f"{x[0]} * 0.85 * (0.8 + {x[1]} * 0.1)",
+            'cp6_x': f"{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",  # tip_right
+            'cp6_y': f"{x[0]} * 0.95 * (0.8 + {x[1]} * 0.1)",
+            'cp7_x': f"{x[0]} * 0.15 * (0.8 + {x[1]} * 0.1)",  # upper_right
+            'cp7_y': f"{x[0]} * 0.6 * (0.8 + {x[1]} * 0.1)",
+            'cp8_x': f"{x[0]} * 0.12 * (0.8 + {x[1]} * 0.1)",  # lower_right
+            'cp8_y': f"{x[0]} * 0.25 * (0.8 + {x[1]} * 0.1)",
             'extrude_depth': f"{x[0]} * 0.01 * (1 + {x[1]} * 0.1)",
-            'rotation_angle': f"137.5 * {x[2]}",
-            # Bone rigging v2 targets
-            'bone_count': f"ceil(2.0 * {x[0]} * {x[2]})",
-            'bone_start_y': "0.0",
-            'bone_end_y': f"{x[0]} * 0.4",
-            'bone_segment_length': f"{x[0]} / ceil(2.0 * {x[0]} * {x[2]})",
-            'bind_weight': f"{x[2]} * (0.5 + {x[3]} * 0.5)",
+            # Bone rigging V5 - 7 bones fishbone structure
+            'bone_root_start_x': "0.0",
+            'bone_root_start_y': "0.0",
+            'bone_root_end_x': "0.0",
+            'bone_root_end_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+            'bone_middle_start_x': "0.0",
+            'bone_middle_start_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+            'bone_middle_end_x': "0.0",
+            'bone_middle_end_y': f"{x[0]} * 0.6 * (0.8 + {x[3]} * 0.1)",
+            'bone_tip_start_x': "0.0",
+            'bone_tip_start_y': f"{x[0]} * 0.6 * (0.8 + {x[3]} * 0.1)",
+            'bone_tip_end_x': "0.0",
+            'bone_tip_end_y': f"{x[0]} * (0.8 + {x[3]} * 0.1)",
+            'bone_left_lower_start_x': "0.0",
+            'bone_left_lower_start_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+            'bone_left_lower_end_x': f"-{x[1]} * 0.35 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+            'bone_left_lower_end_y': f"{x[0]} * 0.275 * (0.8 + {x[3]} * 0.1)",
+            'bone_left_upper_start_x': "0.0",
+            'bone_left_upper_start_y': f"{x[0]} * 0.6 * (0.8 + {x[3]} * 0.1)",
+            'bone_left_upper_end_x': f"-{x[1]} * 0.25 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+            'bone_left_upper_end_y': f"{x[0]} * 0.63 * (0.8 + {x[3]} * 0.1)",
+            'bone_right_lower_start_x': "0.0",
+            'bone_right_lower_start_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+            'bone_right_lower_end_x': f"{x[1]} * 0.35 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+            'bone_right_lower_end_y': f"{x[0]} * 0.275 * (0.8 + {x[3]} * 0.1)",
+            'bone_right_upper_start_x': "0.0",
+            'bone_right_upper_start_y': f"{x[0]} * 0.6 * (0.8 + {x[3]} * 0.1)",
+            'bone_right_upper_end_x': f"{x[1]} * 0.25 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+            'bone_right_upper_end_y': f"{x[0]} * 0.63 * (0.8 + {x[3]} * 0.1)",
             # Animation wingflap targets
             'frequency': f"10.0 * sqrt({x[3]} / ({x[1]} + 0.01))",
             'amplitude': f"{x[2]} * {x[3]} * 3.0",
@@ -211,7 +239,7 @@ class RoseSRTrainer:
 
     def train_all(self, max_iterations: int = None):
         """Train SR models for all categories."""
-        categories = ['petal_spline_v2', 'bone_rigging_v4', 'animation_wingflap']
+        categories = ['petal_spline_v3', 'bone_rigging_v5', 'animation_wingflap']
 
         for category in categories:
             try:
