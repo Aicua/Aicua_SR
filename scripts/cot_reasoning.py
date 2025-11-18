@@ -44,7 +44,7 @@ class CoTReasoner:
             "circle": (8, 16, 12),
             "ellipse": (6, 12, 8),
             "wing": (3, 6, 4),
-            "petal": (7, 10, 8),  # Updated: 8 CPs for realistic rose petal
+            "petal": (9, 11, 11),  # Updated: 11 CPs for hemispherical rose petal
             "leaf": (5, 9, 6),
             "heart": (6, 10, 7),
             "star": (10, 20, 10),
@@ -333,6 +333,29 @@ class CoTReasoner:
                 (half_width * 0.55, height * 0.55),  # mid_right
                 (half_width * 0.7, height * 0.3),  # lower_right_2
                 (half_width / 2, 0.0),  # base_right
+            ]
+        elif cp_count == 11:
+            # Hemispherical rose petal - V3 dome-like distribution
+            # Y values follow sin curve for realistic rose petal shape
+            # Angles: 0°, 15°, 35°, 60°, 80°, 90° (and symmetric)
+            angles = [0, 15, 35, 60, 80, 90, 80, 60, 35, 15, 0]
+            y_factors = [math.sin(math.radians(a)) for a in angles]
+
+            # X spread: narrow at base, widest at middle height, narrow at tip
+            x_factors = [0.25, 0.45, 0.65, 0.85, 0.6, 0.0, 0.6, 0.85, 0.65, 0.45, 0.25]
+
+            cps = [
+                (-half_width * x_factors[0], height * y_factors[0]),   # base_left
+                (-half_width * x_factors[1], height * y_factors[1]),   # lower_left
+                (-half_width * x_factors[2], height * y_factors[2]),   # mid_lower_left
+                (-half_width * x_factors[3], height * y_factors[3]),   # mid_upper_left
+                (-half_width * x_factors[4] + tip_offset, height * y_factors[4]),  # near_tip_left
+                (tip_offset, height * y_factors[5]),                   # tip
+                (half_width * x_factors[6] + tip_offset, height * y_factors[6]),   # near_tip_right
+                (half_width * x_factors[7], height * y_factors[7]),    # mid_upper_right
+                (half_width * x_factors[8], height * y_factors[8]),    # mid_lower_right
+                (half_width * x_factors[9], height * y_factors[9]),    # lower_right
+                (half_width * x_factors[10], height * y_factors[10]),  # base_right
             ]
         else:
             # General case: distribute points along curve
