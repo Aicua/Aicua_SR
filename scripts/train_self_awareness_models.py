@@ -163,6 +163,9 @@ def train_genesis_models(
     Train SR models for Genesis reasoning.
 
     Targets:
+    - cp_count: Predict control points from dimensions
+    - self_understanding: Predict self-awareness score
+    - structural_confidence: Predict structural confidence
         - cp_count: Predict control points from dimensions
         - self_understanding: Predict self-awareness score
         - structural_confidence: Predict structural confidence
@@ -215,6 +218,9 @@ def train_transformation_models(
     Train SR models for Transformation reasoning.
 
     Targets:
+    - morph_confidence: Predict morphing ability
+    - avg_risk_level: Predict transformation risk
+    - structural_stability: Predict structural stability
         - morph_confidence: Predict morphing ability
         - avg_risk_level: Predict transformation risk
         - structural_stability: Predict structural stability
@@ -266,6 +272,8 @@ def train_composition_models(
     Train SR models for Composition reasoning.
 
     Targets:
+    - harmony_score: Predict group harmony
+    - cooperation_confidence: Predict cooperation ability
         - harmony_score: Predict group harmony
         - cooperation_confidence: Predict cooperation ability
     """
