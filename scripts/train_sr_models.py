@@ -178,87 +178,112 @@ class RoseSRTrainer:
         # Simple mock formulas based on target type
         x = [f"x{i}" for i in range(len(features))]
 
-        mock_formulas = {
-            # Spline V3 - 8 control points (heart-shaped tip)
-            'cp1_x': "0.0",  # base center
-            'cp1_y': "0.0",
-            'cp2_x': f"-{x[0]} * 0.12 * (0.8 + {x[1]} * 0.1)",  # lower_left
-            'cp2_y': f"{x[0]} * 0.25 * (0.8 + {x[1]} * 0.1)",
-            'cp3_x': f"-{x[0]} * 0.15 * (0.8 + {x[1]} * 0.1)",  # upper_left
-            'cp3_y': f"{x[0]} * 0.6 * (0.8 + {x[1]} * 0.1)",
-            'cp4_x': f"-{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",  # tip_left
-            'cp4_y': f"{x[0]} * 0.95 * (0.8 + {x[1]} * 0.1)",
-            'cp5_x': "0.0",  # tip_center (notch)
-            'cp5_y': f"{x[0]} * 0.85 * (0.8 + {x[1]} * 0.1)",
-            'cp6_x': f"{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",  # tip_right
-            'cp6_y': f"{x[0]} * 0.95 * (0.8 + {x[1]} * 0.1)",
-            'cp7_x': f"{x[0]} * 0.15 * (0.8 + {x[1]} * 0.1)",  # upper_right
-            'cp7_y': f"{x[0]} * 0.6 * (0.8 + {x[1]} * 0.1)",
-            'cp8_x': f"{x[0]} * 0.12 * (0.8 + {x[1]} * 0.1)",  # lower_right
-            'cp8_y': f"{x[0]} * 0.25 * (0.8 + {x[1]} * 0.1)",
-            'extrude_depth': f"{x[0]} * 0.01 * (1 + {x[1]} * 0.1)",
-            # Bone rigging V5 - 12 bones fishbone structure
-            # Central Spine (4 bones)
-            'bone_root_start_x': "0.0",
-            'bone_root_start_y': "0.0",
-            'bone_root_end_x': "0.0",
-            'bone_root_end_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
-            'bone_lower_mid_start_x': "0.0",
-            'bone_lower_mid_start_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
-            'bone_lower_mid_end_x': "0.0",
-            'bone_lower_mid_end_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
-            'bone_upper_mid_start_x': "0.0",
-            'bone_upper_mid_start_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
-            'bone_upper_mid_end_x': "0.0",
-            'bone_upper_mid_end_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
-            'bone_tip_start_x': "0.0",
-            'bone_tip_start_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
-            'bone_tip_end_x': "0.0",
-            'bone_tip_end_y': f"{x[0]} * (0.8 + {x[3]} * 0.1)",
-            # Left Ribs (4 bones)
-            'bone_left_lower_start_x': "0.0",
-            'bone_left_lower_start_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
-            'bone_left_lower_end_x': f"-{x[1]} * 0.525 * (0.5 + {x[2]} * 0.5) * {x[4]}",
-            'bone_left_lower_end_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
-            'bone_left_mid_lower_start_x': "0.0",
-            'bone_left_mid_lower_start_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
-            'bone_left_mid_lower_end_x': f"-{x[1]} * 0.7 * (0.5 + {x[2]} * 0.5) * {x[4]}",
-            'bone_left_mid_lower_end_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
-            'bone_left_mid_upper_start_x': "0.0",
-            'bone_left_mid_upper_start_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
-            'bone_left_mid_upper_end_x': f"-{x[1]} * 0.8 * (0.5 + {x[2]} * 0.5) * {x[4]}",
-            'bone_left_mid_upper_end_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
-            'bone_left_upper_start_x': "0.0",
-            'bone_left_upper_start_y': f"{x[0]} * 0.78 * (0.8 + {x[3]} * 0.1)",
-            'bone_left_upper_end_x': f"-{x[1]} * 0.65 * (0.5 + {x[2]} * 0.5) * {x[4]}",
-            'bone_left_upper_end_y': f"{x[0]} * 0.78 * (0.8 + {x[3]} * 0.1)",
-            # Right Ribs (4 bones)
-            'bone_right_lower_start_x': "0.0",
-            'bone_right_lower_start_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
-            'bone_right_lower_end_x': f"{x[1]} * 0.525 * (0.5 + {x[2]} * 0.5) * {x[4]}",
-            'bone_right_lower_end_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
-            'bone_right_mid_lower_start_x': "0.0",
-            'bone_right_mid_lower_start_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
-            'bone_right_mid_lower_end_x': f"{x[1]} * 0.7 * (0.5 + {x[2]} * 0.5) * {x[4]}",
-            'bone_right_mid_lower_end_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
-            'bone_right_mid_upper_start_x': "0.0",
-            'bone_right_mid_upper_start_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
-            'bone_right_mid_upper_end_x': f"{x[1]} * 0.8 * (0.5 + {x[2]} * 0.5) * {x[4]}",
-            'bone_right_mid_upper_end_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
-            'bone_right_upper_start_x': "0.0",
-            'bone_right_upper_start_y': f"{x[0]} * 0.78 * (0.8 + {x[3]} * 0.1)",
-            'bone_right_upper_end_x': f"{x[1]} * 0.65 * (0.5 + {x[2]} * 0.5) * {x[4]}",
-            'bone_right_upper_end_y': f"{x[0]} * 0.78 * (0.8 + {x[3]} * 0.1)",
-            # Animation wingflap targets
-            'frequency': f"10.0 * sqrt({x[3]} / ({x[1]} + 0.01))",
-            'amplitude': f"{x[2]} * {x[3]} * 3.0",
-            'axis_x': f"-1 * ({x[4]} > 1)",
-            'axis_y': "-1",
-            'axis_z': "0",
-            'phase_offset': f"{x[3]} * 6.28",
-        }
+        # Petal spline formulas (4 features: base_size, layer_index, petal_index, opening_degree)
+        if target.startswith('cp') or target == 'extrude_depth':
+            petal_formulas = {
+                # Spline V3 - 15 control points
+                'cp1_x': "0.0",  # base center
+                'cp1_y': "0.0",
+                'cp2_x': f"-{x[0]} * 0.12 * (0.8 + {x[1]} * 0.1)",  # lower_left
+                'cp2_y': f"{x[0]} * 0.25 * (0.8 + {x[1]} * 0.1)",
+                'cp3_x': f"-{x[0]} * 0.15 * (0.8 + {x[1]} * 0.1)",  # upper_left
+                'cp3_y': f"{x[0]} * 0.6 * (0.8 + {x[1]} * 0.1)",
+                'cp4_x': f"-{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",  # tip_left
+                'cp4_y': f"{x[0]} * 0.95 * (0.8 + {x[1]} * 0.1)",
+                'cp5_x': "0.0",  # tip_center (notch)
+                'cp5_y': f"{x[0]} * 0.85 * (0.8 + {x[1]} * 0.1)",
+                'cp6_x': f"{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",  # tip_right
+                'cp6_y': f"{x[0]} * 0.95 * (0.8 + {x[1]} * 0.1)",
+                'cp7_x': f"{x[0]} * 0.15 * (0.8 + {x[1]} * 0.1)",  # upper_right
+                'cp7_y': f"{x[0]} * 0.6 * (0.8 + {x[1]} * 0.1)",
+                'cp8_x': f"{x[0]} * 0.12 * (0.8 + {x[1]} * 0.1)",  # lower_right
+                'cp8_y': f"{x[0]} * 0.25 * (0.8 + {x[1]} * 0.1)",
+                'cp9_x': f"{x[0]} * 0.1 * (0.8 + {x[1]} * 0.1)",
+                'cp9_y': f"{x[0]} * 0.15 * (0.8 + {x[1]} * 0.1)",
+                'cp10_x': f"{x[0]} * 0.08 * (0.8 + {x[1]} * 0.1)",
+                'cp10_y': f"{x[0]} * 0.1 * (0.8 + {x[1]} * 0.1)",
+                'cp11_x': f"{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",
+                'cp11_y': f"{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",
+                'cp12_x': f"-{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",
+                'cp12_y': f"{x[0]} * 0.05 * (0.8 + {x[1]} * 0.1)",
+                'cp13_x': f"-{x[0]} * 0.08 * (0.8 + {x[1]} * 0.1)",
+                'cp13_y': f"{x[0]} * 0.1 * (0.8 + {x[1]} * 0.1)",
+                'cp14_x': f"-{x[0]} * 0.1 * (0.8 + {x[1]} * 0.1)",
+                'cp14_y': f"{x[0]} * 0.15 * (0.8 + {x[1]} * 0.1)",
+                'cp15_x': f"-{x[0]} * 0.06 * (0.8 + {x[1]} * 0.1)",
+                'cp15_y': f"{x[0]} * 0.08 * (0.8 + {x[1]} * 0.1)",
+                'extrude_depth': f"{x[0]} * 0.01 * (1 + {x[1]} * 0.1)",
+            }
+            return petal_formulas.get(target, f"{x[0]} * 0.5 + {x[1]} * 0.3")
 
-        return mock_formulas.get(target, f"{x[0]} * 0.5 + {x[1]} * 0.3")
+        # Bone rigging formulas (5 features: base_size, layer_index, petal_index, opening_degree, curvature_intensity)
+        elif target.startswith('bone_'):
+            bone_formulas = {
+                # Central Spine (4 bones)
+                'bone_root_start_x': "0.0",
+                'bone_root_start_y': "0.0",
+                'bone_root_end_x': "0.0",
+                'bone_root_end_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+                'bone_lower_mid_start_x': "0.0",
+                'bone_lower_mid_start_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+                'bone_lower_mid_end_x': "0.0",
+                'bone_lower_mid_end_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
+                'bone_upper_mid_start_x': "0.0",
+                'bone_upper_mid_start_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
+                'bone_upper_mid_end_x': "0.0",
+                'bone_upper_mid_end_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
+                'bone_tip_start_x': "0.0",
+                'bone_tip_start_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
+                'bone_tip_end_x': "0.0",
+                'bone_tip_end_y': f"{x[0]} * (0.8 + {x[3]} * 0.1)",
+                # Left Ribs (4 bones)
+                'bone_left_lower_start_x': "0.0",
+                'bone_left_lower_start_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+                'bone_left_lower_end_x': f"-{x[1]} * 0.525 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+                'bone_left_lower_end_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+                'bone_left_mid_lower_start_x': "0.0",
+                'bone_left_mid_lower_start_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
+                'bone_left_mid_lower_end_x': f"-{x[1]} * 0.7 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+                'bone_left_mid_lower_end_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
+                'bone_left_mid_upper_start_x': "0.0",
+                'bone_left_mid_upper_start_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
+                'bone_left_mid_upper_end_x': f"-{x[1]} * 0.8 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+                'bone_left_mid_upper_end_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
+                'bone_left_upper_start_x': "0.0",
+                'bone_left_upper_start_y': f"{x[0]} * 0.78 * (0.8 + {x[3]} * 0.1)",
+                'bone_left_upper_end_x': f"-{x[1]} * 0.65 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+                'bone_left_upper_end_y': f"{x[0]} * 0.78 * (0.8 + {x[3]} * 0.1)",
+                # Right Ribs (4 bones)
+                'bone_right_lower_start_x': "0.0",
+                'bone_right_lower_start_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+                'bone_right_lower_end_x': f"{x[1]} * 0.525 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+                'bone_right_lower_end_y': f"{x[0]} * 0.25 * (0.8 + {x[3]} * 0.1)",
+                'bone_right_mid_lower_start_x': "0.0",
+                'bone_right_mid_lower_start_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
+                'bone_right_mid_lower_end_x': f"{x[1]} * 0.7 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+                'bone_right_mid_lower_end_y': f"{x[0]} * 0.45 * (0.8 + {x[3]} * 0.1)",
+                'bone_right_mid_upper_start_x': "0.0",
+                'bone_right_mid_upper_start_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
+                'bone_right_mid_upper_end_x': f"{x[1]} * 0.8 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+                'bone_right_mid_upper_end_y': f"{x[0]} * 0.62 * (0.8 + {x[3]} * 0.1)",
+                'bone_right_upper_start_x': "0.0",
+                'bone_right_upper_start_y': f"{x[0]} * 0.78 * (0.8 + {x[3]} * 0.1)",
+                'bone_right_upper_end_x': f"{x[1]} * 0.65 * (0.5 + {x[2]} * 0.5) * {x[4]}",
+                'bone_right_upper_end_y': f"{x[0]} * 0.78 * (0.8 + {x[3]} * 0.1)",
+            }
+            return bone_formulas.get(target, f"{x[0]} * 0.5 + {x[1]} * 0.3")
+
+        # Animation wingflap formulas (5 features: base_size, petal_mass, wind_speed, flexibility, layer_index)
+        else:
+            anim_formulas = {
+                'frequency': f"10.0 * sqrt({x[3]} / ({x[1]} + 0.01))",
+                'amplitude': f"{x[2]} * {x[3]} * 3.0",
+                'axis_x': f"-1 * ({x[4]} > 1)",
+                'axis_y': "-1",
+                'axis_z': "0",
+                'phase_offset': f"{x[3]} * 6.28",
+            }
+            return anim_formulas.get(target, f"{x[0]} * 0.5 + {x[1]} * 0.3")
 
     def train_all(self, max_iterations: int = None):
         """Train SR models for all categories."""
