@@ -44,7 +44,7 @@ class CoTReasoner:
             "circle": (8, 16, 12),
             "ellipse": (6, 12, 8),
             "wing": (3, 6, 4),
-            "petal": (4, 8, 5),
+            "petal": (7, 10, 8),  # Updated: 8 CPs for realistic rose petal
             "leaf": (5, 9, 6),
             "heart": (6, 10, 7),
             "star": (10, 20, 10),
@@ -259,8 +259,7 @@ class CoTReasoner:
                 (half_width, 0.0),
             ]
         elif cp_count == 5:
-            # Petal with MIDDLE-WIDE shape (V2)
-            # Base narrow (1/4 spread), Mid widest (1/2 spread)
+            # Simple petal shape
             cps = [
                 (-half_width / 2, 0.0),  # base_left (narrow)
                 (-half_width, height * 0.4),  # left_curve (WIDEST)
@@ -279,15 +278,61 @@ class CoTReasoner:
                 (half_width, 0.0),
             ]
         elif cp_count == 7:
-            # Complex organic shape
+            # Complex organic shape with rounded tip
             cps = [
-                (-half_width, 0.0),
-                (-half_width * 0.9, height * 0.2),
-                (-half_width * 0.5, height * 0.5),
-                (tip_offset, height),
-                (half_width * 0.5, height * 0.5),
-                (half_width * 0.9, height * 0.2),
-                (half_width, 0.0),
+                (-half_width / 2, 0.0),  # base_left
+                (-half_width * 0.7, height * 0.25),  # lower_left
+                (-half_width * 0.5, height * 0.6),  # upper_left
+                (tip_offset, height),  # tip
+                (half_width * 0.5, height * 0.6),  # upper_right
+                (half_width * 0.7, height * 0.25),  # lower_right
+                (half_width / 2, 0.0),  # base_right
+            ]
+        elif cp_count == 8:
+            # Realistic petal V3 - heart-shaped tip with notch
+            # Based on rose_petals.jpg reference
+            notch_depth = height * 0.05
+            notch_width = half_width * 0.3
+            cps = [
+                (-half_width / 2, 0.0),  # CP1: base_left
+                (-half_width * 0.7, height * 0.25),  # CP2: lower_left
+                (-half_width * 0.5, height * 0.6),  # CP3: upper_left
+                (-notch_width, height - notch_depth),  # CP4: tip_left
+                (tip_offset, height),  # CP5: tip_center
+                (notch_width, height - notch_depth),  # CP6: tip_right
+                (half_width * 0.5, height * 0.6),  # CP7: upper_right
+                (half_width * 0.7, height * 0.25),  # CP8: lower_right
+            ]
+        elif cp_count == 9:
+            # Extra detailed petal with more edge control
+            notch_depth = height * 0.05
+            notch_width = half_width * 0.25
+            cps = [
+                (-half_width / 2, 0.0),  # base_left
+                (-half_width * 0.65, height * 0.15),  # lower_left_1
+                (-half_width * 0.7, height * 0.35),  # lower_left_2
+                (-half_width * 0.5, height * 0.65),  # upper_left
+                (tip_offset, height),  # tip
+                (half_width * 0.5, height * 0.65),  # upper_right
+                (half_width * 0.7, height * 0.35),  # lower_right_2
+                (half_width * 0.65, height * 0.15),  # lower_right_1
+                (half_width / 2, 0.0),  # base_right
+            ]
+        elif cp_count == 10:
+            # Maximum detail petal
+            notch_depth = height * 0.05
+            notch_width = half_width * 0.2
+            cps = [
+                (-half_width / 2, 0.0),  # base_left
+                (-half_width * 0.6, height * 0.12),  # lower_left_1
+                (-half_width * 0.7, height * 0.3),  # lower_left_2
+                (-half_width * 0.55, height * 0.55),  # mid_left
+                (-notch_width, height - notch_depth),  # tip_left
+                (tip_offset, height),  # tip_center
+                (notch_width, height - notch_depth),  # tip_right
+                (half_width * 0.55, height * 0.55),  # mid_right
+                (half_width * 0.7, height * 0.3),  # lower_right_2
+                (half_width / 2, 0.0),  # base_right
             ]
         else:
             # General case: distribute points along curve
