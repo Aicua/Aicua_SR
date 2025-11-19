@@ -93,7 +93,7 @@ class RoseCLIGenerator:
         # Generate 5 independent bones - T-shape (NO parent_bone commands!)
         # Vertical spine
         rigging_cli.append(f"add_bone {armature_name} bone_base 0 0.0000 0 0 {h_45:.4f} 0;")
-        rigging_cli.append(f"add_bone {armature_name} bone_mid 0 {h_45:.4f} 0 0 {h_78:.4f} 0;")
+        rigging_cli.append(f"add_bone {armature_name} bone_mid 0 {h_78:.4f} 0 0 {h_45:.4f} 0;")
         rigging_cli.append(f"add_bone {armature_name} bone_tip 0 {h_78:.4f} 0 0 {h_100:.4f} 0;")
         # Horizontal edges at 62%
         rigging_cli.append(f"add_bone {armature_name} bone_left 0 {h_62:.4f} 0 {-half_width:.4f} {h_62:.4f} 0;")
