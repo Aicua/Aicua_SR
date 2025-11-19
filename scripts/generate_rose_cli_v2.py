@@ -80,8 +80,8 @@ class RoseCLIGeneratorV2:
                 'end_x': offset_45, 'end_y': petal_height * 0.45
             },
             'bone_mid': {
-                'start_x': offset_45, 'start_y': petal_height * 0.45,
-                'end_x': offset_78, 'end_y': petal_height * 0.78
+                'start_x': offset_78, 'start_y': petal_height * 0.78,
+                'end_x': offset_45, 'end_y': petal_height * 0.45
             },
             'bone_tip': {
                 'start_x': offset_78, 'start_y': petal_height * 0.78,
