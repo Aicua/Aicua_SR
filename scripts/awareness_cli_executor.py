@@ -505,25 +505,32 @@ class SRAwarenessExecutor:
             f"sketch_extrude {petal_name} {geometry.extrude_depth:.4f};",
         ]
 
-        # === COMPUTE RIGGING ===
-        rigging = self.compute_bone_rigging(
-            geometry.petal_height, geometry.petal_width, opening_degree, layer_index_0based
-        )
-
+        # === COMPUTE RIGGING (V6 - 5 independent bones) ===
         rig_name = f"{petal_name}_rig"
+        petal_height = geometry.petal_height
+        layer_factor = 0.8 + 0.1 * layer_index_0based
+
+        # 5 bone height positions
+        h_base = petal_height * 0.25 * layer_factor
+        h_mid = petal_height * 0.45 * layer_factor
+        h_mid_upper = petal_height * 0.62 * layer_factor
+        h_upper = petal_height * 0.78 * layer_factor
+        h_tip = petal_height * layer_factor
+
+        flexibility = 0.5 + (2 - layer_index_0based) * 0.15
+        bind_weight = flexibility * [1.0, 1.5, 2.0][layer_index_0based]
+
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name} (SR v4 branching structure)",
+            f"# Rigging for {petal_name} (v6 - 5 independent bones)",
             f"create_armature {rig_name};",
-            f"add_bone {rig_name} bone_root 0 0 0 0 {rigging.root_end_y:.4f} 0;",
-            f"add_bone {rig_name} bone_middle 0 {rigging.root_end_y:.4f} 0 0 {rigging.middle_end_y:.4f} 0;",
-            f"add_bone {rig_name} bone_left 0 {rigging.middle_end_y:.4f} 0 {rigging.left_end_x:.4f} {rigging.left_end_y:.4f} 0;",
-            f"add_bone {rig_name} bone_right 0 {rigging.middle_end_y:.4f} 0 {rigging.right_end_x:.4f} {rigging.left_end_y:.4f} 0;",
-            f"parent_bone {rig_name} bone_middle bone_root;",
-            f"parent_bone {rig_name} bone_left bone_middle;",
-            f"parent_bone {rig_name} bone_right bone_middle;",
+            f"add_bone {rig_name} bone_base 0 0 0 0 {h_base:.4f} 0;",
+            f"add_bone {rig_name} bone_mid 0 {h_base:.4f} 0 0 {h_mid:.4f} 0;",
+            f"add_bone {rig_name} bone_mid_upper 0 {h_mid:.4f} 0 0 {h_mid_upper:.4f} 0;",
+            f"add_bone {rig_name} bone_upper 0 {h_mid_upper:.4f} 0 0 {h_upper:.4f} 0;",
+            f"add_bone {rig_name} bone_tip 0 {h_upper:.4f} 0 0 {h_tip:.4f} 0;",
             f"finalize_bones {rig_name};",
-            f"bind_armature {rig_name} {petal_name} {rigging.bind_weight:.4f};",
+            f"bind_armature {rig_name} {petal_name} {bind_weight:.4f};",
         ]
 
         # === COMPUTE ANIMATION ===
@@ -535,14 +542,16 @@ class SRAwarenessExecutor:
         if anim_params.rotation_angle > 0:
             rigging_cli.append(f"")
             rigging_cli.append(f"# Position petal in spiral arrangement")
-            rigging_cli.append(f"rotate_bone {rig_name} bone_root 0 0 {anim_params.rotation_angle:.2f};")
+            rigging_cli.append(f"rotate_bone {rig_name} bone_base 0 0 {anim_params.rotation_angle:.2f};")
 
         animation_cli = [
             f"",
-            f"# Animation for {petal_name} (SR computed)",
-            f"wing_flap {rig_name} bone_middle {anim_params.frequency:.0f} {anim_params.amplitude:.1f} 0 -1 0 0;",
-            f"wing_flap {rig_name} bone_left {anim_params.frequency:.0f} {anim_params.amplitude * 0.5:.1f} -1 0 0 0.25;",
-            f"wing_flap {rig_name} bone_right {anim_params.frequency:.0f} {anim_params.amplitude * 0.5:.1f} 1 0 0 0.25;",
+            f"# Animation for {petal_name} (v6 - 5 independent bones)",
+            f"wing_flap {rig_name} bone_base {anim_params.frequency:.0f} {anim_params.amplitude * 0.3:.1f} 0 -1 0 0;",
+            f"wing_flap {rig_name} bone_mid {anim_params.frequency:.0f} {anim_params.amplitude * 0.5:.1f} 0 -1 0 0.05;",
+            f"wing_flap {rig_name} bone_mid_upper {anim_params.frequency:.0f} {anim_params.amplitude * 0.8:.1f} 0 -1 0 0.1;",
+            f"wing_flap {rig_name} bone_upper {anim_params.frequency:.0f} {anim_params.amplitude * 0.6:.1f} 0 -1 0 0.15;",
+            f"wing_flap {rig_name} bone_tip {anim_params.frequency * 1.5:.0f} {anim_params.amplitude * 0.4:.1f} 0 -1 0 0.2;",
         ]
 
         # Bloom animation
@@ -550,7 +559,7 @@ class SRAwarenessExecutor:
             animation_cli.append(f"")
             animation_cli.append(f"# Bloom animation (SR computed angle)")
             animation_cli.append(
-                f"auto_rotate {rig_name} bone_middle 1 0 0 {anim_params.bloom_angle:.1f} {bloom_duration} smooth;"
+                f"auto_rotate {rig_name} bone_mid_upper 1 0 0 {anim_params.bloom_angle:.1f} {bloom_duration} smooth;"
             )
 
         return {
@@ -559,7 +568,6 @@ class SRAwarenessExecutor:
             "animation": animation_cli,
             "sr_data": {
                 "geometry": geometry,
-                "rigging": rigging,
                 "animation": anim_params,
             }
         }

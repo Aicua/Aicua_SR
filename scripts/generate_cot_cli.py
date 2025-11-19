@@ -71,77 +71,44 @@ class CoTRoseCLIGenerator:
         petal_height = max(cp[1] for cp in cps)
         petal_width = max(cp[0] for cp in cps) - min(cp[0] for cp in cps)
 
-        # Generate bone rigging (V5: 7 bones branching structure)
+        # Generate bone rigging (V6: 5 independent bones)
         rig_name = f"{petal_name}_rig"
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name} (v5 branching structure - 7 bones)",
+            f"# Rigging for {petal_name} (v6 - 5 independent bones)",
             f"create_armature {rig_name};",
         ]
 
         # Calculate bone positions (0-based layer index for calculations)
         layer_idx_0based = layer_idx - 1
         layer_factor_bone = 0.8 + 0.1 * layer_idx_0based
-        curvature_intensity = 1.0
 
-        # Bone root: 0 to 25% height
-        root_end_y = petal_height * 0.25 * layer_factor_bone
+        # 5 bone height positions
+        h_base = petal_height * 0.25 * layer_factor_bone
+        h_mid = petal_height * 0.45 * layer_factor_bone
+        h_mid_upper = petal_height * 0.62 * layer_factor_bone
+        h_upper = petal_height * 0.78 * layer_factor_bone
+        h_tip = petal_height * layer_factor_bone
 
-        # Bone middle: 25% to 55% height
-        middle_end_y = petal_height * 0.55 * layer_factor_bone
-
-        # Bone tip: 55% to 100% height
-        tip_end_y = petal_height * layer_factor_bone
-
-        # Branch spread based on opening degree
-        lower_spread = petal_width * 0.3 * (0.5 + opening_degree * 0.5)
-        upper_spread = petal_width * 0.5 * (0.5 + opening_degree * 0.5)
-        curvature_factor = curvature_intensity * 0.1
-
-        # Lower branches: from root end
-        left_lower_end_x = -lower_spread * (1 + curvature_factor)
-        left_lower_end_y = petal_height * 0.35 * layer_factor_bone
-        right_lower_end_x = lower_spread * (1 + curvature_factor)
-        right_lower_end_y = petal_height * 0.35 * layer_factor_bone
-
-        # Upper branches: from middle end
-        left_upper_end_x = -upper_spread * (1 + curvature_factor)
-        left_upper_end_y = petal_height * 0.85 * layer_factor_bone
-        right_upper_end_x = upper_spread * (1 + curvature_factor)
-        right_upper_end_y = petal_height * 0.85 * layer_factor_bone
-
-        # Add 7 bones with v5 branching structure
-        # Central spine
-        rigging_cli.append(f"add_bone {rig_name} bone_root 0 0 0 0 {root_end_y:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_middle 0 {root_end_y:.4f} 0 0 {middle_end_y:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_tip 0 {middle_end_y:.4f} 0 0 {tip_end_y:.4f} 0;")
-        # Lower branches
-        rigging_cli.append(f"add_bone {rig_name} bone_left_lower 0 {root_end_y:.4f} 0 {left_lower_end_x:.4f} {left_lower_end_y:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_right_lower 0 {root_end_y:.4f} 0 {right_lower_end_x:.4f} {right_lower_end_y:.4f} 0;")
-        # Upper branches
-        rigging_cli.append(f"add_bone {rig_name} bone_left_upper 0 {middle_end_y:.4f} 0 {left_upper_end_x:.4f} {left_upper_end_y:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_right_upper 0 {middle_end_y:.4f} 0 {right_upper_end_x:.4f} {right_upper_end_y:.4f} 0;")
-
-        # Parent bones in v5 branching structure
-        rigging_cli.append(f"parent_bone {rig_name} bone_middle bone_root;")
-        rigging_cli.append(f"parent_bone {rig_name} bone_tip bone_middle;")
-        rigging_cli.append(f"parent_bone {rig_name} bone_left_lower bone_root;")
-        rigging_cli.append(f"parent_bone {rig_name} bone_right_lower bone_root;")
-        rigging_cli.append(f"parent_bone {rig_name} bone_left_upper bone_middle;")
-        rigging_cli.append(f"parent_bone {rig_name} bone_right_upper bone_middle;")
+        # Add 5 independent bones (NO parent_bone commands!)
+        rigging_cli.append(f"add_bone {rig_name} bone_base 0 0 0 0 {h_base:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_mid 0 {h_base:.4f} 0 0 {h_mid:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_mid_upper 0 {h_mid:.4f} 0 0 {h_mid_upper:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_upper 0 {h_mid_upper:.4f} 0 0 {h_upper:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_tip 0 {h_upper:.4f} 0 0 {h_tip:.4f} 0;")
 
         rigging_cli.append(f"finalize_bones {rig_name};")
         flexibility = 0.5 + (3 - layer_idx) * 0.15
         bind_weight = flexibility * [1.0, 1.5, 2.0][layer_idx - 1]
         rigging_cli.append(f"bind_armature {rig_name} {petal_name} {bind_weight:.4f};")
 
-        # Rotate petal into position using root bone
+        # Rotate petal into position using base bone
         if rotation_angle > 0:
             rigging_cli.append(f"")
-            rigging_cli.append(f"# Position petal in spiral arrangement (rotate root bone)")
-            rigging_cli.append(f"rotate_bone {rig_name} bone_root 0 0 {rotation_angle:.2f};")
+            rigging_cli.append(f"# Position petal in spiral arrangement (rotate base bone)")
+            rigging_cli.append(f"rotate_bone {rig_name} bone_base 0 0 {rotation_angle:.2f};")
 
-        # Generate animation (symmetric for left/right branches)
+        # Generate animation (each bone animates independently)
         petal_mass = base_size * petal_width * petal_height * 0.01
         wind_speed = 3.0
         frequency = 10.0 * math.sqrt(flexibility / (petal_mass + 0.01))
@@ -151,16 +118,12 @@ class CoTRoseCLIGenerator:
 
         animation_cli = [
             f"",
-            f"# Animation for {petal_name} (v5 - 7 bones)",
-            f"# bone_middle controls overall bend, bone_tip adds tip flutter",
-            f"wing_flap {rig_name} bone_middle {frequency:.0f} {amplitude:.1f} 0 -1 0 0;",
-            f"wing_flap {rig_name} bone_tip {frequency * 1.5:.0f} {amplitude * 0.3:.1f} 0 -1 0 0.1;",
-            f"# Lower branches: subtle base movement",
-            f"wing_flap {rig_name} bone_left_lower {frequency:.0f} {amplitude * 0.3:.1f} -1 0 0 0.15;",
-            f"wing_flap {rig_name} bone_right_lower {frequency:.0f} {amplitude * 0.3:.1f} 1 0 0 0.15;",
-            f"# Upper branches: main symmetric opening",
-            f"wing_flap {rig_name} bone_left_upper {frequency:.0f} {amplitude * 0.5:.1f} -1 0 0 0.25;",
-            f"wing_flap {rig_name} bone_right_upper {frequency:.0f} {amplitude * 0.5:.1f} 1 0 0 0.25;",
+            f"# Animation for {petal_name} (v6 - 5 independent bones)",
+            f"wing_flap {rig_name} bone_base {frequency:.0f} {amplitude * 0.3:.1f} 0 -1 0 0;",
+            f"wing_flap {rig_name} bone_mid {frequency:.0f} {amplitude * 0.5:.1f} 0 -1 0 0.05;",
+            f"wing_flap {rig_name} bone_mid_upper {frequency:.0f} {amplitude * 0.8:.1f} 0 -1 0 0.1;",
+            f"wing_flap {rig_name} bone_upper {frequency:.0f} {amplitude * 0.6:.1f} 0 -1 0 0.15;",
+            f"wing_flap {rig_name} bone_tip {frequency * 1.5:.0f} {amplitude * 0.4:.1f} 0 -1 0 0.2;",
         ]
 
         # Add bloom animation if requested (auto_rotate for smooth opening)
@@ -171,7 +134,7 @@ class CoTRoseCLIGenerator:
             animation_cli.append(f"")
             animation_cli.append(f"# Bloom animation (smooth opening)")
             animation_cli.append(
-                f"auto_rotate {rig_name} bone_middle 1 0 0 {bloom_angle:.1f} {bloom_duration} smooth;"
+                f"auto_rotate {rig_name} bone_mid_upper 1 0 0 {bloom_angle:.1f} {bloom_duration} smooth;"
             )
 
         return {
