@@ -69,43 +69,32 @@ class RoseCLIGenerator:
             f"bezier_surface {petal_name} {length:.4f} {base_width:.4f} {curvature:.4f} {twist_angle:.4f} {thickness:.6f};",
         ]
 
-        # Generate bone rigging using discovered formulas
+        # Generate bone rigging with 5 independent bones (v6)
         flexibility = 0.5 + (3 - layer_idx) * 0.15  # Outer more flexible
-        bone_count = int(self.bone_mod.compute_bone_count(
-            length, base_width, flexibility, layer_idx
-        ))
-        bone_count = max(2, min(bone_count, 10))  # Clamp to reasonable range
-
-        bone_length_seg = self.bone_mod.compute_bone_length(
-            length, base_width, flexibility, layer_idx
-        )
-        bind_weight = self.bone_mod.compute_bind_weight(
-            length, base_width, flexibility, layer_idx
-        )
+        bind_weight = flexibility * [1.0, 1.5, 2.0][layer_idx - 1] if layer_idx > 0 else 1.0
 
         armature_name = f"{petal_name}_arm"
 
+        # Calculate bone heights based on petal length
+        # 5 bones: base (0-25%), mid (25-45%), mid_upper (45-62%), upper (62-78%), tip (78-100%)
+        h_base = length * 0.25
+        h_mid = length * 0.45
+        h_mid_upper = length * 0.62
+        h_upper = length * 0.78
+        h_tip = length
+
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name}",
+            f"# Rigging for {petal_name} (5 independent bones)",
             f"create_armature {armature_name};",
         ]
 
-        # Generate bones
-        for i in range(bone_count):
-            bone_name = f"bone_{i}"
-            start_y = i * bone_length_seg
-            end_y = (i + 1) * bone_length_seg
-
-            rigging_cli.append(
-                f"add_bone {armature_name} {bone_name} 0 {start_y:.4f} 0 0 {end_y:.4f} 0;"
-            )
-
-        # Parent bones
-        for i in range(1, bone_count):
-            rigging_cli.append(
-                f"parent_bone {armature_name} bone_{i} bone_{i-1};"
-            )
+        # Generate 5 independent bones (NO parent_bone commands!)
+        rigging_cli.append(f"add_bone {armature_name} bone_base 0 0.0000 0 0 {h_base:.4f} 0;")
+        rigging_cli.append(f"add_bone {armature_name} bone_mid 0 {h_base:.4f} 0 0 {h_mid:.4f} 0;")
+        rigging_cli.append(f"add_bone {armature_name} bone_mid_upper 0 {h_mid:.4f} 0 0 {h_mid_upper:.4f} 0;")
+        rigging_cli.append(f"add_bone {armature_name} bone_upper 0 {h_mid_upper:.4f} 0 0 {h_upper:.4f} 0;")
+        rigging_cli.append(f"add_bone {armature_name} bone_tip 0 {h_upper:.4f} 0 0 {h_tip:.4f} 0;")
 
         rigging_cli.append(f"finalize_bones {armature_name};")
         rigging_cli.append(f"bind_armature {armature_name} {petal_name} {bind_weight:.4f};")
@@ -131,8 +120,12 @@ class RoseCLIGenerator:
 
         animation_cli = [
             f"",
-            f"# Animation for {petal_name}",
-            f"wind_sway {armature_name} bone_{bone_count-1} {frequency:.4f} {amplitude:.4f} 0 1 0 {damping:.6f};",
+            f"# Animation for {petal_name} (5 independent bones)",
+            f"wind_sway {armature_name} bone_base {frequency:.4f} {amplitude * 0.3:.4f} 0 1 0 {damping:.6f};",
+            f"wind_sway {armature_name} bone_mid {frequency:.4f} {amplitude * 0.5:.4f} 0 1 0 {damping:.6f};",
+            f"wind_sway {armature_name} bone_mid_upper {frequency:.4f} {amplitude * 0.8:.4f} 0 1 0 {damping:.6f};",
+            f"wind_sway {armature_name} bone_upper {frequency:.4f} {amplitude * 0.6:.4f} 0 1 0 {damping:.6f};",
+            f"wind_sway {armature_name} bone_tip {frequency:.4f} {amplitude:.4f} 0 1 0 {damping:.6f};",
         ]
 
         return {
@@ -145,7 +138,7 @@ class RoseCLIGenerator:
                 'curvature': curvature,
                 'twist_angle': twist_angle,
                 'thickness': thickness,
-                'bone_count': bone_count,
+                'bone_count': 5,  # Fixed 5 bones
                 'frequency': frequency,
                 'amplitude': amplitude,
             }
@@ -205,7 +198,7 @@ class RoseCLIGenerator:
         all_cli.append("exit;")
         all_cli.append("")
         all_cli.append(f"# Total petals: {total_petals}")
-        all_cli.append(f"# Total bones: {total_petals * 4}")  # Approximate
+        all_cli.append(f"# Total bones: {total_petals * 5}")  # 5 independent bones per petal
         all_cli.append(f"# All parameters computed using Symbolic Regression")
 
         return '\n'.join(all_cli)
