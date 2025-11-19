@@ -25,7 +25,7 @@ class RoseCLIGeneratorV2:
     def compute_bone_positions(self, petal_height: float, base_spread: float,
                                 deformation_type: int, intensity: float) -> dict:
         """
-        Compute positions for 5 independent bones.
+        Compute positions for 5 independent bones - T-shape.
 
         Args:
             petal_height: Total height of petal
@@ -38,64 +38,63 @@ class RoseCLIGeneratorV2:
         """
         import numpy as np
 
-        # Width profile at each height level
-        width_at_25 = base_spread * 1.05
-        width_at_45 = base_spread * 1.4
-        width_at_62 = base_spread * 1.6  # WIDEST
-        width_at_78 = base_spread * 1.3
-        width_at_100 = base_spread * 0.1
+        # Width at 62% (widest point)
+        width_at_62 = base_spread * 1.6
 
-        # Calculate x-offsets based on deformation type
-        offset_25 = 0.0
+        # Calculate x-offsets based on deformation type for vertical bones
         offset_45 = 0.0
-        offset_62 = 0.0
         offset_78 = 0.0
         offset_100 = 0.0
+        # Edge curl for horizontal bones
+        curl_left = 0.0
+        curl_right = 0.0
 
         if deformation_type == 0:  # Straight
             pass
 
         elif deformation_type == 1:  # S-curve
-            offset_25 = width_at_25 * 0.1 * intensity
-            offset_45 = width_at_45 * 0.3 * intensity
-            offset_62 = -width_at_62 * 0.2 * intensity
-            offset_78 = -width_at_78 * 0.15 * intensity
-            offset_100 = width_at_100 * 0.25 * intensity
+            offset_45 = base_spread * 0.2 * intensity
+            offset_78 = -base_spread * 0.15 * intensity
+            offset_100 = base_spread * 0.1 * intensity
+            curl_left = width_at_62 * 0.1 * intensity
+            curl_right = width_at_62 * 0.1 * intensity
 
         elif deformation_type == 2:  # C-curve
-            offset_25 = -width_at_25 * 0.05 * intensity
-            offset_45 = -width_at_45 * 0.15 * intensity
-            offset_62 = -width_at_62 * 0.35 * intensity
-            offset_78 = -width_at_78 * 0.3 * intensity
-            offset_100 = -width_at_100 * 0.25 * intensity
+            offset_45 = -base_spread * 0.05 * intensity
+            offset_78 = -base_spread * 0.15 * intensity
+            offset_100 = -base_spread * 0.1 * intensity
+            curl_left = width_at_62 * 0.35 * intensity
+            curl_right = width_at_62 * 0.35 * intensity
 
         elif deformation_type == 3:  # Wave
-            offset_25 = width_at_25 * 0.2 * np.sin(0.25 * np.pi * 2) * intensity
-            offset_45 = width_at_45 * 0.2 * np.sin(0.45 * np.pi * 2) * intensity
-            offset_62 = width_at_62 * 0.2 * np.sin(0.62 * np.pi * 2) * intensity
-            offset_78 = width_at_78 * 0.2 * np.sin(0.78 * np.pi * 2) * intensity
-            offset_100 = width_at_100 * 0.2 * np.sin(1.0 * np.pi * 2) * intensity
+            offset_45 = base_spread * 0.15 * np.sin(0.45 * np.pi * 2) * intensity
+            offset_78 = base_spread * 0.15 * np.sin(0.78 * np.pi * 2) * intensity
+            offset_100 = base_spread * 0.15 * np.sin(1.0 * np.pi * 2) * intensity
+            curl_left = width_at_62 * 0.2 * np.sin(0.62 * np.pi * 3) * intensity
+            curl_right = width_at_62 * 0.2 * np.sin(0.62 * np.pi * 3 + np.pi) * intensity
 
         return {
+            # Vertical spine bones
             'bone_base': {
                 'start_x': 0.0, 'start_y': 0.0,
-                'end_x': offset_25, 'end_y': petal_height * 0.25
-            },
-            'bone_mid': {
-                'start_x': offset_25, 'start_y': petal_height * 0.25,
                 'end_x': offset_45, 'end_y': petal_height * 0.45
             },
-            'bone_mid_upper': {
+            'bone_mid': {
                 'start_x': offset_45, 'start_y': petal_height * 0.45,
-                'end_x': offset_62, 'end_y': petal_height * 0.62
-            },
-            'bone_upper': {
-                'start_x': offset_62, 'start_y': petal_height * 0.62,
                 'end_x': offset_78, 'end_y': petal_height * 0.78
             },
             'bone_tip': {
                 'start_x': offset_78, 'start_y': petal_height * 0.78,
                 'end_x': offset_100, 'end_y': petal_height
+            },
+            # Horizontal edge bones at 62%
+            'bone_left': {
+                'start_x': 0.0, 'start_y': petal_height * 0.62,
+                'end_x': -width_at_62 / 2 + curl_left, 'end_y': petal_height * 0.62
+            },
+            'bone_right': {
+                'start_x': 0.0, 'start_y': petal_height * 0.62,
+                'end_x': width_at_62 / 2 - curl_right, 'end_y': petal_height * 0.62
             }
         }
 
@@ -133,12 +132,12 @@ class RoseCLIGeneratorV2:
 
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name} (5 independent bones)",
+            f"# Rigging for {petal_name} (v7 - T-shape 5 bones)",
             f"create_armature {armature_name};",
         ]
 
-        # Generate 5 independent bones (NO parent_bone commands!)
-        bone_names = ['bone_base', 'bone_mid', 'bone_mid_upper', 'bone_upper', 'bone_tip']
+        # Generate 5 independent bones - T-shape (NO parent_bone commands!)
+        bone_names = ['bone_base', 'bone_mid', 'bone_tip', 'bone_left', 'bone_right']
         for bone_name in bone_names:
             pos = bones[bone_name]
             rigging_cli.append(
