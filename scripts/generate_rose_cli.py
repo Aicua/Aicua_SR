@@ -69,32 +69,35 @@ class RoseCLIGenerator:
             f"bezier_surface {petal_name} {length:.4f} {base_width:.4f} {curvature:.4f} {twist_angle:.4f} {thickness:.6f};",
         ]
 
-        # Generate bone rigging with 5 independent bones (v6)
+        # Generate bone rigging with 5 independent bones - T-shape (v7)
         flexibility = 0.5 + (3 - layer_idx) * 0.15  # Outer more flexible
         bind_weight = flexibility * [1.0, 1.5, 2.0][layer_idx - 1] if layer_idx > 0 else 1.0
 
         armature_name = f"{petal_name}_arm"
 
-        # Calculate bone heights based on petal length
-        # 5 bones: base (0-25%), mid (25-45%), mid_upper (45-62%), upper (62-78%), tip (78-100%)
-        h_base = length * 0.25
-        h_mid = length * 0.45
-        h_mid_upper = length * 0.62
-        h_upper = length * 0.78
-        h_tip = length
+        # Calculate bone heights based on petal length - T-shape
+        # Vertical: base (0-45%), mid (45-78%), tip (78-100%)
+        # Horizontal: left/right at 62%
+        h_45 = length * 0.45
+        h_62 = length * 0.62
+        h_78 = length * 0.78
+        h_100 = length
+        half_width = base_width / 2
 
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name} (5 independent bones)",
+            f"# Rigging for {petal_name} (v7 - T-shape 5 bones)",
             f"create_armature {armature_name};",
         ]
 
-        # Generate 5 independent bones (NO parent_bone commands!)
-        rigging_cli.append(f"add_bone {armature_name} bone_base 0 0.0000 0 0 {h_base:.4f} 0;")
-        rigging_cli.append(f"add_bone {armature_name} bone_mid 0 {h_base:.4f} 0 0 {h_mid:.4f} 0;")
-        rigging_cli.append(f"add_bone {armature_name} bone_mid_upper 0 {h_mid:.4f} 0 0 {h_mid_upper:.4f} 0;")
-        rigging_cli.append(f"add_bone {armature_name} bone_upper 0 {h_mid_upper:.4f} 0 0 {h_upper:.4f} 0;")
-        rigging_cli.append(f"add_bone {armature_name} bone_tip 0 {h_upper:.4f} 0 0 {h_tip:.4f} 0;")
+        # Generate 5 independent bones - T-shape (NO parent_bone commands!)
+        # Vertical spine
+        rigging_cli.append(f"add_bone {armature_name} bone_base 0 0.0000 0 0 {h_45:.4f} 0;")
+        rigging_cli.append(f"add_bone {armature_name} bone_mid 0 {h_45:.4f} 0 0 {h_78:.4f} 0;")
+        rigging_cli.append(f"add_bone {armature_name} bone_tip 0 {h_78:.4f} 0 0 {h_100:.4f} 0;")
+        # Horizontal edges at 62%
+        rigging_cli.append(f"add_bone {armature_name} bone_left 0 {h_62:.4f} 0 {-half_width:.4f} {h_62:.4f} 0;")
+        rigging_cli.append(f"add_bone {armature_name} bone_right 0 {h_62:.4f} 0 {half_width:.4f} {h_62:.4f} 0;")
 
         rigging_cli.append(f"finalize_bones {armature_name};")
         rigging_cli.append(f"bind_armature {armature_name} {petal_name} {bind_weight:.4f};")
@@ -120,12 +123,12 @@ class RoseCLIGenerator:
 
         animation_cli = [
             f"",
-            f"# Animation for {petal_name} (5 independent bones)",
+            f"# Animation for {petal_name} (v7 - T-shape 5 bones)",
             f"wind_sway {armature_name} bone_base {frequency:.4f} {amplitude * 0.3:.4f} 0 1 0 {damping:.6f};",
-            f"wind_sway {armature_name} bone_mid {frequency:.4f} {amplitude * 0.5:.4f} 0 1 0 {damping:.6f};",
-            f"wind_sway {armature_name} bone_mid_upper {frequency:.4f} {amplitude * 0.8:.4f} 0 1 0 {damping:.6f};",
-            f"wind_sway {armature_name} bone_upper {frequency:.4f} {amplitude * 0.6:.4f} 0 1 0 {damping:.6f};",
-            f"wind_sway {armature_name} bone_tip {frequency:.4f} {amplitude:.4f} 0 1 0 {damping:.6f};",
+            f"wind_sway {armature_name} bone_mid {frequency:.4f} {amplitude * 0.6:.4f} 0 1 0 {damping:.6f};",
+            f"wind_sway {armature_name} bone_tip {frequency:.4f} {amplitude * 0.4:.4f} 0 1 0 {damping:.6f};",
+            f"wind_sway {armature_name} bone_left {frequency * 0.8:.4f} {amplitude * 0.5:.4f} -1 0 0 {damping:.6f};",
+            f"wind_sway {armature_name} bone_right {frequency * 0.8:.4f} {amplitude * 0.5:.4f} 1 0 0 {damping:.6f};",
         ]
 
         return {

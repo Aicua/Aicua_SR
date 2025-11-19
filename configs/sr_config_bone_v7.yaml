@@ -1,0 +1,106 @@
+# Symbolic Regression Configuration - Bone Rigging V7
+# 5 INDEPENDENT Bones - T-Shape Structure
+# 3 vertical spine + 2 horizontal edge bones
+
+general:
+  niterations: 100
+  populations: 20
+  population_size: 33
+  model_selection: "best"
+  verbosity: 1
+
+# Category-specific configurations
+categories:
+  bone_rigging_v7:
+    description: "5 Independent Bones T-Shape (3 spine + 2 edge)"
+    features:
+      - base_size
+      - layer_index
+      - petal_index
+      - opening_degree
+      - deformation_type
+      - intensity
+    targets:
+      # Bone Base (0% → 45%) - vertical spine lower
+      - bone_base_start_x
+      - bone_base_start_y
+      - bone_base_end_x
+      - bone_base_end_y
+      # Bone Mid (45% → 78%) - vertical spine upper
+      - bone_mid_start_x
+      - bone_mid_start_y
+      - bone_mid_end_x
+      - bone_mid_end_y
+      # Bone Tip (78% → 100%) - vertical tip
+      - bone_tip_start_x
+      - bone_tip_start_y
+      - bone_tip_end_x
+      - bone_tip_end_y
+      # Bone Left (at 62%) - horizontal left edge
+      - bone_left_start_x
+      - bone_left_start_y
+      - bone_left_end_x
+      - bone_left_end_y
+      # Bone Right (at 62%) - horizontal right edge
+      - bone_right_start_x
+      - bone_right_start_y
+      - bone_right_end_x
+      - bone_right_end_y
+    operators:
+      binary: ["+", "-", "*", "/"]
+      unary: ["sqrt", "log", "sin", "cos"]
+    constraints:
+      maxsize: 15
+
+# Quality thresholds
+quality:
+  min_r2_score: 0.90
+  max_complexity: 15
+  validation_split: 0.2
+
+# Physical constraints for generated parameters
+constraints:
+  bone_position_x:
+    min: -3.0
+    max: 3.0
+  bone_position_y:
+    min: 0.0
+    max: 10.0
+
+# Deformation types
+deformation_types:
+  0: "straight"
+  1: "s_curve"
+  2: "c_curve"
+  3: "wave"
+
+# V7 specific notes
+notes:
+  - "T-shape structure: 3 vertical spine + 2 horizontal edge bones"
+  - "bone_left/bone_right at 62% (widest point) control edge curl"
+  - "20 targets (5 bones × 4 coordinates)"
+  - "Supports 4 deformation types: straight, s_curve, c_curve, wave"
+  - "Each bone can be rotated independently without affecting others"
+  - "Better control of S-curve and C-curve via edge bones"
+
+# Bone structure diagram
+structure: |
+                      bone_tip (78%-100%)
+                           |
+                           |
+          bone_left ←── (62%) ──→ bone_right
+                           |
+                      bone_mid (45%-78%)
+                           |
+                      bone_base (0%-45%)
+
+# Example CLI output (no parent_bone commands)
+example_cli: |
+  create_armature petal_L1_P0_rig;
+  add_bone petal_L1_P0_rig bone_base 0.0000 0.0000 0 0.0000 0.5530 0;
+  add_bone petal_L1_P0_rig bone_mid 0.0000 0.5530 0 0.0000 0.9585 0;
+  add_bone petal_L1_P0_rig bone_tip 0.0000 0.9585 0 0.0000 1.2288 0;
+  add_bone petal_L1_P0_rig bone_left 0.0000 0.7619 0 -0.4800 0.7619 0;
+  add_bone petal_L1_P0_rig bone_right 0.0000 0.7619 0 0.4800 0.7619 0;
+  finalize_bones petal_L1_P0_rig;
+  bind_armature petal_L1_P0_rig petal_L1_P0;
