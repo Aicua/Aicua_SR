@@ -44,7 +44,7 @@ class CoTReasoner:
             "circle": (8, 16, 12),
             "ellipse": (6, 12, 8),
             "wing": (3, 6, 4),
-            "petal": (9, 11, 11),  # Updated: 11 CPs for hemispherical rose petal
+            "petal": (13, 15, 15),  # Updated: 15 CPs for realistic rose petal shape (V3)
             "leaf": (5, 9, 6),
             "heart": (6, 10, 7),
             "star": (10, 20, 10),
@@ -356,6 +356,33 @@ class CoTReasoner:
                 (half_width * x_factors[8], height * y_factors[8]),    # mid_lower_right
                 (half_width * x_factors[9], height * y_factors[9]),    # lower_right
                 (half_width * x_factors[10], height * y_factors[10]),  # base_right
+            ]
+        elif cp_count in [13, 14, 15]:
+            # 15 CPs for realistic rose petal shape (V3)
+            # Y positions (percentage of petal height)
+            # cp1: 0%, cp2: 5%, cp3: 25%, cp4: 45%, cp5: 62% (WIDEST), cp6: 78%, cp7: 92%, cp8: 100% (tip)
+            # cp9-cp14: mirror, cp15: close
+            y_positions = [0.0, 0.05, 0.25, 0.45, 0.62, 0.78, 0.92, 1.0, 0.92, 0.78, 0.62, 0.45, 0.25, 0.05, 0.0]
+
+            # X width factors (base narrow, widest at 62%, tip narrow)
+            x_factors = [0.0, 0.15, 0.45, 0.70, 0.85, 0.65, 0.30, 0.0, 0.30, 0.65, 0.85, 0.70, 0.45, 0.15, 0.0]
+
+            cps = [
+                (0.0, height * y_positions[0]),                                      # CP1: base center
+                (-half_width * x_factors[1], height * y_positions[1]),               # CP2: base left (5%)
+                (-half_width * x_factors[2], height * y_positions[2]),               # CP3: lower left (25%)
+                (-half_width * x_factors[3], height * y_positions[3]),               # CP4: mid-low left (45%)
+                (-half_width * x_factors[4], height * y_positions[4]),               # CP5: upper-mid left (62% - WIDEST)
+                (-half_width * x_factors[5] + tip_offset, height * y_positions[5]),  # CP6: upper left (78%)
+                (-half_width * x_factors[6] + tip_offset, height * y_positions[6]),  # CP7: near-tip left (92%)
+                (tip_offset, height * y_positions[7]),                               # CP8: tip center (100%)
+                (half_width * x_factors[8] + tip_offset, height * y_positions[8]),   # CP9: near-tip right (92%)
+                (half_width * x_factors[9] + tip_offset, height * y_positions[9]),   # CP10: upper right (78%)
+                (half_width * x_factors[10], height * y_positions[10]),              # CP11: upper-mid right (62% - WIDEST)
+                (half_width * x_factors[11], height * y_positions[11]),              # CP12: mid-low right (45%)
+                (half_width * x_factors[12], height * y_positions[12]),              # CP13: lower right (25%)
+                (half_width * x_factors[13], height * y_positions[13]),              # CP14: base right (5%)
+                (0.0, height * y_positions[14]),                                     # CP15: close spline (back to base)
             ]
         else:
             # General case: distribute points along curve

@@ -62,7 +62,7 @@ class TestBoneRiggingV7Dataset:
         assert (df['bone_base_start_y'] == 0.0).all()
 
     def test_vertical_bone_positions(self):
-        """Test that vertical bone positions are correct (bone_mid is reversed)."""
+        """Test that vertical bone positions are correct (connected spine)."""
         df = generate_bone_rigging_v7(n_samples=50)
 
         # For each sample, check bone positions
@@ -70,12 +70,15 @@ class TestBoneRiggingV7Dataset:
             base_end_y = df.iloc[idx]['bone_base_end_y']
             mid_start_y = df.iloc[idx]['bone_mid_start_y']
             mid_end_y = df.iloc[idx]['bone_mid_end_y']
+            tip_start_y = df.iloc[idx]['bone_tip_start_y']
             tip_end_y = df.iloc[idx]['bone_tip_end_y']
 
             assert base_end_y > 0, "bone_base_end_y should be positive"
-            # bone_mid is reversed: starts at 78%, ends at 45%
-            assert mid_start_y > mid_end_y, "bone_mid should point downward (reversed)"
-            assert tip_end_y > mid_start_y, "bone_tip should be highest"
+            # bone_mid is connected: starts at 45% (bone_base tail), ends at 78%
+            assert mid_end_y > mid_start_y, "bone_mid should point upward (connected)"
+            # bone_tip is connected: starts at 78% (bone_mid tail)
+            assert abs(tip_start_y - mid_end_y) < 0.01, "bone_tip head should connect to bone_mid tail"
+            assert tip_end_y > tip_start_y, "bone_tip should be highest"
 
     def test_horizontal_bones_at_same_height(self):
         """Test that bone_left and bone_right are at 62% height."""

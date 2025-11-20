@@ -71,11 +71,11 @@ class CoTRoseCLIGenerator:
         petal_height = max(cp[1] for cp in cps)
         petal_width = max(cp[0] for cp in cps) - min(cp[0] for cp in cps)
 
-        # Generate bone rigging (V6: 5 independent bones)
+        # Generate bone rigging (V7: T-shape 5 independent bones)
         rig_name = f"{petal_name}_rig"
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name} (v6 - 5 independent bones)",
+            f"# Rigging for {petal_name} (v7 - T-shape 5 bones)",
             f"create_armature {rig_name};",
         ]
 
@@ -83,19 +83,23 @@ class CoTRoseCLIGenerator:
         layer_idx_0based = layer_idx - 1
         layer_factor_bone = 0.8 + 0.1 * layer_idx_0based
 
-        # 5 bone height positions
-        h_base = petal_height * 0.25 * layer_factor_bone
-        h_mid = petal_height * 0.45 * layer_factor_bone
-        h_mid_upper = petal_height * 0.62 * layer_factor_bone
-        h_upper = petal_height * 0.78 * layer_factor_bone
-        h_tip = petal_height * layer_factor_bone
+        # V7 T-shape bone height positions
+        h_45 = petal_height * 0.45 * layer_factor_bone   # End of bone_base
+        h_62 = petal_height * 0.62 * layer_factor_bone   # Position of bone_left/bone_right
+        h_78 = petal_height * 0.78 * layer_factor_bone   # End of bone_mid
+        h_100 = petal_height * layer_factor_bone          # End of bone_tip
 
-        # Add 5 independent bones (NO parent_bone commands!)
-        rigging_cli.append(f"add_bone {rig_name} bone_base 0 0 0 0 {h_base:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_mid 0 {h_base:.4f} 0 0 {h_mid:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_mid_upper 0 {h_mid:.4f} 0 0 {h_mid_upper:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_upper 0 {h_mid_upper:.4f} 0 0 {h_upper:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_tip 0 {h_upper:.4f} 0 0 {h_tip:.4f} 0;")
+        # Width at 62% (widest point)
+        half_width = petal_width / 2
+
+        # Add 5 independent bones - T-shape (connected spine)
+        # Vertical spine (tail of each bone = head of next)
+        rigging_cli.append(f"add_bone {rig_name} bone_base 0 0 0 0 {h_45:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_mid 0 {h_45:.4f} 0 0 {h_78:.4f} 0;")  # connected
+        rigging_cli.append(f"add_bone {rig_name} bone_tip 0 {h_78:.4f} 0 0 {h_100:.4f} 0;")
+        # Horizontal edges at 62%
+        rigging_cli.append(f"add_bone {rig_name} bone_left 0 {h_62:.4f} 0 {-half_width:.4f} {h_62:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_right 0 {h_62:.4f} 0 {half_width:.4f} {h_62:.4f} 0;")
 
         rigging_cli.append(f"finalize_bones {rig_name};")
         flexibility = 0.5 + (3 - layer_idx) * 0.15
@@ -118,12 +122,12 @@ class CoTRoseCLIGenerator:
 
         animation_cli = [
             f"",
-            f"# Animation for {petal_name} (v6 - 5 independent bones)",
+            f"# Animation for {petal_name} (v7 - T-shape 5 bones)",
             f"wing_flap {rig_name} bone_base {frequency:.0f} {amplitude * 0.3:.1f} 0 -1 0 0;",
-            f"wing_flap {rig_name} bone_mid {frequency:.0f} {amplitude * 0.5:.1f} 0 -1 0 0.05;",
-            f"wing_flap {rig_name} bone_mid_upper {frequency:.0f} {amplitude * 0.8:.1f} 0 -1 0 0.1;",
-            f"wing_flap {rig_name} bone_upper {frequency:.0f} {amplitude * 0.6:.1f} 0 -1 0 0.15;",
-            f"wing_flap {rig_name} bone_tip {frequency * 1.5:.0f} {amplitude * 0.4:.1f} 0 -1 0 0.2;",
+            f"wing_flap {rig_name} bone_mid {frequency:.0f} {amplitude * 0.6:.1f} 0 -1 0 0.05;",
+            f"wing_flap {rig_name} bone_tip {frequency * 1.2:.0f} {amplitude * 0.4:.1f} 0 -1 0 0.1;",
+            f"wing_flap {rig_name} bone_left {frequency * 0.8:.0f} {amplitude * 0.5:.1f} -1 0 0 0.15;",
+            f"wing_flap {rig_name} bone_right {frequency * 0.8:.0f} {amplitude * 0.5:.1f} 1 0 0 0.15;",
         ]
 
         # Add bloom animation if requested (auto_rotate for smooth opening)
@@ -134,13 +138,57 @@ class CoTRoseCLIGenerator:
             animation_cli.append(f"")
             animation_cli.append(f"# Bloom animation (smooth opening)")
             animation_cli.append(
-                f"auto_rotate {rig_name} bone_mid_upper 1 0 0 {bloom_angle:.1f} {bloom_duration} smooth;"
+                f"auto_rotate {rig_name} bone_mid 1 0 0 {bloom_angle:.1f} {bloom_duration} smooth;"
             )
+
+        # Generate deformation rotate_bone commands (head/tail modes)
+        # Deformation type based on opening_degree
+        if opening_degree < 0.3:
+            deformation_type = 0  # straight
+        elif opening_degree < 0.6:
+            deformation_type = 1  # s_curve
+        elif opening_degree < 0.8:
+            deformation_type = 2  # c_curve
+        else:
+            deformation_type = 3  # wave
+
+        intensity = opening_degree
+        deformation_cli = [
+            f"",
+            f"# Deformation rotate_bone (head/tail modes)",
+        ]
+
+        if deformation_type == 1:  # S-curve
+            deformation_cli.extend([
+                f"rotate_bone {rig_name} bone_base {15 * intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_mid {-25 * intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_tip {15 * intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_left 0 {10 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_right 0 {-10 * intensity:.1f} 0 head;",
+            ])
+        elif deformation_type == 2:  # C-curve (cup shape)
+            deformation_cli.extend([
+                f"rotate_bone {rig_name} bone_base 0 {20 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_mid 0 {30 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_tip 0 {25 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_left 0 {40 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_right 0 {-40 * intensity:.1f} 0 head;",
+            ])
+        elif deformation_type == 3:  # Wave
+            deformation_cli.extend([
+                f"rotate_bone {rig_name} bone_base {10 * intensity:.1f} {5 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_mid {-15 * intensity:.1f} {-10 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_tip {20 * intensity:.1f} {8 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_left {5 * intensity:.1f} {15 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_right {-5 * intensity:.1f} {-15 * intensity:.1f} 0 head;",
+            ])
+        # straight (type 0) has no deformation
 
         return {
             "geometry": geometry_cli,
             "rigging": rigging_cli,
             "animation": animation_cli,
+            "deformation": deformation_cli,
             "cot_result": cot_result,
         }
 
@@ -181,6 +229,7 @@ class CoTRoseCLIGenerator:
                 all_cli.extend(petal_data["geometry"])
                 all_cli.extend(petal_data["rigging"])
                 all_cli.extend(petal_data["animation"])
+                all_cli.extend(petal_data["deformation"])
                 all_cli.append("")
 
                 # Track CP statistics
