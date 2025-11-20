@@ -135,6 +135,53 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
         bone_right_end_x = width_at_62 / 2 - curl_right + noise()
         bone_right_end_y = h_62
 
+        # Calculate rotations for head and tail modes
+        # head mode: head fixed, tail rotates around head
+        # tail mode: tail fixed, head rotates around tail
+
+        # Initialize rotations (in degrees)
+        rot_noise = lambda: np.random.uniform(-2, 2)  # Small noise
+
+        # Default rotations (straight)
+        rotations = {
+            'bone_base_head': [0, 0, 0],
+            'bone_base_tail': [0, 0, 0],
+            'bone_mid_head': [0, 0, 0],
+            'bone_mid_tail': [0, 0, 0],
+            'bone_tip_head': [0, 0, 0],
+            'bone_tip_tail': [0, 0, 0],
+            'bone_left_head': [0, 0, 0],
+            'bone_left_tail': [0, 0, 0],
+            'bone_right_head': [0, 0, 0],
+            'bone_right_tail': [0, 0, 0],
+        }
+
+        if deformation_type == 1:  # S-curve
+            # Vertical S: base right, mid left, tip right
+            rotations['bone_base_head'] = [15 * intensity, 0, 0]
+            rotations['bone_mid_head'] = [-25 * intensity, 0, 0]
+            rotations['bone_tip_head'] = [15 * intensity, 0, 0]
+            # Slight edge curl
+            rotations['bone_left_head'] = [0, 10 * intensity, 0]
+            rotations['bone_right_head'] = [0, -10 * intensity, 0]
+
+        elif deformation_type == 2:  # C-curve (cup shape)
+            # All curve forward/inward
+            rotations['bone_base_head'] = [0, 20 * intensity, 0]
+            rotations['bone_mid_head'] = [0, 30 * intensity, 0]
+            rotations['bone_tip_head'] = [0, 25 * intensity, 0]
+            # Edges curl inward significantly
+            rotations['bone_left_head'] = [0, 40 * intensity, 0]
+            rotations['bone_right_head'] = [0, -40 * intensity, 0]
+
+        elif deformation_type == 3:  # Wave
+            # Oscillating pattern
+            rotations['bone_base_head'] = [10 * np.sin(0.45 * np.pi * 2) * intensity, 0, 0]
+            rotations['bone_mid_head'] = [10 * np.sin(0.78 * np.pi * 2) * intensity, 0, 0]
+            rotations['bone_tip_head'] = [10 * np.sin(1.0 * np.pi * 2) * intensity, 0, 0]
+            rotations['bone_left_head'] = [0, 15 * np.sin(0.62 * np.pi * 3) * intensity, 0]
+            rotations['bone_right_head'] = [0, 15 * np.sin(0.62 * np.pi * 3 + np.pi) * intensity, 0]
+
         row = {
             # Features
             'base_size': base_size,
@@ -143,31 +190,66 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
             'opening_degree': opening_degree,
             'deformation_type': deformation_type,
             'intensity': intensity,
-            # Targets - bone_base
+            # Targets - bone_base positions
             'bone_base_start_x': bone_base_start_x,
             'bone_base_start_y': bone_base_start_y,
             'bone_base_end_x': bone_base_end_x,
             'bone_base_end_y': bone_base_end_y,
-            # Targets - bone_mid
+            # Targets - bone_mid positions
             'bone_mid_start_x': bone_mid_start_x,
             'bone_mid_start_y': bone_mid_start_y,
             'bone_mid_end_x': bone_mid_end_x,
             'bone_mid_end_y': bone_mid_end_y,
-            # Targets - bone_tip
+            # Targets - bone_tip positions
             'bone_tip_start_x': bone_tip_start_x,
             'bone_tip_start_y': bone_tip_start_y,
             'bone_tip_end_x': bone_tip_end_x,
             'bone_tip_end_y': bone_tip_end_y,
-            # Targets - bone_left
+            # Targets - bone_left positions
             'bone_left_start_x': bone_left_start_x,
             'bone_left_start_y': bone_left_start_y,
             'bone_left_end_x': bone_left_end_x,
             'bone_left_end_y': bone_left_end_y,
-            # Targets - bone_right
+            # Targets - bone_right positions
             'bone_right_start_x': bone_right_start_x,
             'bone_right_start_y': bone_right_start_y,
             'bone_right_end_x': bone_right_end_x,
             'bone_right_end_y': bone_right_end_y,
+            # Targets - bone_base rotations
+            'bone_base_head_rx': rotations['bone_base_head'][0] + rot_noise(),
+            'bone_base_head_ry': rotations['bone_base_head'][1] + rot_noise(),
+            'bone_base_head_rz': rotations['bone_base_head'][2] + rot_noise(),
+            'bone_base_tail_rx': rotations['bone_base_tail'][0] + rot_noise(),
+            'bone_base_tail_ry': rotations['bone_base_tail'][1] + rot_noise(),
+            'bone_base_tail_rz': rotations['bone_base_tail'][2] + rot_noise(),
+            # Targets - bone_mid rotations
+            'bone_mid_head_rx': rotations['bone_mid_head'][0] + rot_noise(),
+            'bone_mid_head_ry': rotations['bone_mid_head'][1] + rot_noise(),
+            'bone_mid_head_rz': rotations['bone_mid_head'][2] + rot_noise(),
+            'bone_mid_tail_rx': rotations['bone_mid_tail'][0] + rot_noise(),
+            'bone_mid_tail_ry': rotations['bone_mid_tail'][1] + rot_noise(),
+            'bone_mid_tail_rz': rotations['bone_mid_tail'][2] + rot_noise(),
+            # Targets - bone_tip rotations
+            'bone_tip_head_rx': rotations['bone_tip_head'][0] + rot_noise(),
+            'bone_tip_head_ry': rotations['bone_tip_head'][1] + rot_noise(),
+            'bone_tip_head_rz': rotations['bone_tip_head'][2] + rot_noise(),
+            'bone_tip_tail_rx': rotations['bone_tip_tail'][0] + rot_noise(),
+            'bone_tip_tail_ry': rotations['bone_tip_tail'][1] + rot_noise(),
+            'bone_tip_tail_rz': rotations['bone_tip_tail'][2] + rot_noise(),
+            # Targets - bone_left rotations
+            'bone_left_head_rx': rotations['bone_left_head'][0] + rot_noise(),
+            'bone_left_head_ry': rotations['bone_left_head'][1] + rot_noise(),
+            'bone_left_head_rz': rotations['bone_left_head'][2] + rot_noise(),
+            'bone_left_tail_rx': rotations['bone_left_tail'][0] + rot_noise(),
+            'bone_left_tail_ry': rotations['bone_left_tail'][1] + rot_noise(),
+            'bone_left_tail_rz': rotations['bone_left_tail'][2] + rot_noise(),
+            # Targets - bone_right rotations
+            'bone_right_head_rx': rotations['bone_right_head'][0] + rot_noise(),
+            'bone_right_head_ry': rotations['bone_right_head'][1] + rot_noise(),
+            'bone_right_head_rz': rotations['bone_right_head'][2] + rot_noise(),
+            'bone_right_tail_rx': rotations['bone_right_tail'][0] + rot_noise(),
+            'bone_right_tail_ry': rotations['bone_right_tail'][1] + rot_noise(),
+            'bone_right_tail_rz': rotations['bone_right_tail'][2] + rot_noise(),
         }
 
         data.append(row)
@@ -194,13 +276,16 @@ def main():
 
     print(f"\nDataset shape: {df.shape}")
     print(f"Features: base_size, layer_index, petal_index, opening_degree, deformation_type, intensity")
-    print(f"Targets: 20 (5 bones × 4 coordinates)")
+    print(f"Targets: 50 (5 bones × [4 coords + 6 head rot + 6 tail rot])")
     print(f"\nBone structure (T-shape):")
     print(f"  - bone_base (0% → 45%)   : vertical spine lower")
-    print(f"  - bone_mid (45% → 78%)   : vertical spine upper")
+    print(f"  - bone_mid (78% → 45%)   : vertical spine upper (reversed)")
     print(f"  - bone_tip (78% → 100%)  : vertical tip")
     print(f"  - bone_left (at 62%)     : horizontal left edge")
     print(f"  - bone_right (at 62%)    : horizontal right edge")
+    print(f"\nRotation modes:")
+    print(f"  - head mode: head fixed, tail rotates (rx, ry, rz)")
+    print(f"  - tail mode: tail fixed, head rotates (rx, ry, rz)")
     print(f"\nSaved to: {output_path}")
 
     # Show sample
