@@ -44,10 +44,10 @@ class TestBoneRiggingV7Dataset:
                 assert col in df.columns, f"Missing target: {col}"
 
     def test_total_columns(self):
-        """Test that dataset has correct total columns (6 features + 20 targets)."""
+        """Test that dataset has correct total columns (6 features + 50 targets)."""
         df = generate_bone_rigging_v7(n_samples=10)
-        # 6 features + 20 targets = 26 columns
-        assert len(df.columns) == 26
+        # 6 features + 20 positions + 30 rotations = 56 columns
+        assert len(df.columns) == 56
 
     def test_deformation_types(self):
         """Test that all deformation types (0-3) are present."""
