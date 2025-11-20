@@ -2,14 +2,14 @@
 """
 Generate bone rigging v7 dataset with T-shape structure.
 
-5 Independent Bones - T-Shape:
+5 Independent Bones - T-Shape (Connected Spine):
 - bone_base (0% → 45%)      - vertical spine lower
-- bone_mid (78% → 45%)      - vertical spine upper (reversed)
-- bone_tip (78% → 100%)     - vertical tip
+- bone_mid (45% → 78%)      - vertical spine upper (connected to bone_base tail)
+- bone_tip (78% → 100%)     - vertical tip (connected to bone_mid tail)
 - bone_left (at 62%)        - horizontal left edge
 - bone_right (at 62%)       - horizontal right edge
 
-Key advantage: bone_left/bone_right control edge curl independently.
+Key advantage: Connected spine creates continuous deformation chain.
 """
 
 import numpy as np
@@ -107,11 +107,11 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
         bone_base_end_x = offset_base + noise()
         bone_base_end_y = h_45
 
-        # bone_mid: 78% → 45% (reversed - head at top, tail at bottom)
-        bone_mid_start_x = offset_mid
-        bone_mid_start_y = h_78
-        bone_mid_end_x = offset_base + noise()
-        bone_mid_end_y = h_45
+        # bone_mid: 45% → 78% (connected - head at bone_base tail, tail at bone_tip head)
+        bone_mid_start_x = offset_base + noise()
+        bone_mid_start_y = h_45
+        bone_mid_end_x = offset_mid
+        bone_mid_end_y = h_78
 
         # bone_tip: 78% → 100%
         bone_tip_start_x = offset_mid

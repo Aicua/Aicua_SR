@@ -186,18 +186,18 @@ class SplineRoseCLIGenerator:
             half_width = petal_width / 2
 
             return {
-                # 5 Independent Bones - T-Shape (no parent-child)
-                # Vertical spine
+                # 5 Independent Bones - T-Shape (connected spine)
+                # Vertical spine (tail of each bone = head of next)
                 'bone_base_start_x': 0.0,
                 'bone_base_start_y': 0.0,
                 'bone_base_end_x': 0.0,
                 'bone_base_end_y': h_45,
                 'bone_mid_start_x': 0.0,
-                'bone_mid_start_y': h_78,
+                'bone_mid_start_y': h_45,  # Connected to bone_base tail
                 'bone_mid_end_x': 0.0,
-                'bone_mid_end_y': h_45,
+                'bone_mid_end_y': h_78,
                 'bone_tip_start_x': 0.0,
-                'bone_tip_start_y': h_78,
+                'bone_tip_start_y': h_78,  # Connected to bone_mid tail
                 'bone_tip_end_x': 0.0,
                 'bone_tip_end_y': h_100,
                 # Horizontal edges at 62%
@@ -325,10 +325,55 @@ class SplineRoseCLIGenerator:
             f"wing_flap {rig_name} bone_right {ap['frequency'] * 0.8:.0f} {ap['amplitude'] * 0.5:.1f} 1 0 0 0.15;",
         ]
 
+        # Generate deformation rotate_bone commands (head/tail modes)
+        # Deformation type based on opening_degree
+        # 0-0.3: straight, 0.3-0.6: s_curve, 0.6-0.8: c_curve, 0.8-1.0: wave
+        if opening_degree < 0.3:
+            deformation_type = 0  # straight
+        elif opening_degree < 0.6:
+            deformation_type = 1  # s_curve
+        elif opening_degree < 0.8:
+            deformation_type = 2  # c_curve
+        else:
+            deformation_type = 3  # wave
+
+        intensity = opening_degree
+        deformation_cli = [
+            f"",
+            f"# Deformation rotate_bone (head/tail modes)",
+        ]
+
+        if deformation_type == 1:  # S-curve
+            deformation_cli.extend([
+                f"rotate_bone {rig_name} bone_base {15 * intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_mid {-25 * intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_tip {15 * intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_left 0 {10 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_right 0 {-10 * intensity:.1f} 0 head;",
+            ])
+        elif deformation_type == 2:  # C-curve (cup shape)
+            deformation_cli.extend([
+                f"rotate_bone {rig_name} bone_base 0 {20 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_mid 0 {30 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_tip 0 {25 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_left 0 {40 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_right 0 {-40 * intensity:.1f} 0 head;",
+            ])
+        elif deformation_type == 3:  # Wave
+            deformation_cli.extend([
+                f"rotate_bone {rig_name} bone_base {10 * intensity:.1f} {5 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_mid {-15 * intensity:.1f} {-10 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_tip {20 * intensity:.1f} {8 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_left {5 * intensity:.1f} {15 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_right {-5 * intensity:.1f} {-15 * intensity:.1f} 0 head;",
+            ])
+        # straight (type 0) has no deformation
+
         return {
             'geometry': geometry_cli,
             'rigging': rigging_cli,
             'animation': animation_cli,
+            'deformation': deformation_cli,
             'params': sp,
         }
 
@@ -362,6 +407,7 @@ class SplineRoseCLIGenerator:
                 all_cli.extend(petal_data['geometry'])
                 all_cli.extend(petal_data['rigging'])
                 all_cli.extend(petal_data['animation'])
+                all_cli.extend(petal_data['deformation'])
                 all_cli.append("")
 
                 total_petals += 1
