@@ -21,31 +21,66 @@ categories:
       - deformation_type
       - intensity
     targets:
-      # Bone Base (0% → 45%) - vertical spine lower
+      # Bone Base (0% → 45%) - positions
       - bone_base_start_x
       - bone_base_start_y
       - bone_base_end_x
       - bone_base_end_y
-      # Bone Mid (45% → 78%) - vertical spine upper
+      # Bone Mid (78% → 45%) - positions (reversed)
       - bone_mid_start_x
       - bone_mid_start_y
       - bone_mid_end_x
       - bone_mid_end_y
-      # Bone Tip (78% → 100%) - vertical tip
+      # Bone Tip (78% → 100%) - positions
       - bone_tip_start_x
       - bone_tip_start_y
       - bone_tip_end_x
       - bone_tip_end_y
-      # Bone Left (at 62%) - horizontal left edge
+      # Bone Left (at 62%) - positions
       - bone_left_start_x
       - bone_left_start_y
       - bone_left_end_x
       - bone_left_end_y
-      # Bone Right (at 62%) - horizontal right edge
+      # Bone Right (at 62%) - positions
       - bone_right_start_x
       - bone_right_start_y
       - bone_right_end_x
       - bone_right_end_y
+      # Bone Base - rotations (head mode: head fixed, tail rotates)
+      - bone_base_head_rx
+      - bone_base_head_ry
+      - bone_base_head_rz
+      - bone_base_tail_rx
+      - bone_base_tail_ry
+      - bone_base_tail_rz
+      # Bone Mid - rotations
+      - bone_mid_head_rx
+      - bone_mid_head_ry
+      - bone_mid_head_rz
+      - bone_mid_tail_rx
+      - bone_mid_tail_ry
+      - bone_mid_tail_rz
+      # Bone Tip - rotations
+      - bone_tip_head_rx
+      - bone_tip_head_ry
+      - bone_tip_head_rz
+      - bone_tip_tail_rx
+      - bone_tip_tail_ry
+      - bone_tip_tail_rz
+      # Bone Left - rotations
+      - bone_left_head_rx
+      - bone_left_head_ry
+      - bone_left_head_rz
+      - bone_left_tail_rx
+      - bone_left_tail_ry
+      - bone_left_tail_rz
+      # Bone Right - rotations
+      - bone_right_head_rx
+      - bone_right_head_ry
+      - bone_right_head_rz
+      - bone_right_tail_rx
+      - bone_right_tail_ry
+      - bone_right_tail_rz
     operators:
       binary: ["+", "-", "*", "/"]
       unary: ["sqrt", "log", "sin", "cos"]
@@ -78,10 +113,11 @@ deformation_types:
 notes:
   - "T-shape structure: 3 vertical spine + 2 horizontal edge bones"
   - "bone_left/bone_right at 62% (widest point) control edge curl"
-  - "20 targets (5 bones × 4 coordinates)"
+  - "50 targets (5 bones × [4 coords + 6 rotations])"
   - "Supports 4 deformation types: straight, s_curve, c_curve, wave"
-  - "Each bone can be rotated independently without affecting others"
-  - "Better control of S-curve and C-curve via edge bones"
+  - "Each bone has head and tail rotation modes"
+  - "head mode: head fixed, tail rotates around head"
+  - "tail mode: tail fixed, head rotates around tail"
 
 # Bone structure diagram
 structure: |
@@ -90,17 +126,23 @@ structure: |
                            |
           bone_left ←── (62%) ──→ bone_right
                            |
-                      bone_mid (45%-78%)
+                      bone_mid (78%-45%) [reversed]
                            |
                       bone_base (0%-45%)
 
-# Example CLI output (no parent_bone commands)
+# Example CLI output with rotate_bone commands
 example_cli: |
   create_armature petal_L1_P0_rig;
   add_bone petal_L1_P0_rig bone_base 0.0000 0.0000 0 0.0000 0.5530 0;
-  add_bone petal_L1_P0_rig bone_mid 0.0000 0.5530 0 0.0000 0.9585 0;
+  add_bone petal_L1_P0_rig bone_mid 0.0000 0.9585 0 0.0000 0.5530 0;
   add_bone petal_L1_P0_rig bone_tip 0.0000 0.9585 0 0.0000 1.2288 0;
   add_bone petal_L1_P0_rig bone_left 0.0000 0.7619 0 -0.4800 0.7619 0;
   add_bone petal_L1_P0_rig bone_right 0.0000 0.7619 0 0.4800 0.7619 0;
   finalize_bones petal_L1_P0_rig;
   bind_armature petal_L1_P0_rig petal_L1_P0;
+  # Deformation rotations (S-curve example)
+  rotate_bone petal_L1_P0_rig bone_base 15 0 0 head;
+  rotate_bone petal_L1_P0_rig bone_mid -25 0 0 head;
+  rotate_bone petal_L1_P0_rig bone_tip 15 0 0 head;
+  rotate_bone petal_L1_P0_rig bone_left 0 10 0 head;
+  rotate_bone petal_L1_P0_rig bone_right 0 -10 0 head;
