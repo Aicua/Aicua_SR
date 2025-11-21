@@ -100,19 +100,58 @@ class FlowerCLIGeneratorV1:
             'rotate_z': rotate_z,
         }
 
-    def generate_petal_geometry_simple(self, petal_name: str, base_size: float,
+    def generate_petal_geometry_spline(self, petal_name: str, base_size: float,
                                        opening_degree: float, layer_index: int) -> list:
-        """Generate simplified petal geometry using bezier_surface."""
+        """Generate petal geometry using 15-CP spline (matching petal_spline_v3.csv)."""
+        import random
+
+        # Layer factor
         layer_factor = 0.8 + 0.1 * layer_index
+
+        # Petal height
         petal_height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
-        base_width = base_size * 0.30 * layer_factor * (1 + opening_degree * 0.2) * 2
-        curvature = 0.3 + opening_degree * 0.4
-        twist_angle = layer_index * 5
-        thickness = 0.01 * base_size
+
+        # Base spread
+        base_spread = base_size * 0.30 * layer_factor * (1 + opening_degree * 0.2)
+
+        # Width calculations
+        base_width = base_spread * 0.5  # Base narrow
+        lower_width = base_spread * 1.05
+        mid_low_width = base_spread * 1.4
+        upper_mid_width = base_spread * 1.6  # WIDEST at 62%
+        upper_width = base_spread * 1.3
+        near_tip_width = base_spread * 0.8
+
+        # Tip offset
+        tip_x_offset = base_size * 0.02 * layer_index * opening_degree
+
+        # 15 Control Points (simplified, no noise)
+        cp1 = (0.0, 0.0)
+        cp2 = (-base_width * 0.5, petal_height * 0.05)
+        cp3 = (-lower_width * 0.5, petal_height * 0.25)
+        cp4 = (-mid_low_width * 0.5, petal_height * 0.45)
+        cp5 = (-upper_mid_width * 0.5, petal_height * 0.62)
+        cp6 = (-upper_width * 0.5, petal_height * 0.78)
+        cp7 = (-near_tip_width * 0.5, petal_height * 0.92)
+        cp8 = (tip_x_offset, petal_height)
+        cp9 = (near_tip_width * 0.5, petal_height * 0.92)
+        cp10 = (upper_width * 0.5, petal_height * 0.78)
+        cp11 = (upper_mid_width * 0.5, petal_height * 0.62)
+        cp12 = (mid_low_width * 0.5, petal_height * 0.45)
+        cp13 = (lower_width * 0.5, petal_height * 0.25)
+        cp14 = (base_width * 0.5, petal_height * 0.05)
+        cp15 = (0.0, 0.0)
+
+        # Build spline command
+        cp_str = " ".join([f"{x:.4f} {y:.4f}" for x, y in [cp1, cp2, cp3, cp4, cp5, cp6, cp7, cp8, cp9, cp10, cp11, cp12, cp13, cp14, cp15]])
+
+        # Extrude depth (ultra-thin)
+        extrude_depth = random.uniform(0.001, 0.0015)
 
         return [
             f"obj {petal_name};",
-            f"bezier_surface {petal_name} {petal_height:.4f} {base_width:.4f} {curvature:.4f} {twist_angle:.4f} {thickness:.6f};",
+            f"spline {cp_str};",
+            f"sketch_extrude {petal_name} {extrude_depth:.4f};",
         ]
 
     def generate_bone_rigging_v7(self, petal_name: str, base_size: float,
@@ -226,9 +265,9 @@ class FlowerCLIGeneratorV1:
             "",
         ])
 
-        # 1. Geometry
-        cli.append("# Geometry")
-        cli.extend(self.generate_petal_geometry_simple(petal_name, base_size, opening_degree, layer_index))
+        # 1. Geometry (15-CP spline)
+        cli.append("# Geometry (15-CP spline)")
+        cli.extend(self.generate_petal_geometry_spline(petal_name, base_size, opening_degree, layer_index))
         cli.append("")
 
         # 2. Rigging

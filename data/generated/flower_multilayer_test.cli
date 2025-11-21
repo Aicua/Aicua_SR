@@ -17,9 +17,10 @@
 #   Rotation: face_outward = angle + 90° = 90.00°
 #   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L0_P0;
-bezier_surface petal_L0_P0 1.4880 1.1328 0.6600 0.0000 0.020000;
+spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
+sketch_extrude petal_L0_P0 0.0013;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L0_P0_rig;
@@ -46,9 +47,10 @@ rotate petal_L0_P0 0.00 1.00 90.00;
 #   Rotation: face_outward = angle + 90° = 162.00°
 #   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L0_P1;
-bezier_surface petal_L0_P1 1.4880 1.1328 0.6600 0.0000 0.020000;
+spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
+sketch_extrude petal_L0_P1 0.0011;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L0_P1_rig;
@@ -75,9 +77,10 @@ rotate petal_L0_P1 0.00 1.00 162.00;
 #   Rotation: face_outward = angle + 90° = 234.00°
 #   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L0_P2;
-bezier_surface petal_L0_P2 1.4880 1.1328 0.6600 0.0000 0.020000;
+spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
+sketch_extrude petal_L0_P2 0.0012;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L0_P2_rig;
@@ -104,9 +107,10 @@ rotate petal_L0_P2 0.00 1.00 234.00;
 #   Rotation: face_outward = angle + 90° = 306.00°
 #   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L0_P3;
-bezier_surface petal_L0_P3 1.4880 1.1328 0.6600 0.0000 0.020000;
+spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
+sketch_extrude petal_L0_P3 0.0011;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L0_P3_rig;
@@ -133,9 +137,10 @@ rotate petal_L0_P3 0.00 1.00 306.00;
 #   Rotation: face_outward = angle + 90° = 378.00°
 #   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L0_P4;
-bezier_surface petal_L0_P4 1.4880 1.1328 0.6600 0.0000 0.020000;
+spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
+sketch_extrude petal_L0_P4 0.0010;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L0_P4_rig;
@@ -165,9 +170,10 @@ rotate petal_L0_P4 0.00 1.00 378.00;
 #   Rotation: face_outward = angle + 90° = 90.00°
 #   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L1_P0;
-bezier_surface petal_L1_P0 1.7820 1.2312 0.5800 5.0000 0.020000;
+spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
+sketch_extrude petal_L1_P0 0.0014;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L1_P0_rig;
@@ -194,9 +200,10 @@ rotate petal_L1_P0 0.00 6.00 90.00;
 #   Rotation: face_outward = angle + 90° = 135.00°
 #   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L1_P1;
-bezier_surface petal_L1_P1 1.7820 1.2312 0.5800 5.0000 0.020000;
+spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
+sketch_extrude petal_L1_P1 0.0015;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L1_P1_rig;
@@ -223,9 +230,10 @@ rotate petal_L1_P1 0.00 6.00 135.00;
 #   Rotation: face_outward = angle + 90° = 180.00°
 #   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L1_P2;
-bezier_surface petal_L1_P2 1.7820 1.2312 0.5800 5.0000 0.020000;
+spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
+sketch_extrude petal_L1_P2 0.0013;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L1_P2_rig;
@@ -252,9 +260,10 @@ rotate petal_L1_P2 0.00 6.00 180.00;
 #   Rotation: face_outward = angle + 90° = 225.00°
 #   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L1_P3;
-bezier_surface petal_L1_P3 1.7820 1.2312 0.5800 5.0000 0.020000;
+spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
+sketch_extrude petal_L1_P3 0.0011;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L1_P3_rig;
@@ -281,9 +290,10 @@ rotate petal_L1_P3 0.00 6.00 225.00;
 #   Rotation: face_outward = angle + 90° = 270.00°
 #   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L1_P4;
-bezier_surface petal_L1_P4 1.7820 1.2312 0.5800 5.0000 0.020000;
+spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
+sketch_extrude petal_L1_P4 0.0015;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L1_P4_rig;
@@ -310,9 +320,10 @@ rotate petal_L1_P4 0.00 6.00 270.00;
 #   Rotation: face_outward = angle + 90° = 315.00°
 #   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L1_P5;
-bezier_surface petal_L1_P5 1.7820 1.2312 0.5800 5.0000 0.020000;
+spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
+sketch_extrude petal_L1_P5 0.0011;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L1_P5_rig;
@@ -339,9 +350,10 @@ rotate petal_L1_P5 0.00 6.00 315.00;
 #   Rotation: face_outward = angle + 90° = 360.00°
 #   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L1_P6;
-bezier_surface petal_L1_P6 1.7820 1.2312 0.5800 5.0000 0.020000;
+spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
+sketch_extrude petal_L1_P6 0.0013;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L1_P6_rig;
@@ -368,9 +380,10 @@ rotate petal_L1_P6 0.00 6.00 360.00;
 #   Rotation: face_outward = angle + 90° = 405.00°
 #   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L1_P7;
-bezier_surface petal_L1_P7 1.7820 1.2312 0.5800 5.0000 0.020000;
+spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
+sketch_extrude petal_L1_P7 0.0015;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L1_P7_rig;
@@ -400,9 +413,10 @@ rotate petal_L1_P7 0.00 6.00 405.00;
 #   Rotation: face_outward = angle + 90° = 90.00°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P0;
-bezier_surface petal_L2_P0 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P0 0.0012;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P0_rig;
@@ -429,9 +443,10 @@ rotate petal_L2_P0 0.00 15.00 90.00;
 #   Rotation: face_outward = angle + 90° = 117.69°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P1;
-bezier_surface petal_L2_P1 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P1 0.0015;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P1_rig;
@@ -458,9 +473,10 @@ rotate petal_L2_P1 0.00 15.00 117.69;
 #   Rotation: face_outward = angle + 90° = 145.38°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P2;
-bezier_surface petal_L2_P2 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P2 0.0010;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P2_rig;
@@ -487,9 +503,10 @@ rotate petal_L2_P2 0.00 15.00 145.38;
 #   Rotation: face_outward = angle + 90° = 173.08°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P3;
-bezier_surface petal_L2_P3 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P3 0.0012;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P3_rig;
@@ -516,9 +533,10 @@ rotate petal_L2_P3 0.00 15.00 173.08;
 #   Rotation: face_outward = angle + 90° = 200.77°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P4;
-bezier_surface petal_L2_P4 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P4 0.0014;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P4_rig;
@@ -545,9 +563,10 @@ rotate petal_L2_P4 0.00 15.00 200.77;
 #   Rotation: face_outward = angle + 90° = 228.46°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P5;
-bezier_surface petal_L2_P5 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P5 0.0012;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P5_rig;
@@ -574,9 +593,10 @@ rotate petal_L2_P5 0.00 15.00 228.46;
 #   Rotation: face_outward = angle + 90° = 256.15°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P6;
-bezier_surface petal_L2_P6 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P6 0.0011;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P6_rig;
@@ -603,9 +623,10 @@ rotate petal_L2_P6 0.00 15.00 256.15;
 #   Rotation: face_outward = angle + 90° = 283.85°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P7;
-bezier_surface petal_L2_P7 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P7 0.0011;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P7_rig;
@@ -632,9 +653,10 @@ rotate petal_L2_P7 0.00 15.00 283.85;
 #   Rotation: face_outward = angle + 90° = 311.54°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P8;
-bezier_surface petal_L2_P8 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P8 0.0013;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P8_rig;
@@ -661,9 +683,10 @@ rotate petal_L2_P8 0.00 15.00 311.54;
 #   Rotation: face_outward = angle + 90° = 339.23°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P9;
-bezier_surface petal_L2_P9 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P9 0.0013;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P9_rig;
@@ -690,9 +713,10 @@ rotate petal_L2_P9 0.00 15.00 339.23;
 #   Rotation: face_outward = angle + 90° = 366.92°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P10;
-bezier_surface petal_L2_P10 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P10 0.0011;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P10_rig;
@@ -719,9 +743,10 @@ rotate petal_L2_P10 0.00 15.00 366.92;
 #   Rotation: face_outward = angle + 90° = 394.62°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P11;
-bezier_surface petal_L2_P11 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P11 0.0013;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P11_rig;
@@ -748,9 +773,10 @@ rotate petal_L2_P11 0.00 15.00 394.62;
 #   Rotation: face_outward = angle + 90° = 422.31°
 #   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
-# Geometry
+# Geometry (15-CP spline)
 obj petal_L2_P12;
-bezier_surface petal_L2_P12 2.1000 1.3200 0.5000 10.0000 0.020000;
+spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
+sketch_extrude petal_L2_P12 0.0011;
 
 # Rigging (v7 - T-shape 5 bones)
 create_armature petal_L2_P12_rig;
