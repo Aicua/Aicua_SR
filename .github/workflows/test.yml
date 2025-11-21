@@ -108,6 +108,57 @@ jobs:
 
           echo "✓ CoT CLI generation test passed"
 
+      - name: Test Flower CLI with MOVE+ROTATE
+        run: |
+          # Generate positioning dataset first
+          python scripts/generate_petal_positioning_v1.py
+
+          # Train SR models (mock)
+          python scripts/train_sr_positioning_v1.py
+
+          # Generate flower CLI with 3 petals
+          python scripts/generate_flower_cli_v1.py --petals 3 --radius 5.0 --output /tmp/test_flower.cli
+
+          echo "Generated Flower CLI preview:"
+          head -50 /tmp/test_flower.cli
+
+          # Validate MOVE commands
+          if ! grep -q "^move" /tmp/test_flower.cli; then
+            echo "Error: No move commands found"
+            exit 1
+          fi
+
+          # Validate ROTATE commands
+          if ! grep -q "^rotate" /tmp/test_flower.cli; then
+            echo "Error: No rotate commands found"
+            exit 1
+          fi
+
+          # Validate CoT Positioning Reasoning
+          if ! grep -q "CoT Positioning Reasoning" /tmp/test_flower.cli; then
+            echo "Error: No CoT Positioning Reasoning found"
+            exit 1
+          fi
+
+          # Count move/rotate commands (should have 3 each for 3 petals)
+          move_count=$(grep -c "^move" /tmp/test_flower.cli || true)
+          rotate_count=$(grep -c "^rotate" /tmp/test_flower.cli || true)
+
+          echo "Move commands: $move_count"
+          echo "Rotate commands: $rotate_count"
+
+          if [ $move_count -ne 3 ]; then
+            echo "Error: Expected 3 move commands, found $move_count"
+            exit 1
+          fi
+
+          if [ $rotate_count -ne 3 ]; then
+            echo "Error: Expected 3 rotate commands, found $rotate_count"
+            exit 1
+          fi
+
+          echo "✓ Flower CLI with MOVE+ROTATE test passed"
+
       - name: Validate generated code syntax
         run: |
           echo "Checking Python syntax..."
