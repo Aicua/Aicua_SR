@@ -1,0 +1,74 @@
+# Flower CAD Generation V1
+# Approach: MOVE + ROTATE (Cylindrical Positioning)
+# Base Size: 2.0
+# Layers: 1
+
+2d;
+
+# ====== LAYER 0 (3 petals) ======
+# Radius: 5.00, Opening: 0.80, Tilt: 15.00°
+
+# === Petal 0 (Layer 0) ===
+
+# Geometry
+obj petal_0;
+bezier_surface petal_0 1.5360 1.1136 0.6200 0.0000 0.020000;
+
+# Rigging (v7 - T-shape 5 bones)
+create_armature petal_0_rig;
+add_bone petal_0_rig bone_base 0.0000 0.0000 0 0.0000 0.6912 0;
+add_bone petal_0_rig bone_mid 0.0000 0.6912 0 0.0000 1.1981 0;
+add_bone petal_0_rig bone_tip 0.0000 1.1981 0 0.0000 1.5360 0;
+add_bone petal_0_rig bone_left 0.0000 0.9523 0 -0.4454 0.9523 0;
+add_bone petal_0_rig bone_right 0.0000 0.9523 0 0.4454 0.9523 0;
+finalize_bones petal_0_rig;
+bind_armature petal_0_rig petal_0;
+
+# Positioning (MOVE + ROTATE)
+move petal_0 5.0000 0.0000 0.0000;
+rotate petal_0 0.00 3.00 90.00;
+
+# === Petal 1 (Layer 0) ===
+
+# Geometry
+obj petal_1;
+bezier_surface petal_1 1.5360 1.1136 0.6200 0.0000 0.020000;
+
+# Rigging (v7 - T-shape 5 bones)
+create_armature petal_1_rig;
+add_bone petal_1_rig bone_base 0.0000 0.0000 0 0.0000 0.6912 0;
+add_bone petal_1_rig bone_mid 0.0000 0.6912 0 0.0000 1.1981 0;
+add_bone petal_1_rig bone_tip 0.0000 1.1981 0 0.0000 1.5360 0;
+add_bone petal_1_rig bone_left 0.0000 0.9523 0 -0.4454 0.9523 0;
+add_bone petal_1_rig bone_right 0.0000 0.9523 0 0.4454 0.9523 0;
+finalize_bones petal_1_rig;
+bind_armature petal_1_rig petal_1;
+
+# Positioning (MOVE + ROTATE)
+move petal_1 -2.5000 4.3301 0.0000;
+rotate petal_1 0.00 3.00 210.00;
+
+# === Petal 2 (Layer 0) ===
+
+# Geometry
+obj petal_2;
+bezier_surface petal_2 1.5360 1.1136 0.6200 0.0000 0.020000;
+
+# Rigging (v7 - T-shape 5 bones)
+create_armature petal_2_rig;
+add_bone petal_2_rig bone_base 0.0000 0.0000 0 0.0000 0.6912 0;
+add_bone petal_2_rig bone_mid 0.0000 0.6912 0 0.0000 1.1981 0;
+add_bone petal_2_rig bone_tip 0.0000 1.1981 0 0.0000 1.5360 0;
+add_bone petal_2_rig bone_left 0.0000 0.9523 0 -0.4454 0.9523 0;
+add_bone petal_2_rig bone_right 0.0000 0.9523 0 0.4454 0.9523 0;
+finalize_bones petal_2_rig;
+bind_armature petal_2_rig petal_2;
+
+# Positioning (MOVE + ROTATE)
+move petal_2 -2.5000 -4.3301 0.0000;
+rotate petal_2 0.00 3.00 330.00;
+
+exit;
+
+# Total petals: 3
+# Total bones: 15 (5 per petal)
