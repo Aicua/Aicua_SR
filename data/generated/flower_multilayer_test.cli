@@ -10,6 +10,13 @@
 
 # === Petal 0 (Layer 0) ===
 
+# CoT Positioning Reasoning:
+#   Target: Arrange 5 petals in circular pattern
+#   Angle: petal_0 = (0 * 360° / 5) = 0.00°
+#   Position: radius=8.00 → (x=8.0000, y=0.0000, z=0.0000)
+#   Rotation: face_outward = angle + 90° = 90.00°
+#   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
+
 # Geometry
 obj petal_L0_P0;
 bezier_surface petal_L0_P0 1.4880 1.1328 0.6600 0.0000 0.020000;
@@ -24,11 +31,20 @@ add_bone petal_L0_P0_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P0_rig;
 bind_armature petal_L0_P0_rig petal_L0_P0;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 8.00 * cos(0.00°)
+#   pos_y = layer_radius * sin(angle°) = 8.00 * sin(0.00°)
 move petal_L0_P0 8.0000 0.0000 0.0000;
 rotate petal_L0_P0 0.00 1.00 90.00;
 
 # === Petal 1 (Layer 0) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 5 petals in circular pattern
+#   Angle: petal_1 = (1 * 360° / 5) = 72.00°
+#   Position: radius=8.00 → (x=2.4721, y=7.6085, z=0.0000)
+#   Rotation: face_outward = angle + 90° = 162.00°
+#   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
 
 # Geometry
 obj petal_L0_P1;
@@ -44,11 +60,20 @@ add_bone petal_L0_P1_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P1_rig;
 bind_armature petal_L0_P1_rig petal_L0_P1;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 8.00 * cos(72.00°)
+#   pos_y = layer_radius * sin(angle°) = 8.00 * sin(72.00°)
 move petal_L0_P1 2.4721 7.6085 0.0000;
 rotate petal_L0_P1 0.00 1.00 162.00;
 
 # === Petal 2 (Layer 0) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 5 petals in circular pattern
+#   Angle: petal_2 = (2 * 360° / 5) = 144.00°
+#   Position: radius=8.00 → (x=-6.4721, y=4.7023, z=0.0000)
+#   Rotation: face_outward = angle + 90° = 234.00°
+#   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
 
 # Geometry
 obj petal_L0_P2;
@@ -64,11 +89,20 @@ add_bone petal_L0_P2_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P2_rig;
 bind_armature petal_L0_P2_rig petal_L0_P2;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 8.00 * cos(144.00°)
+#   pos_y = layer_radius * sin(angle°) = 8.00 * sin(144.00°)
 move petal_L0_P2 -6.4721 4.7023 0.0000;
 rotate petal_L0_P2 0.00 1.00 234.00;
 
 # === Petal 3 (Layer 0) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 5 petals in circular pattern
+#   Angle: petal_3 = (3 * 360° / 5) = 216.00°
+#   Position: radius=8.00 → (x=-6.4721, y=-4.7023, z=0.0000)
+#   Rotation: face_outward = angle + 90° = 306.00°
+#   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
 
 # Geometry
 obj petal_L0_P3;
@@ -84,11 +118,20 @@ add_bone petal_L0_P3_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P3_rig;
 bind_armature petal_L0_P3_rig petal_L0_P3;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 8.00 * cos(216.00°)
+#   pos_y = layer_radius * sin(angle°) = 8.00 * sin(216.00°)
 move petal_L0_P3 -6.4721 -4.7023 0.0000;
 rotate petal_L0_P3 0.00 1.00 306.00;
 
 # === Petal 4 (Layer 0) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 5 petals in circular pattern
+#   Angle: petal_4 = (4 * 360° / 5) = 288.00°
+#   Position: radius=8.00 → (x=2.4721, y=-7.6085, z=0.0000)
+#   Rotation: face_outward = angle + 90° = 378.00°
+#   Tilt: cup_shape = 10.0° * (1 - 0.90) = 1.00°
 
 # Geometry
 obj petal_L0_P4;
@@ -104,7 +147,9 @@ add_bone petal_L0_P4_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P4_rig;
 bind_armature petal_L0_P4_rig petal_L0_P4;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 8.00 * cos(288.00°)
+#   pos_y = layer_radius * sin(angle°) = 8.00 * sin(288.00°)
 move petal_L0_P4 2.4721 -7.6085 0.0000;
 rotate petal_L0_P4 0.00 1.00 378.00;
 
@@ -112,6 +157,13 @@ rotate petal_L0_P4 0.00 1.00 378.00;
 # Radius: 5.00, Opening: 0.70, Tilt: 20.00°
 
 # === Petal 0 (Layer 1) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 8 petals in circular pattern
+#   Angle: petal_0 = (0 * 360° / 8) = 0.00°
+#   Position: radius=5.00 → (x=5.0000, y=0.0000, z=-0.5000)
+#   Rotation: face_outward = angle + 90° = 90.00°
+#   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
 # Geometry
 obj petal_L1_P0;
@@ -127,11 +179,20 @@ add_bone petal_L1_P0_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P0_rig;
 bind_armature petal_L1_P0_rig petal_L1_P0;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 5.00 * cos(0.00°)
+#   pos_y = layer_radius * sin(angle°) = 5.00 * sin(0.00°)
 move petal_L1_P0 5.0000 0.0000 -0.5000;
 rotate petal_L1_P0 0.00 6.00 90.00;
 
 # === Petal 1 (Layer 1) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 8 petals in circular pattern
+#   Angle: petal_1 = (1 * 360° / 8) = 45.00°
+#   Position: radius=5.00 → (x=3.5355, y=3.5355, z=-0.5000)
+#   Rotation: face_outward = angle + 90° = 135.00°
+#   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
 # Geometry
 obj petal_L1_P1;
@@ -147,11 +208,20 @@ add_bone petal_L1_P1_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P1_rig;
 bind_armature petal_L1_P1_rig petal_L1_P1;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 5.00 * cos(45.00°)
+#   pos_y = layer_radius * sin(angle°) = 5.00 * sin(45.00°)
 move petal_L1_P1 3.5355 3.5355 -0.5000;
 rotate petal_L1_P1 0.00 6.00 135.00;
 
 # === Petal 2 (Layer 1) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 8 petals in circular pattern
+#   Angle: petal_2 = (2 * 360° / 8) = 90.00°
+#   Position: radius=5.00 → (x=0.0000, y=5.0000, z=-0.5000)
+#   Rotation: face_outward = angle + 90° = 180.00°
+#   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
 # Geometry
 obj petal_L1_P2;
@@ -167,11 +237,20 @@ add_bone petal_L1_P2_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P2_rig;
 bind_armature petal_L1_P2_rig petal_L1_P2;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 5.00 * cos(90.00°)
+#   pos_y = layer_radius * sin(angle°) = 5.00 * sin(90.00°)
 move petal_L1_P2 0.0000 5.0000 -0.5000;
 rotate petal_L1_P2 0.00 6.00 180.00;
 
 # === Petal 3 (Layer 1) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 8 petals in circular pattern
+#   Angle: petal_3 = (3 * 360° / 8) = 135.00°
+#   Position: radius=5.00 → (x=-3.5355, y=3.5355, z=-0.5000)
+#   Rotation: face_outward = angle + 90° = 225.00°
+#   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
 # Geometry
 obj petal_L1_P3;
@@ -187,11 +266,20 @@ add_bone petal_L1_P3_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P3_rig;
 bind_armature petal_L1_P3_rig petal_L1_P3;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 5.00 * cos(135.00°)
+#   pos_y = layer_radius * sin(angle°) = 5.00 * sin(135.00°)
 move petal_L1_P3 -3.5355 3.5355 -0.5000;
 rotate petal_L1_P3 0.00 6.00 225.00;
 
 # === Petal 4 (Layer 1) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 8 petals in circular pattern
+#   Angle: petal_4 = (4 * 360° / 8) = 180.00°
+#   Position: radius=5.00 → (x=-5.0000, y=0.0000, z=-0.5000)
+#   Rotation: face_outward = angle + 90° = 270.00°
+#   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
 # Geometry
 obj petal_L1_P4;
@@ -207,11 +295,20 @@ add_bone petal_L1_P4_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P4_rig;
 bind_armature petal_L1_P4_rig petal_L1_P4;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 5.00 * cos(180.00°)
+#   pos_y = layer_radius * sin(angle°) = 5.00 * sin(180.00°)
 move petal_L1_P4 -5.0000 0.0000 -0.5000;
 rotate petal_L1_P4 0.00 6.00 270.00;
 
 # === Petal 5 (Layer 1) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 8 petals in circular pattern
+#   Angle: petal_5 = (5 * 360° / 8) = 225.00°
+#   Position: radius=5.00 → (x=-3.5355, y=-3.5355, z=-0.5000)
+#   Rotation: face_outward = angle + 90° = 315.00°
+#   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
 # Geometry
 obj petal_L1_P5;
@@ -227,11 +324,20 @@ add_bone petal_L1_P5_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P5_rig;
 bind_armature petal_L1_P5_rig petal_L1_P5;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 5.00 * cos(225.00°)
+#   pos_y = layer_radius * sin(angle°) = 5.00 * sin(225.00°)
 move petal_L1_P5 -3.5355 -3.5355 -0.5000;
 rotate petal_L1_P5 0.00 6.00 315.00;
 
 # === Petal 6 (Layer 1) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 8 petals in circular pattern
+#   Angle: petal_6 = (6 * 360° / 8) = 270.00°
+#   Position: radius=5.00 → (x=-0.0000, y=-5.0000, z=-0.5000)
+#   Rotation: face_outward = angle + 90° = 360.00°
+#   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
 # Geometry
 obj petal_L1_P6;
@@ -247,11 +353,20 @@ add_bone petal_L1_P6_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P6_rig;
 bind_armature petal_L1_P6_rig petal_L1_P6;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 5.00 * cos(270.00°)
+#   pos_y = layer_radius * sin(angle°) = 5.00 * sin(270.00°)
 move petal_L1_P6 -0.0000 -5.0000 -0.5000;
 rotate petal_L1_P6 0.00 6.00 360.00;
 
 # === Petal 7 (Layer 1) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 8 petals in circular pattern
+#   Angle: petal_7 = (7 * 360° / 8) = 315.00°
+#   Position: radius=5.00 → (x=3.5355, y=-3.5355, z=-0.5000)
+#   Rotation: face_outward = angle + 90° = 405.00°
+#   Tilt: cup_shape = 20.0° * (1 - 0.70) = 6.00°
 
 # Geometry
 obj petal_L1_P7;
@@ -267,7 +382,9 @@ add_bone petal_L1_P7_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P7_rig;
 bind_armature petal_L1_P7_rig petal_L1_P7;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 5.00 * cos(315.00°)
+#   pos_y = layer_radius * sin(angle°) = 5.00 * sin(315.00°)
 move petal_L1_P7 3.5355 -3.5355 -0.5000;
 rotate petal_L1_P7 0.00 6.00 405.00;
 
@@ -275,6 +392,13 @@ rotate petal_L1_P7 0.00 6.00 405.00;
 # Radius: 3.00, Opening: 0.50, Tilt: 30.00°
 
 # === Petal 0 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_0 = (0 * 360° / 13) = 0.00°
+#   Position: radius=3.00 → (x=3.0000, y=0.0000, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 90.00°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P0;
@@ -290,11 +414,20 @@ add_bone petal_L2_P0_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P0_rig;
 bind_armature petal_L2_P0_rig petal_L2_P0;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(0.00°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(0.00°)
 move petal_L2_P0 3.0000 0.0000 -1.0000;
 rotate petal_L2_P0 0.00 15.00 90.00;
 
 # === Petal 1 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_1 = (1 * 360° / 13) = 27.69°
+#   Position: radius=3.00 → (x=2.6564, y=1.3942, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 117.69°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P1;
@@ -310,11 +443,20 @@ add_bone petal_L2_P1_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P1_rig;
 bind_armature petal_L2_P1_rig petal_L2_P1;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(27.69°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(27.69°)
 move petal_L2_P1 2.6564 1.3942 -1.0000;
 rotate petal_L2_P1 0.00 15.00 117.69;
 
 # === Petal 2 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_2 = (2 * 360° / 13) = 55.38°
+#   Position: radius=3.00 → (x=1.7042, y=2.4690, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 145.38°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P2;
@@ -330,11 +472,20 @@ add_bone petal_L2_P2_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P2_rig;
 bind_armature petal_L2_P2_rig petal_L2_P2;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(55.38°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(55.38°)
 move petal_L2_P2 1.7042 2.4690 -1.0000;
 rotate petal_L2_P2 0.00 15.00 145.38;
 
 # === Petal 3 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_3 = (3 * 360° / 13) = 83.08°
+#   Position: radius=3.00 → (x=0.3616, y=2.9781, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 173.08°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P3;
@@ -350,11 +501,20 @@ add_bone petal_L2_P3_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P3_rig;
 bind_armature petal_L2_P3_rig petal_L2_P3;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(83.08°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(83.08°)
 move petal_L2_P3 0.3616 2.9781 -1.0000;
 rotate petal_L2_P3 0.00 15.00 173.08;
 
 # === Petal 4 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_4 = (4 * 360° / 13) = 110.77°
+#   Position: radius=3.00 → (x=-1.0638, y=2.8050, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 200.77°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P4;
@@ -370,11 +530,20 @@ add_bone petal_L2_P4_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P4_rig;
 bind_armature petal_L2_P4_rig petal_L2_P4;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(110.77°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(110.77°)
 move petal_L2_P4 -1.0638 2.8050 -1.0000;
 rotate petal_L2_P4 0.00 15.00 200.77;
 
 # === Petal 5 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_5 = (5 * 360° / 13) = 138.46°
+#   Position: radius=3.00 → (x=-2.2455, y=1.9894, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 228.46°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P5;
@@ -390,11 +559,20 @@ add_bone petal_L2_P5_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P5_rig;
 bind_armature petal_L2_P5_rig petal_L2_P5;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(138.46°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(138.46°)
 move petal_L2_P5 -2.2455 1.9894 -1.0000;
 rotate petal_L2_P5 0.00 15.00 228.46;
 
 # === Petal 6 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_6 = (6 * 360° / 13) = 166.15°
+#   Position: radius=3.00 → (x=-2.9128, y=0.7179, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 256.15°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P6;
@@ -410,11 +588,20 @@ add_bone petal_L2_P6_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P6_rig;
 bind_armature petal_L2_P6_rig petal_L2_P6;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(166.15°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(166.15°)
 move petal_L2_P6 -2.9128 0.7179 -1.0000;
 rotate petal_L2_P6 0.00 15.00 256.15;
 
 # === Petal 7 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_7 = (7 * 360° / 13) = 193.85°
+#   Position: radius=3.00 → (x=-2.9128, y=-0.7179, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 283.85°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P7;
@@ -430,11 +617,20 @@ add_bone petal_L2_P7_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P7_rig;
 bind_armature petal_L2_P7_rig petal_L2_P7;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(193.85°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(193.85°)
 move petal_L2_P7 -2.9128 -0.7179 -1.0000;
 rotate petal_L2_P7 0.00 15.00 283.85;
 
 # === Petal 8 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_8 = (8 * 360° / 13) = 221.54°
+#   Position: radius=3.00 → (x=-2.2455, y=-1.9894, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 311.54°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P8;
@@ -450,11 +646,20 @@ add_bone petal_L2_P8_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P8_rig;
 bind_armature petal_L2_P8_rig petal_L2_P8;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(221.54°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(221.54°)
 move petal_L2_P8 -2.2455 -1.9894 -1.0000;
 rotate petal_L2_P8 0.00 15.00 311.54;
 
 # === Petal 9 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_9 = (9 * 360° / 13) = 249.23°
+#   Position: radius=3.00 → (x=-1.0638, y=-2.8050, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 339.23°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P9;
@@ -470,11 +675,20 @@ add_bone petal_L2_P9_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P9_rig;
 bind_armature petal_L2_P9_rig petal_L2_P9;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(249.23°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(249.23°)
 move petal_L2_P9 -1.0638 -2.8050 -1.0000;
 rotate petal_L2_P9 0.00 15.00 339.23;
 
 # === Petal 10 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_10 = (10 * 360° / 13) = 276.92°
+#   Position: radius=3.00 → (x=0.3616, y=-2.9781, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 366.92°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P10;
@@ -490,11 +704,20 @@ add_bone petal_L2_P10_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P10_rig;
 bind_armature petal_L2_P10_rig petal_L2_P10;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(276.92°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(276.92°)
 move petal_L2_P10 0.3616 -2.9781 -1.0000;
 rotate petal_L2_P10 0.00 15.00 366.92;
 
 # === Petal 11 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_11 = (11 * 360° / 13) = 304.62°
+#   Position: radius=3.00 → (x=1.7042, y=-2.4690, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 394.62°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P11;
@@ -510,11 +733,20 @@ add_bone petal_L2_P11_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P11_rig;
 bind_armature petal_L2_P11_rig petal_L2_P11;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(304.62°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(304.62°)
 move petal_L2_P11 1.7042 -2.4690 -1.0000;
 rotate petal_L2_P11 0.00 15.00 394.62;
 
 # === Petal 12 (Layer 2) ===
+
+# CoT Positioning Reasoning:
+#   Target: Arrange 13 petals in circular pattern
+#   Angle: petal_12 = (12 * 360° / 13) = 332.31°
+#   Position: radius=3.00 → (x=2.6564, y=-1.3942, z=-1.0000)
+#   Rotation: face_outward = angle + 90° = 422.31°
+#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
 
 # Geometry
 obj petal_L2_P12;
@@ -530,7 +762,9 @@ add_bone petal_L2_P12_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
 finalize_bones petal_L2_P12_rig;
 bind_armature petal_L2_P12_rig petal_L2_P12;
 
-# Positioning (MOVE + ROTATE)
+# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
+#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(332.31°)
+#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(332.31°)
 move petal_L2_P12 2.6564 -1.3942 -1.0000;
 rotate petal_L2_P12 0.00 15.00 422.31;
 
