@@ -146,70 +146,52 @@ class SplineRoseCLIGenerator:
                 'extrude_depth': max(0.001, base_size * 0.005 * (1 - (layer_idx - 1) * 0.1) * (1 - opening_degree * 0.3)),
             }
 
-    def compute_bone_params_v7(self, petal_height, petal_width, opening_degree, layer_idx):
-        """Compute bone rigging parameters for v7 T-shape structure (5 independent bones)."""
+    def compute_bone_params_v8(self, petal_height, petal_width, opening_degree, layer_idx):
+        """Compute bone rigging parameters for v8 3-bone connected spine."""
         if self.use_sr_bone:
-            return {
-                # 5 Independent Bones - T-Shape
-                'bone_base_start_x': self.bone_mod.compute_bone_base_start_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_base_start_y': self.bone_mod.compute_bone_base_start_y(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_base_end_x': self.bone_mod.compute_bone_base_end_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_base_end_y': self.bone_mod.compute_bone_base_end_y(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_mid_start_x': self.bone_mod.compute_bone_mid_start_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_mid_start_y': self.bone_mod.compute_bone_mid_start_y(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_mid_end_x': self.bone_mod.compute_bone_mid_end_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_mid_end_y': self.bone_mod.compute_bone_mid_end_y(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_tip_start_x': self.bone_mod.compute_bone_tip_start_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_tip_start_y': self.bone_mod.compute_bone_tip_start_y(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_tip_end_x': self.bone_mod.compute_bone_tip_end_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_tip_end_y': self.bone_mod.compute_bone_tip_end_y(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_left_start_x': self.bone_mod.compute_bone_left_start_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_left_start_y': self.bone_mod.compute_bone_left_start_y(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_left_end_x': self.bone_mod.compute_bone_left_end_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_left_end_y': self.bone_mod.compute_bone_left_end_y(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_right_start_x': self.bone_mod.compute_bone_right_start_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_right_start_y': self.bone_mod.compute_bone_right_start_y(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_right_end_x': self.bone_mod.compute_bone_right_end_x(petal_height, petal_width, opening_degree, layer_idx),
-                'bone_right_end_y': self.bone_mod.compute_bone_right_end_y(petal_height, petal_width, opening_degree, layer_idx),
-            }
-        else:
-            # Fallback formulas for v7 T-shape structure (5 independent bones)
-            layer_factor = [0.8, 0.9, 1.0][layer_idx]
+            try:
+                import bone_rigging_v8_formulas as bone_v8
+                return {
+                    # 3 Vertical Bones - Connected Spine
+                    'bone_base_start_x': bone_v8.compute_bone_base_start_x(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_base_start_y': bone_v8.compute_bone_base_start_y(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_base_end_x': bone_v8.compute_bone_base_end_x(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_base_end_y': bone_v8.compute_bone_base_end_y(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_mid_start_x': bone_v8.compute_bone_mid_start_x(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_mid_start_y': bone_v8.compute_bone_mid_start_y(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_mid_end_x': bone_v8.compute_bone_mid_end_x(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_mid_end_y': bone_v8.compute_bone_mid_end_y(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_tip_start_x': bone_v8.compute_bone_tip_start_x(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_tip_start_y': bone_v8.compute_bone_tip_start_y(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_tip_end_x': bone_v8.compute_bone_tip_end_x(petal_height, petal_width, opening_degree, layer_idx),
+                    'bone_tip_end_y': bone_v8.compute_bone_tip_end_y(petal_height, petal_width, opening_degree, layer_idx),
+                }
+            except ImportError:
+                pass  # Fall through to fallback
 
-            # Height positions for vertical bones
-            h_45 = petal_height * 0.45 * layer_factor   # End of bone_base
-            h_62 = petal_height * 0.62 * layer_factor   # Position of bone_left/bone_right
-            h_78 = petal_height * 0.78 * layer_factor   # End of bone_mid
-            h_100 = petal_height * layer_factor         # End of bone_tip
+        # Fallback formulas for v8 3-bone structure
+        layer_factor = [0.8, 0.9, 1.0][layer_idx]
 
-            # Width at 62% (widest point)
-            half_width = petal_width / 2
+        # Height positions for 3 vertical bones (equal thirds)
+        h_33 = petal_height * 0.33 * layer_factor   # End of bone_base
+        h_67 = petal_height * 0.67 * layer_factor   # End of bone_mid
+        h_100 = petal_height * layer_factor          # End of bone_tip
 
-            return {
-                # 5 Independent Bones - T-Shape (connected spine)
-                # Vertical spine (tail of each bone = head of next)
-                'bone_base_start_x': 0.0,
-                'bone_base_start_y': 0.0,
-                'bone_base_end_x': 0.0,
-                'bone_base_end_y': h_45,
-                'bone_mid_start_x': 0.0,
-                'bone_mid_start_y': h_45,  # Connected to bone_base tail
-                'bone_mid_end_x': 0.0,
-                'bone_mid_end_y': h_78,
-                'bone_tip_start_x': 0.0,
-                'bone_tip_start_y': h_78,  # Connected to bone_mid tail
-                'bone_tip_end_x': 0.0,
-                'bone_tip_end_y': h_100,
-                # Horizontal edges at 62%
-                'bone_left_start_x': 0.0,
-                'bone_left_start_y': h_62,
-                'bone_left_end_x': -half_width,
-                'bone_left_end_y': h_62,
-                'bone_right_start_x': 0.0,
-                'bone_right_start_y': h_62,
-                'bone_right_end_x': half_width,
-                'bone_right_end_y': h_62,
-            }
+        return {
+            # 3 Vertical Bones - Connected Spine
+            'bone_base_start_x': 0.0,
+            'bone_base_start_y': 0.0,
+            'bone_base_end_x': 0.0,
+            'bone_base_end_y': h_33,
+            'bone_mid_start_x': 0.0,
+            'bone_mid_start_y': h_33,  # Connected to bone_base tail
+            'bone_mid_end_x': 0.0,
+            'bone_mid_end_y': h_67,
+            'bone_tip_start_x': 0.0,
+            'bone_tip_start_y': h_67,  # Connected to bone_mid tail
+            'bone_tip_end_x': 0.0,
+            'bone_tip_end_y': h_100,
+        }
 
     def compute_anim_params(self, base_size, petal_mass, wind_speed, flexibility, layer_idx):
         """Compute animation parameters for wing_flap."""
@@ -258,26 +240,25 @@ class SplineRoseCLIGenerator:
             f"sketch_extrude {petal_name} {sp['extrude_depth']:.4f};",
         ]
 
-        # Generate bone rigging with v7 T-shape structure (5 independent bones)
+        # Generate bone rigging with v8 3-bone connected spine
         # Use cp8_y as petal height (tip at 100%), use WIDEST width at cp5/cp11 (62% height)
         petal_height = sp['cp8_y']
         # For V3 shape: cp11_x - cp5_x is the widest part (at 62% height)
         petal_width = sp['cp11_x'] - sp['cp5_x']  # Width at 62% (WIDEST)
 
-        # layer_idx is 1-based, convert to 0-based for v7
+        # layer_idx is 1-based, convert to 0-based for v8
         layer_idx_0based = layer_idx - 1
-        bp = self.compute_bone_params_v7(petal_height, petal_width, opening_degree, layer_idx_0based)
+        bp = self.compute_bone_params_v8(petal_height, petal_width, opening_degree, layer_idx_0based)
 
         rig_name = f"{petal_name}_rig"
 
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name} (v7 - T-shape 5 bones)",
+            f"# Rigging for {petal_name} (v8 - 3 bone connected spine)",
             f"create_armature {rig_name};",
         ]
 
-        # Generate 5 independent bones - T-shape (NO parent_bone commands!)
-        # Vertical spine bones
+        # Generate 3 vertical bones - connected spine
         rigging_cli.append(
             f"add_bone {rig_name} bone_base {bp['bone_base_start_x']:.4f} {bp['bone_base_start_y']:.4f} 0 {bp['bone_base_end_x']:.4f} {bp['bone_base_end_y']:.4f} 0;"
         )
@@ -286,13 +267,6 @@ class SplineRoseCLIGenerator:
         )
         rigging_cli.append(
             f"add_bone {rig_name} bone_tip {bp['bone_tip_start_x']:.4f} {bp['bone_tip_start_y']:.4f} 0 {bp['bone_tip_end_x']:.4f} {bp['bone_tip_end_y']:.4f} 0;"
-        )
-        # Horizontal edge bones at 62%
-        rigging_cli.append(
-            f"add_bone {rig_name} bone_left {bp['bone_left_start_x']:.4f} {bp['bone_left_start_y']:.4f} 0 {bp['bone_left_end_x']:.4f} {bp['bone_left_end_y']:.4f} 0;"
-        )
-        rigging_cli.append(
-            f"add_bone {rig_name} bone_right {bp['bone_right_start_x']:.4f} {bp['bone_right_start_y']:.4f} 0 {bp['bone_right_end_x']:.4f} {bp['bone_right_end_y']:.4f} 0;"
         )
 
         # Calculate bind weight based on flexibility
@@ -316,58 +290,30 @@ class SplineRoseCLIGenerator:
 
         animation_cli = [
             f"",
-            f"# Animation for {petal_name} (v7 - T-shape 5 bones)",
-            f"# Vertical spine and horizontal edges animate independently",
+            f"# Animation for {petal_name} (v8 - 3 bone connected spine)",
             f"wing_flap {rig_name} bone_base {ap['frequency']:.0f} {ap['amplitude'] * 0.3:.1f} 0 -1 0 0;",
             f"wing_flap {rig_name} bone_mid {ap['frequency']:.0f} {ap['amplitude'] * 0.6:.1f} 0 -1 0 0.05;",
             f"wing_flap {rig_name} bone_tip {ap['frequency'] * 1.2:.0f} {ap['amplitude'] * 0.4:.1f} 0 -1 0 0.1;",
-            f"wing_flap {rig_name} bone_left {ap['frequency'] * 0.8:.0f} {ap['amplitude'] * 0.5:.1f} -1 0 0 0.15;",
-            f"wing_flap {rig_name} bone_right {ap['frequency'] * 0.8:.0f} {ap['amplitude'] * 0.5:.1f} 1 0 0 0.15;",
         ]
 
-        # Generate deformation rotate_bone commands (head/tail modes)
-        # Deformation type based on opening_degree
-        # 0-0.3: straight, 0.3-0.6: s_curve, 0.6-0.8: c_curve, 0.8-1.0: wave
-        if opening_degree < 0.3:
-            deformation_type = 0  # straight
-        elif opening_degree < 0.6:
-            deformation_type = 1  # s_curve
-        elif opening_degree < 0.8:
-            deformation_type = 2  # c_curve
-        else:
-            deformation_type = 3  # wave
+        # Generate deformation rotate_bone commands (v8 cup shape logic)
+        # Cup intensity inversely proportional to opening_degree
+        # Bud (opening_degree ~ 0) = strong cup, Open (opening_degree ~ 1) = weak cup
+        cup_intensity = (1.0 - opening_degree)
 
-        intensity = opening_degree
         deformation_cli = [
             f"",
-            f"# Deformation rotate_bone (head/tail modes)",
+            f"# Deformation rotate_bone (v8 cup shape)",
+            f"# cup_intensity = {cup_intensity:.2f} (inversely proportional to opening)",
         ]
 
-        if deformation_type == 1:  # S-curve
+        # Cup shape (forward curve, rx > 0)
+        if cup_intensity > 0.1:  # Only add if significant cup
             deformation_cli.extend([
-                f"rotate_bone {rig_name} bone_base {15 * intensity:.1f} 0 0 head;",
-                f"rotate_bone {rig_name} bone_mid {-25 * intensity:.1f} 0 0 head;",
-                f"rotate_bone {rig_name} bone_tip {15 * intensity:.1f} 0 0 head;",
-                f"rotate_bone {rig_name} bone_left 0 {10 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_right 0 {-10 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_base {20 * cup_intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_mid {30 * cup_intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_tip {20 * cup_intensity:.1f} 0 0 head;",
             ])
-        elif deformation_type == 2:  # C-curve (cup shape)
-            deformation_cli.extend([
-                f"rotate_bone {rig_name} bone_base 0 {20 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_mid 0 {30 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_tip 0 {25 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_left 0 {40 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_right 0 {-40 * intensity:.1f} 0 head;",
-            ])
-        elif deformation_type == 3:  # Wave
-            deformation_cli.extend([
-                f"rotate_bone {rig_name} bone_base {10 * intensity:.1f} {5 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_mid {-15 * intensity:.1f} {-10 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_tip {20 * intensity:.1f} {8 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_left {5 * intensity:.1f} {15 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_right {-5 * intensity:.1f} {-15 * intensity:.1f} 0 head;",
-            ])
-        # straight (type 0) has no deformation
 
         return {
             'geometry': geometry_cli,
