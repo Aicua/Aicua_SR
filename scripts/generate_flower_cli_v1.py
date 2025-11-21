@@ -4,7 +4,7 @@ Generate Flower CAD CLI V1 with MOVE + ROTATE positioning.
 
 This script generates complete CLI commands for creating a flower with:
 1. Petal geometry (15 CP spline or simplified bezier)
-2. Bone rigging (5-bone T-shape)
+2. Bone rigging (3-bone vertical spine)
 3. Positioning (MOVE + ROTATE in 3D space)
 
 Usage:
@@ -157,14 +157,12 @@ class FlowerCLIGeneratorV1:
     def generate_bone_rigging_v7(self, petal_name: str, base_size: float,
                                   opening_degree: float, layer_index: int) -> list:
         """
-        Generate T-shape bone rigging (v7) with 5 independent bones.
+        Generate vertical spine bone rigging (v7) with 3 connected bones.
 
         Bones:
         - bone_base (0% → 45%)
         - bone_mid (45% → 78%)
         - bone_tip (78% → 100%)
-        - bone_left (at 62%)
-        - bone_right (at 62%)
         """
         layer_factor = 0.8 + 0.1 * layer_index
         petal_height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
@@ -190,15 +188,6 @@ class FlowerCLIGeneratorV1:
             'bone_tip': {
                 'start_x': 0.0, 'start_y': petal_height * 0.78,
                 'end_x': 0.0, 'end_y': petal_height
-            },
-            # Horizontal edge bones at 62% (widest point)
-            'bone_left': {
-                'start_x': 0.0, 'start_y': petal_height * 0.62,
-                'end_x': -width_at_62 / 2, 'end_y': petal_height * 0.62
-            },
-            'bone_right': {
-                'start_x': 0.0, 'start_y': petal_height * 0.62,
-                'end_x': width_at_62 / 2, 'end_y': petal_height * 0.62
             }
         }
 
@@ -271,7 +260,7 @@ class FlowerCLIGeneratorV1:
         cli.append("")
 
         # 2. Rigging
-        cli.append("# Rigging (v7 - T-shape 5 bones)")
+        cli.append("# Rigging (v7 - 3 bones vertical spine)")
         cli.extend(self.generate_bone_rigging_v7(petal_name, base_size, opening_degree, layer_index))
         cli.append("")
 

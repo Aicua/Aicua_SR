@@ -1,7 +1,7 @@
 # Flower CAD Generation V1
 # Approach: MOVE + ROTATE (Cylindrical Positioning)
 # Base Size: 2.0
-# Layers: 3
+# Layers: 2
 
 2d;
 
@@ -20,15 +20,13 @@
 # Geometry (15-CP spline)
 obj petal_L0_P0;
 spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
-sketch_extrude petal_L0_P0 0.0013;
+sketch_extrude petal_L0_P0 0.0014;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L0_P0_rig;
 add_bone petal_L0_P0_rig bone_base 0.0000 0.0000 0 0.0000 0.6696 0;
 add_bone petal_L0_P0_rig bone_mid 0.0000 0.6696 0 0.0000 1.1606 0;
 add_bone petal_L0_P0_rig bone_tip 0.0000 1.1606 0 0.0000 1.4880 0;
-add_bone petal_L0_P0_rig bone_left 0.0000 0.9226 0 -0.4531 0.9226 0;
-add_bone petal_L0_P0_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P0_rig;
 bind_armature petal_L0_P0_rig petal_L0_P0;
 
@@ -50,15 +48,13 @@ rotate petal_L0_P0 0.00 1.00 90.00;
 # Geometry (15-CP spline)
 obj petal_L0_P1;
 spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
-sketch_extrude petal_L0_P1 0.0011;
+sketch_extrude petal_L0_P1 0.0015;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L0_P1_rig;
 add_bone petal_L0_P1_rig bone_base 0.0000 0.0000 0 0.0000 0.6696 0;
 add_bone petal_L0_P1_rig bone_mid 0.0000 0.6696 0 0.0000 1.1606 0;
 add_bone petal_L0_P1_rig bone_tip 0.0000 1.1606 0 0.0000 1.4880 0;
-add_bone petal_L0_P1_rig bone_left 0.0000 0.9226 0 -0.4531 0.9226 0;
-add_bone petal_L0_P1_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P1_rig;
 bind_armature petal_L0_P1_rig petal_L0_P1;
 
@@ -80,15 +76,13 @@ rotate petal_L0_P1 0.00 1.00 162.00;
 # Geometry (15-CP spline)
 obj petal_L0_P2;
 spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
-sketch_extrude petal_L0_P2 0.0012;
+sketch_extrude petal_L0_P2 0.0014;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L0_P2_rig;
 add_bone petal_L0_P2_rig bone_base 0.0000 0.0000 0 0.0000 0.6696 0;
 add_bone petal_L0_P2_rig bone_mid 0.0000 0.6696 0 0.0000 1.1606 0;
 add_bone petal_L0_P2_rig bone_tip 0.0000 1.1606 0 0.0000 1.4880 0;
-add_bone petal_L0_P2_rig bone_left 0.0000 0.9226 0 -0.4531 0.9226 0;
-add_bone petal_L0_P2_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P2_rig;
 bind_armature petal_L0_P2_rig petal_L0_P2;
 
@@ -110,15 +104,13 @@ rotate petal_L0_P2 0.00 1.00 234.00;
 # Geometry (15-CP spline)
 obj petal_L0_P3;
 spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
-sketch_extrude petal_L0_P3 0.0011;
+sketch_extrude petal_L0_P3 0.0010;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L0_P3_rig;
 add_bone petal_L0_P3_rig bone_base 0.0000 0.0000 0 0.0000 0.6696 0;
 add_bone petal_L0_P3_rig bone_mid 0.0000 0.6696 0 0.0000 1.1606 0;
 add_bone petal_L0_P3_rig bone_tip 0.0000 1.1606 0 0.0000 1.4880 0;
-add_bone petal_L0_P3_rig bone_left 0.0000 0.9226 0 -0.4531 0.9226 0;
-add_bone petal_L0_P3_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P3_rig;
 bind_armature petal_L0_P3_rig petal_L0_P3;
 
@@ -140,15 +132,13 @@ rotate petal_L0_P3 0.00 1.00 306.00;
 # Geometry (15-CP spline)
 obj petal_L0_P4;
 spline 0.0000 0.0000 -0.1416 0.0744 -0.2974 0.3720 -0.3965 0.6696 -0.4531 0.9226 -0.3682 1.1606 -0.2266 1.3690 0.0000 1.4880 0.2266 1.3690 0.3682 1.1606 0.4531 0.9226 0.3965 0.6696 0.2974 0.3720 0.1416 0.0744 0.0000 0.0000;
-sketch_extrude petal_L0_P4 0.0010;
+sketch_extrude petal_L0_P4 0.0011;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L0_P4_rig;
 add_bone petal_L0_P4_rig bone_base 0.0000 0.0000 0 0.0000 0.6696 0;
 add_bone petal_L0_P4_rig bone_mid 0.0000 0.6696 0 0.0000 1.1606 0;
 add_bone petal_L0_P4_rig bone_tip 0.0000 1.1606 0 0.0000 1.4880 0;
-add_bone petal_L0_P4_rig bone_left 0.0000 0.9226 0 -0.4531 0.9226 0;
-add_bone petal_L0_P4_rig bone_right 0.0000 0.9226 0 0.4531 0.9226 0;
 finalize_bones petal_L0_P4_rig;
 bind_armature petal_L0_P4_rig petal_L0_P4;
 
@@ -173,15 +163,13 @@ rotate petal_L0_P4 0.00 1.00 378.00;
 # Geometry (15-CP spline)
 obj petal_L1_P0;
 spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
-sketch_extrude petal_L1_P0 0.0014;
+sketch_extrude petal_L1_P0 0.0013;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L1_P0_rig;
 add_bone petal_L1_P0_rig bone_base 0.0000 0.0000 0 0.0000 0.8019 0;
 add_bone petal_L1_P0_rig bone_mid 0.0000 0.8019 0 0.0000 1.3900 0;
 add_bone petal_L1_P0_rig bone_tip 0.0000 1.3900 0 0.0000 1.7820 0;
-add_bone petal_L1_P0_rig bone_left 0.0000 1.1048 0 -0.4925 1.1048 0;
-add_bone petal_L1_P0_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P0_rig;
 bind_armature petal_L1_P0_rig petal_L1_P0;
 
@@ -203,15 +191,13 @@ rotate petal_L1_P0 0.00 6.00 90.00;
 # Geometry (15-CP spline)
 obj petal_L1_P1;
 spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
-sketch_extrude petal_L1_P1 0.0015;
+sketch_extrude petal_L1_P1 0.0011;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L1_P1_rig;
 add_bone petal_L1_P1_rig bone_base 0.0000 0.0000 0 0.0000 0.8019 0;
 add_bone petal_L1_P1_rig bone_mid 0.0000 0.8019 0 0.0000 1.3900 0;
 add_bone petal_L1_P1_rig bone_tip 0.0000 1.3900 0 0.0000 1.7820 0;
-add_bone petal_L1_P1_rig bone_left 0.0000 1.1048 0 -0.4925 1.1048 0;
-add_bone petal_L1_P1_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P1_rig;
 bind_armature petal_L1_P1_rig petal_L1_P1;
 
@@ -233,15 +219,13 @@ rotate petal_L1_P1 0.00 6.00 135.00;
 # Geometry (15-CP spline)
 obj petal_L1_P2;
 spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
-sketch_extrude petal_L1_P2 0.0013;
+sketch_extrude petal_L1_P2 0.0011;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L1_P2_rig;
 add_bone petal_L1_P2_rig bone_base 0.0000 0.0000 0 0.0000 0.8019 0;
 add_bone petal_L1_P2_rig bone_mid 0.0000 0.8019 0 0.0000 1.3900 0;
 add_bone petal_L1_P2_rig bone_tip 0.0000 1.3900 0 0.0000 1.7820 0;
-add_bone petal_L1_P2_rig bone_left 0.0000 1.1048 0 -0.4925 1.1048 0;
-add_bone petal_L1_P2_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P2_rig;
 bind_armature petal_L1_P2_rig petal_L1_P2;
 
@@ -265,13 +249,11 @@ obj petal_L1_P3;
 spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
 sketch_extrude petal_L1_P3 0.0011;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L1_P3_rig;
 add_bone petal_L1_P3_rig bone_base 0.0000 0.0000 0 0.0000 0.8019 0;
 add_bone petal_L1_P3_rig bone_mid 0.0000 0.8019 0 0.0000 1.3900 0;
 add_bone petal_L1_P3_rig bone_tip 0.0000 1.3900 0 0.0000 1.7820 0;
-add_bone petal_L1_P3_rig bone_left 0.0000 1.1048 0 -0.4925 1.1048 0;
-add_bone petal_L1_P3_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P3_rig;
 bind_armature petal_L1_P3_rig petal_L1_P3;
 
@@ -293,15 +275,13 @@ rotate petal_L1_P3 0.00 6.00 225.00;
 # Geometry (15-CP spline)
 obj petal_L1_P4;
 spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
-sketch_extrude petal_L1_P4 0.0015;
+sketch_extrude petal_L1_P4 0.0014;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L1_P4_rig;
 add_bone petal_L1_P4_rig bone_base 0.0000 0.0000 0 0.0000 0.8019 0;
 add_bone petal_L1_P4_rig bone_mid 0.0000 0.8019 0 0.0000 1.3900 0;
 add_bone petal_L1_P4_rig bone_tip 0.0000 1.3900 0 0.0000 1.7820 0;
-add_bone petal_L1_P4_rig bone_left 0.0000 1.1048 0 -0.4925 1.1048 0;
-add_bone petal_L1_P4_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P4_rig;
 bind_armature petal_L1_P4_rig petal_L1_P4;
 
@@ -323,15 +303,13 @@ rotate petal_L1_P4 0.00 6.00 270.00;
 # Geometry (15-CP spline)
 obj petal_L1_P5;
 spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
-sketch_extrude petal_L1_P5 0.0011;
+sketch_extrude petal_L1_P5 0.0013;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L1_P5_rig;
 add_bone petal_L1_P5_rig bone_base 0.0000 0.0000 0 0.0000 0.8019 0;
 add_bone petal_L1_P5_rig bone_mid 0.0000 0.8019 0 0.0000 1.3900 0;
 add_bone petal_L1_P5_rig bone_tip 0.0000 1.3900 0 0.0000 1.7820 0;
-add_bone petal_L1_P5_rig bone_left 0.0000 1.1048 0 -0.4925 1.1048 0;
-add_bone petal_L1_P5_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P5_rig;
 bind_armature petal_L1_P5_rig petal_L1_P5;
 
@@ -353,15 +331,13 @@ rotate petal_L1_P5 0.00 6.00 315.00;
 # Geometry (15-CP spline)
 obj petal_L1_P6;
 spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
-sketch_extrude petal_L1_P6 0.0013;
+sketch_extrude petal_L1_P6 0.0011;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L1_P6_rig;
 add_bone petal_L1_P6_rig bone_base 0.0000 0.0000 0 0.0000 0.8019 0;
 add_bone petal_L1_P6_rig bone_mid 0.0000 0.8019 0 0.0000 1.3900 0;
 add_bone petal_L1_P6_rig bone_tip 0.0000 1.3900 0 0.0000 1.7820 0;
-add_bone petal_L1_P6_rig bone_left 0.0000 1.1048 0 -0.4925 1.1048 0;
-add_bone petal_L1_P6_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P6_rig;
 bind_armature petal_L1_P6_rig petal_L1_P6;
 
@@ -383,15 +359,13 @@ rotate petal_L1_P6 0.00 6.00 360.00;
 # Geometry (15-CP spline)
 obj petal_L1_P7;
 spline 0.0000 0.0000 -0.1539 0.0891 -0.3232 0.4455 -0.4309 0.8019 -0.4925 1.1048 -0.4001 1.3900 -0.2462 1.6394 0.0280 1.7820 0.2462 1.6394 0.4001 1.3900 0.4925 1.1048 0.4309 0.8019 0.3232 0.4455 0.1539 0.0891 0.0000 0.0000;
-sketch_extrude petal_L1_P7 0.0015;
+sketch_extrude petal_L1_P7 0.0012;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_L1_P7_rig;
 add_bone petal_L1_P7_rig bone_base 0.0000 0.0000 0 0.0000 0.8019 0;
 add_bone petal_L1_P7_rig bone_mid 0.0000 0.8019 0 0.0000 1.3900 0;
 add_bone petal_L1_P7_rig bone_tip 0.0000 1.3900 0 0.0000 1.7820 0;
-add_bone petal_L1_P7_rig bone_left 0.0000 1.1048 0 -0.4925 1.1048 0;
-add_bone petal_L1_P7_rig bone_right 0.0000 1.1048 0 0.4925 1.1048 0;
 finalize_bones petal_L1_P7_rig;
 bind_armature petal_L1_P7_rig petal_L1_P7;
 
@@ -401,400 +375,7 @@ bind_armature petal_L1_P7_rig petal_L1_P7;
 move petal_L1_P7 3.5355 -3.5355 -0.5000;
 rotate petal_L1_P7 0.00 6.00 405.00;
 
-# ====== LAYER 2 (13 petals) ======
-# Radius: 3.00, Opening: 0.50, Tilt: 30.00°
-
-# === Petal 0 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_0 = (0 * 360° / 13) = 0.00°
-#   Position: radius=3.00 → (x=3.0000, y=0.0000, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 90.00°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P0;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P0 0.0012;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P0_rig;
-add_bone petal_L2_P0_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P0_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P0_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P0_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P0_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P0_rig;
-bind_armature petal_L2_P0_rig petal_L2_P0;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(0.00°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(0.00°)
-move petal_L2_P0 3.0000 0.0000 -1.0000;
-rotate petal_L2_P0 0.00 15.00 90.00;
-
-# === Petal 1 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_1 = (1 * 360° / 13) = 27.69°
-#   Position: radius=3.00 → (x=2.6564, y=1.3942, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 117.69°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P1;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P1 0.0015;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P1_rig;
-add_bone petal_L2_P1_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P1_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P1_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P1_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P1_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P1_rig;
-bind_armature petal_L2_P1_rig petal_L2_P1;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(27.69°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(27.69°)
-move petal_L2_P1 2.6564 1.3942 -1.0000;
-rotate petal_L2_P1 0.00 15.00 117.69;
-
-# === Petal 2 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_2 = (2 * 360° / 13) = 55.38°
-#   Position: radius=3.00 → (x=1.7042, y=2.4690, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 145.38°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P2;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P2 0.0010;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P2_rig;
-add_bone petal_L2_P2_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P2_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P2_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P2_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P2_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P2_rig;
-bind_armature petal_L2_P2_rig petal_L2_P2;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(55.38°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(55.38°)
-move petal_L2_P2 1.7042 2.4690 -1.0000;
-rotate petal_L2_P2 0.00 15.00 145.38;
-
-# === Petal 3 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_3 = (3 * 360° / 13) = 83.08°
-#   Position: radius=3.00 → (x=0.3616, y=2.9781, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 173.08°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P3;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P3 0.0012;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P3_rig;
-add_bone petal_L2_P3_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P3_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P3_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P3_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P3_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P3_rig;
-bind_armature petal_L2_P3_rig petal_L2_P3;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(83.08°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(83.08°)
-move petal_L2_P3 0.3616 2.9781 -1.0000;
-rotate petal_L2_P3 0.00 15.00 173.08;
-
-# === Petal 4 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_4 = (4 * 360° / 13) = 110.77°
-#   Position: radius=3.00 → (x=-1.0638, y=2.8050, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 200.77°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P4;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P4 0.0014;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P4_rig;
-add_bone petal_L2_P4_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P4_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P4_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P4_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P4_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P4_rig;
-bind_armature petal_L2_P4_rig petal_L2_P4;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(110.77°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(110.77°)
-move petal_L2_P4 -1.0638 2.8050 -1.0000;
-rotate petal_L2_P4 0.00 15.00 200.77;
-
-# === Petal 5 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_5 = (5 * 360° / 13) = 138.46°
-#   Position: radius=3.00 → (x=-2.2455, y=1.9894, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 228.46°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P5;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P5 0.0012;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P5_rig;
-add_bone petal_L2_P5_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P5_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P5_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P5_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P5_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P5_rig;
-bind_armature petal_L2_P5_rig petal_L2_P5;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(138.46°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(138.46°)
-move petal_L2_P5 -2.2455 1.9894 -1.0000;
-rotate petal_L2_P5 0.00 15.00 228.46;
-
-# === Petal 6 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_6 = (6 * 360° / 13) = 166.15°
-#   Position: radius=3.00 → (x=-2.9128, y=0.7179, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 256.15°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P6;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P6 0.0011;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P6_rig;
-add_bone petal_L2_P6_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P6_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P6_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P6_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P6_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P6_rig;
-bind_armature petal_L2_P6_rig petal_L2_P6;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(166.15°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(166.15°)
-move petal_L2_P6 -2.9128 0.7179 -1.0000;
-rotate petal_L2_P6 0.00 15.00 256.15;
-
-# === Petal 7 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_7 = (7 * 360° / 13) = 193.85°
-#   Position: radius=3.00 → (x=-2.9128, y=-0.7179, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 283.85°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P7;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P7 0.0011;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P7_rig;
-add_bone petal_L2_P7_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P7_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P7_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P7_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P7_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P7_rig;
-bind_armature petal_L2_P7_rig petal_L2_P7;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(193.85°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(193.85°)
-move petal_L2_P7 -2.9128 -0.7179 -1.0000;
-rotate petal_L2_P7 0.00 15.00 283.85;
-
-# === Petal 8 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_8 = (8 * 360° / 13) = 221.54°
-#   Position: radius=3.00 → (x=-2.2455, y=-1.9894, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 311.54°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P8;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P8 0.0013;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P8_rig;
-add_bone petal_L2_P8_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P8_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P8_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P8_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P8_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P8_rig;
-bind_armature petal_L2_P8_rig petal_L2_P8;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(221.54°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(221.54°)
-move petal_L2_P8 -2.2455 -1.9894 -1.0000;
-rotate petal_L2_P8 0.00 15.00 311.54;
-
-# === Petal 9 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_9 = (9 * 360° / 13) = 249.23°
-#   Position: radius=3.00 → (x=-1.0638, y=-2.8050, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 339.23°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P9;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P9 0.0013;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P9_rig;
-add_bone petal_L2_P9_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P9_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P9_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P9_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P9_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P9_rig;
-bind_armature petal_L2_P9_rig petal_L2_P9;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(249.23°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(249.23°)
-move petal_L2_P9 -1.0638 -2.8050 -1.0000;
-rotate petal_L2_P9 0.00 15.00 339.23;
-
-# === Petal 10 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_10 = (10 * 360° / 13) = 276.92°
-#   Position: radius=3.00 → (x=0.3616, y=-2.9781, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 366.92°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P10;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P10 0.0011;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P10_rig;
-add_bone petal_L2_P10_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P10_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P10_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P10_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P10_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P10_rig;
-bind_armature petal_L2_P10_rig petal_L2_P10;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(276.92°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(276.92°)
-move petal_L2_P10 0.3616 -2.9781 -1.0000;
-rotate petal_L2_P10 0.00 15.00 366.92;
-
-# === Petal 11 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_11 = (11 * 360° / 13) = 304.62°
-#   Position: radius=3.00 → (x=1.7042, y=-2.4690, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 394.62°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P11;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P11 0.0013;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P11_rig;
-add_bone petal_L2_P11_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P11_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P11_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P11_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P11_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P11_rig;
-bind_armature petal_L2_P11_rig petal_L2_P11;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(304.62°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(304.62°)
-move petal_L2_P11 1.7042 -2.4690 -1.0000;
-rotate petal_L2_P11 0.00 15.00 394.62;
-
-# === Petal 12 (Layer 2) ===
-
-# CoT Positioning Reasoning:
-#   Target: Arrange 13 petals in circular pattern
-#   Angle: petal_12 = (12 * 360° / 13) = 332.31°
-#   Position: radius=3.00 → (x=2.6564, y=-1.3942, z=-1.0000)
-#   Rotation: face_outward = angle + 90° = 422.31°
-#   Tilt: cup_shape = 30.0° * (1 - 0.50) = 15.00°
-
-# Geometry (15-CP spline)
-obj petal_L2_P12;
-spline 0.0000 0.0000 -0.1650 0.1050 -0.3465 0.5250 -0.4620 0.9450 -0.5280 1.3020 -0.4290 1.6380 -0.2640 1.9320 0.0400 2.1000 0.2640 1.9320 0.4290 1.6380 0.5280 1.3020 0.4620 0.9450 0.3465 0.5250 0.1650 0.1050 0.0000 0.0000;
-sketch_extrude petal_L2_P12 0.0011;
-
-# Rigging (v7 - T-shape 5 bones)
-create_armature petal_L2_P12_rig;
-add_bone petal_L2_P12_rig bone_base 0.0000 0.0000 0 0.0000 0.9450 0;
-add_bone petal_L2_P12_rig bone_mid 0.0000 0.9450 0 0.0000 1.6380 0;
-add_bone petal_L2_P12_rig bone_tip 0.0000 1.6380 0 0.0000 2.1000 0;
-add_bone petal_L2_P12_rig bone_left 0.0000 1.3020 0 -0.5280 1.3020 0;
-add_bone petal_L2_P12_rig bone_right 0.0000 1.3020 0 0.5280 1.3020 0;
-finalize_bones petal_L2_P12_rig;
-bind_armature petal_L2_P12_rig petal_L2_P12;
-
-# Positioning (MOVE + ROTATE) - Using SR-discovered formulas
-#   pos_x = layer_radius * cos(angle°) = 3.00 * cos(332.31°)
-#   pos_y = layer_radius * sin(angle°) = 3.00 * sin(332.31°)
-move petal_L2_P12 2.6564 -1.3942 -1.0000;
-rotate petal_L2_P12 0.00 15.00 422.31;
-
 exit;
 
-# Total petals: 26
-# Total bones: 130 (5 per petal)
+# Total petals: 13
+# Total bones: 65 (5 per petal)
