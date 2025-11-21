@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 """
-Generate bone rigging v7 dataset with T-shape structure.
+Generate bone rigging v7 dataset with vertical spine structure.
 
-5 Independent Bones - T-Shape (Connected Spine):
+3 Connected Bones - Vertical Spine:
 - bone_base (0% → 45%)      - vertical spine lower
 - bone_mid (45% → 78%)      - vertical spine upper (connected to bone_base tail)
 - bone_tip (78% → 100%)     - vertical tip (connected to bone_mid tail)
-- bone_left (at 62%)        - horizontal left edge
-- bone_right (at 62%)       - horizontal right edge
 
 Key advantage: Connected spine creates continuous deformation chain.
 """
@@ -19,7 +17,7 @@ from pathlib import Path
 
 def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
     """
-    Generate dataset for T-shape bone rigging (5 bones).
+    Generate dataset for vertical spine bone rigging (3 bones).
 
     Features:
         - base_size: Overall petal size
@@ -29,12 +27,10 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
         - deformation_type: 0=straight, 1=s_curve, 2=c_curve, 3=wave
         - intensity: Deformation intensity (0.0-1.0)
 
-    Targets (20 values = 5 bones × 4 coordinates):
+    Targets (12 positions + 18 rotations = 30 total):
         - bone_base: start_x, start_y, end_x, end_y
         - bone_mid: start_x, start_y, end_x, end_y
         - bone_tip: start_x, start_y, end_x, end_y
-        - bone_left: start_x, start_y, end_x, end_y
-        - bone_right: start_x, start_y, end_x, end_y
     """
     np.random.seed(42)
 
@@ -59,7 +55,6 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
 
         # Height positions for vertical bones
         h_45 = petal_height * 0.45   # End of bone_base
-        h_62 = petal_height * 0.62   # Position of bone_left/bone_right
         h_78 = petal_height * 0.78   # End of bone_mid
         h_100 = petal_height         # End of bone_tip
 
@@ -119,21 +114,9 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
         bone_tip_end_x = offset_tip + noise()
         bone_tip_end_y = h_100
 
-        # bone_left: at 62%, from center to left edge
         # Interpolate x position at 62% between base and mid
-        t = (h_62 - h_45) / (h_78 - h_45)  # Interpolation factor
-        center_x_at_62 = offset_base + t * (offset_mid - offset_base)
 
-        bone_left_start_x = center_x_at_62
-        bone_left_start_y = h_62
-        bone_left_end_x = -width_at_62 / 2 + curl_left + noise()
-        bone_left_end_y = h_62
 
-        # bone_right: at 62%, from center to right edge
-        bone_right_start_x = center_x_at_62
-        bone_right_start_y = h_62
-        bone_right_end_x = width_at_62 / 2 - curl_right + noise()
-        bone_right_end_y = h_62
 
         # Calculate rotations for head and tail modes
         # head mode: head fixed, tail rotates around head
@@ -150,10 +133,6 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
             'bone_mid_tail': [0, 0, 0],
             'bone_tip_head': [0, 0, 0],
             'bone_tip_tail': [0, 0, 0],
-            'bone_left_head': [0, 0, 0],
-            'bone_left_tail': [0, 0, 0],
-            'bone_right_head': [0, 0, 0],
-            'bone_right_tail': [0, 0, 0],
         }
 
         if deformation_type == 1:  # S-curve
@@ -162,8 +141,6 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
             rotations['bone_mid_head'] = [-25 * intensity, 0, 0]
             rotations['bone_tip_head'] = [15 * intensity, 0, 0]
             # Slight edge curl
-            rotations['bone_left_head'] = [0, 10 * intensity, 0]
-            rotations['bone_right_head'] = [0, -10 * intensity, 0]
 
         elif deformation_type == 2:  # C-curve (cup shape)
             # All curve forward/inward
@@ -171,16 +148,12 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
             rotations['bone_mid_head'] = [0, 30 * intensity, 0]
             rotations['bone_tip_head'] = [0, 25 * intensity, 0]
             # Edges curl inward significantly
-            rotations['bone_left_head'] = [0, 40 * intensity, 0]
-            rotations['bone_right_head'] = [0, -40 * intensity, 0]
 
         elif deformation_type == 3:  # Wave
             # Oscillating pattern
             rotations['bone_base_head'] = [10 * np.sin(0.45 * np.pi * 2) * intensity, 0, 0]
             rotations['bone_mid_head'] = [10 * np.sin(0.78 * np.pi * 2) * intensity, 0, 0]
             rotations['bone_tip_head'] = [10 * np.sin(1.0 * np.pi * 2) * intensity, 0, 0]
-            rotations['bone_left_head'] = [0, 15 * np.sin(0.62 * np.pi * 3) * intensity, 0]
-            rotations['bone_right_head'] = [0, 15 * np.sin(0.62 * np.pi * 3 + np.pi) * intensity, 0]
 
         row = {
             # Features
@@ -205,16 +178,6 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
             'bone_tip_start_y': bone_tip_start_y,
             'bone_tip_end_x': bone_tip_end_x,
             'bone_tip_end_y': bone_tip_end_y,
-            # Targets - bone_left positions
-            'bone_left_start_x': bone_left_start_x,
-            'bone_left_start_y': bone_left_start_y,
-            'bone_left_end_x': bone_left_end_x,
-            'bone_left_end_y': bone_left_end_y,
-            # Targets - bone_right positions
-            'bone_right_start_x': bone_right_start_x,
-            'bone_right_start_y': bone_right_start_y,
-            'bone_right_end_x': bone_right_end_x,
-            'bone_right_end_y': bone_right_end_y,
             # Targets - bone_base rotations
             'bone_base_head_rx': rotations['bone_base_head'][0] + rot_noise(),
             'bone_base_head_ry': rotations['bone_base_head'][1] + rot_noise(),
@@ -236,20 +199,6 @@ def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
             'bone_tip_tail_rx': rotations['bone_tip_tail'][0] + rot_noise(),
             'bone_tip_tail_ry': rotations['bone_tip_tail'][1] + rot_noise(),
             'bone_tip_tail_rz': rotations['bone_tip_tail'][2] + rot_noise(),
-            # Targets - bone_left rotations
-            'bone_left_head_rx': rotations['bone_left_head'][0] + rot_noise(),
-            'bone_left_head_ry': rotations['bone_left_head'][1] + rot_noise(),
-            'bone_left_head_rz': rotations['bone_left_head'][2] + rot_noise(),
-            'bone_left_tail_rx': rotations['bone_left_tail'][0] + rot_noise(),
-            'bone_left_tail_ry': rotations['bone_left_tail'][1] + rot_noise(),
-            'bone_left_tail_rz': rotations['bone_left_tail'][2] + rot_noise(),
-            # Targets - bone_right rotations
-            'bone_right_head_rx': rotations['bone_right_head'][0] + rot_noise(),
-            'bone_right_head_ry': rotations['bone_right_head'][1] + rot_noise(),
-            'bone_right_head_rz': rotations['bone_right_head'][2] + rot_noise(),
-            'bone_right_tail_rx': rotations['bone_right_tail'][0] + rot_noise(),
-            'bone_right_tail_ry': rotations['bone_right_tail'][1] + rot_noise(),
-            'bone_right_tail_rz': rotations['bone_right_tail'][2] + rot_noise(),
         }
 
         data.append(row)
@@ -268,7 +217,7 @@ def main():
     df = generate_bone_rigging_v7(n_samples)
 
     # Save to CSV
-    output_dir = Path(__file__).parent.parent / "data" / "raw"
+    output_dir = Path(__file__).parent.parent / "data" / "processed"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_path = output_dir / "bone_rigging_v7.csv"
 
@@ -281,8 +230,6 @@ def main():
     print(f"  - bone_base (0% → 45%)   : vertical spine lower")
     print(f"  - bone_mid (78% → 45%)   : vertical spine upper (reversed)")
     print(f"  - bone_tip (78% → 100%)  : vertical tip")
-    print(f"  - bone_left (at 62%)     : horizontal left edge")
-    print(f"  - bone_right (at 62%)    : horizontal right edge")
     print(f"\nRotation modes:")
     print(f"  - head mode: head fixed, tail rotates (rx, ry, rz)")
     print(f"  - tail mode: tail fixed, head rotates (rx, ry, rz)")
