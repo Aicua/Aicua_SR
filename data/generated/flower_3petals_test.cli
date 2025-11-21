@@ -20,15 +20,13 @@
 # Geometry (15-CP spline)
 obj petal_0;
 spline 0.0000 0.0000 -0.1392 0.0768 -0.2923 0.3840 -0.3898 0.6912 -0.4454 0.9523 -0.3619 1.1981 -0.2227 1.4131 0.0000 1.5360 0.2227 1.4131 0.3619 1.1981 0.4454 0.9523 0.3898 0.6912 0.2923 0.3840 0.1392 0.0768 0.0000 0.0000;
-sketch_extrude petal_0 0.0013;
+sketch_extrude petal_0 0.0015;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_0_rig;
 add_bone petal_0_rig bone_base 0.0000 0.0000 0 0.0000 0.6912 0;
 add_bone petal_0_rig bone_mid 0.0000 0.6912 0 0.0000 1.1981 0;
 add_bone petal_0_rig bone_tip 0.0000 1.1981 0 0.0000 1.5360 0;
-add_bone petal_0_rig bone_left 0.0000 0.9523 0 -0.4454 0.9523 0;
-add_bone petal_0_rig bone_right 0.0000 0.9523 0 0.4454 0.9523 0;
 finalize_bones petal_0_rig;
 bind_armature petal_0_rig petal_0;
 
@@ -52,13 +50,11 @@ obj petal_1;
 spline 0.0000 0.0000 -0.1392 0.0768 -0.2923 0.3840 -0.3898 0.6912 -0.4454 0.9523 -0.3619 1.1981 -0.2227 1.4131 0.0000 1.5360 0.2227 1.4131 0.3619 1.1981 0.4454 0.9523 0.3898 0.6912 0.2923 0.3840 0.1392 0.0768 0.0000 0.0000;
 sketch_extrude petal_1 0.0014;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_1_rig;
 add_bone petal_1_rig bone_base 0.0000 0.0000 0 0.0000 0.6912 0;
 add_bone petal_1_rig bone_mid 0.0000 0.6912 0 0.0000 1.1981 0;
 add_bone petal_1_rig bone_tip 0.0000 1.1981 0 0.0000 1.5360 0;
-add_bone petal_1_rig bone_left 0.0000 0.9523 0 -0.4454 0.9523 0;
-add_bone petal_1_rig bone_right 0.0000 0.9523 0 0.4454 0.9523 0;
 finalize_bones petal_1_rig;
 bind_armature petal_1_rig petal_1;
 
@@ -82,13 +78,11 @@ obj petal_2;
 spline 0.0000 0.0000 -0.1392 0.0768 -0.2923 0.3840 -0.3898 0.6912 -0.4454 0.9523 -0.3619 1.1981 -0.2227 1.4131 0.0000 1.5360 0.2227 1.4131 0.3619 1.1981 0.4454 0.9523 0.3898 0.6912 0.2923 0.3840 0.1392 0.0768 0.0000 0.0000;
 sketch_extrude petal_2 0.0012;
 
-# Rigging (v7 - T-shape 5 bones)
+# Rigging (v7 - 3 bones vertical spine)
 create_armature petal_2_rig;
 add_bone petal_2_rig bone_base 0.0000 0.0000 0 0.0000 0.6912 0;
 add_bone petal_2_rig bone_mid 0.0000 0.6912 0 0.0000 1.1981 0;
 add_bone petal_2_rig bone_tip 0.0000 1.1981 0 0.0000 1.5360 0;
-add_bone petal_2_rig bone_left 0.0000 0.9523 0 -0.4454 0.9523 0;
-add_bone petal_2_rig bone_right 0.0000 0.9523 0 0.4454 0.9523 0;
 finalize_bones petal_2_rig;
 bind_armature petal_2_rig petal_2;
 
