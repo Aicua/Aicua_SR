@@ -10,6 +10,7 @@ Output format matches:
 
 import argparse
 import math
+import random
 import sys
 from pathlib import Path
 
@@ -85,7 +86,7 @@ class SplineRoseCLIGenerator:
                 'cp14_y': self.petal_mod.compute_cp14_y(base_size, layer_idx, petal_idx, opening_degree),
                 'cp15_x': self.petal_mod.compute_cp15_x(base_size, layer_idx, petal_idx, opening_degree),
                 'cp15_y': self.petal_mod.compute_cp15_y(base_size, layer_idx, petal_idx, opening_degree),
-                'extrude_depth': self.petal_mod.compute_extrude_depth(base_size, layer_idx, petal_idx, opening_degree),
+                'extrude_depth': random.uniform(0.001, 0.0015),
             }
         else:
             # Fallback formulas (2D spline control points) - V3 with 15 CPs
@@ -143,7 +144,7 @@ class SplineRoseCLIGenerator:
                 'cp15_x': 0.0,                                     # close spline (back to base)
                 'cp15_y': petal_height * y_positions[14],
                 # ULTRA-THIN THICKNESS
-                'extrude_depth': max(0.001, base_size * 0.005 * (1 - (layer_idx - 1) * 0.1) * (1 - opening_degree * 0.3)),
+                'extrude_depth': random.uniform(0.001, 0.0015),
             }
 
     def compute_bone_params_v8(self, petal_height, petal_width, opening_degree, layer_idx):

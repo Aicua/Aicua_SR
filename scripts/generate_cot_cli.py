@@ -7,6 +7,7 @@ Dynamically decides optimal number of control points based on shape analysis.
 
 import argparse
 import math
+import random
 import sys
 from pathlib import Path
 
@@ -37,7 +38,7 @@ class CoTRoseCLIGenerator:
         height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
         tip_offset = base_size * 0.02 * (layer_idx - 1) * opening_degree
         # Ultra-thin thickness
-        extrude_depth = max(0.001, base_size * 0.005 * (1 - (layer_idx - 1) * 0.1) * (1 - opening_degree * 0.3))
+        extrude_depth = random.uniform(0.001, 0.0015)
 
         # Use CoT reasoning to determine CP count and positions
         cot_result = self.reasoner.reason_and_generate(
