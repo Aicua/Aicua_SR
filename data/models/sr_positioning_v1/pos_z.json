@@ -1,0 +1,14 @@
+{
+  "formula": "z_variation",
+  "score": 0.962067207955602,
+  "complexity": 14,
+  "features": [
+    "layer_radius",
+    "num_petals",
+    "petal_index",
+    "opening_degree",
+    "base_tilt_angle",
+    "z_variation"
+  ],
+  "timestamp": "2025-11-21T05:03:45.781296"
+}

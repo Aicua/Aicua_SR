@@ -1,0 +1,14 @@
+{
+  "formula": "((petal_index * 360.0) / num_petals) + 90.0",
+  "score": 0.9747725012665036,
+  "complexity": 6,
+  "features": [
+    "layer_radius",
+    "num_petals",
+    "petal_index",
+    "opening_degree",
+    "base_tilt_angle",
+    "z_variation"
+  ],
+  "timestamp": "2025-11-21T05:03:45.781656"
+}

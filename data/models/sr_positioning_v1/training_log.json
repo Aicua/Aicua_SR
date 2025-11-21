@@ -1,0 +1,38 @@
+[
+  {
+    "target": "pos_x",
+    "formula": "layer_radius * cos((petal_index * 360.0) / num_petals)",
+    "score": 0.9553668670007617,
+    "complexity": 5
+  },
+  {
+    "target": "pos_y",
+    "formula": "layer_radius * sin((petal_index * 360.0) / num_petals)",
+    "score": 0.9663791668575492,
+    "complexity": 7
+  },
+  {
+    "target": "pos_z",
+    "formula": "z_variation",
+    "score": 0.962067207955602,
+    "complexity": 14
+  },
+  {
+    "target": "rotate_x",
+    "formula": "0.0",
+    "score": 0.9672435421491423,
+    "complexity": 10
+  },
+  {
+    "target": "rotate_y",
+    "formula": "base_tilt_angle * (1.0 - opening_degree)",
+    "score": 0.964908609194089,
+    "complexity": 6
+  },
+  {
+    "target": "rotate_z",
+    "formula": "((petal_index * 360.0) / num_petals) + 90.0",
+    "score": 0.9747725012665036,
+    "complexity": 6
+  }
+]
