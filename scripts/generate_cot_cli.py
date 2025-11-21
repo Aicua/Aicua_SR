@@ -71,11 +71,11 @@ class CoTRoseCLIGenerator:
         petal_height = max(cp[1] for cp in cps)
         petal_width = max(cp[0] for cp in cps) - min(cp[0] for cp in cps)
 
-        # Generate bone rigging (V7: T-shape 5 independent bones)
+        # Generate bone rigging (V8: 3-bone connected spine)
         rig_name = f"{petal_name}_rig"
         rigging_cli = [
             f"",
-            f"# Rigging for {petal_name} (v7 - T-shape 5 bones)",
+            f"# Rigging for {petal_name} (v8 - 3 bone connected spine)",
             f"create_armature {rig_name};",
         ]
 
@@ -83,23 +83,15 @@ class CoTRoseCLIGenerator:
         layer_idx_0based = layer_idx - 1
         layer_factor_bone = 0.8 + 0.1 * layer_idx_0based
 
-        # V7 T-shape bone height positions
-        h_45 = petal_height * 0.45 * layer_factor_bone   # End of bone_base
-        h_62 = petal_height * 0.62 * layer_factor_bone   # Position of bone_left/bone_right
-        h_78 = petal_height * 0.78 * layer_factor_bone   # End of bone_mid
+        # V8 3-bone spine height positions (equal thirds)
+        h_33 = petal_height * 0.33 * layer_factor_bone   # End of bone_base
+        h_67 = petal_height * 0.67 * layer_factor_bone   # End of bone_mid
         h_100 = petal_height * layer_factor_bone          # End of bone_tip
 
-        # Width at 62% (widest point)
-        half_width = petal_width / 2
-
-        # Add 5 independent bones - T-shape (connected spine)
-        # Vertical spine (tail of each bone = head of next)
-        rigging_cli.append(f"add_bone {rig_name} bone_base 0 0 0 0 {h_45:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_mid 0 {h_45:.4f} 0 0 {h_78:.4f} 0;")  # connected
-        rigging_cli.append(f"add_bone {rig_name} bone_tip 0 {h_78:.4f} 0 0 {h_100:.4f} 0;")
-        # Horizontal edges at 62%
-        rigging_cli.append(f"add_bone {rig_name} bone_left 0 {h_62:.4f} 0 {-half_width:.4f} {h_62:.4f} 0;")
-        rigging_cli.append(f"add_bone {rig_name} bone_right 0 {h_62:.4f} 0 {half_width:.4f} {h_62:.4f} 0;")
+        # Add 3 vertical bones - connected spine
+        rigging_cli.append(f"add_bone {rig_name} bone_base 0 0 0 0 {h_33:.4f} 0;")
+        rigging_cli.append(f"add_bone {rig_name} bone_mid 0 {h_33:.4f} 0 0 {h_67:.4f} 0;")  # connected
+        rigging_cli.append(f"add_bone {rig_name} bone_tip 0 {h_67:.4f} 0 0 {h_100:.4f} 0;")  # connected
 
         rigging_cli.append(f"finalize_bones {rig_name};")
         flexibility = 0.5 + (3 - layer_idx) * 0.15
@@ -122,12 +114,10 @@ class CoTRoseCLIGenerator:
 
         animation_cli = [
             f"",
-            f"# Animation for {petal_name} (v7 - T-shape 5 bones)",
+            f"# Animation for {petal_name} (v8 - 3 bone connected spine)",
             f"wing_flap {rig_name} bone_base {frequency:.0f} {amplitude * 0.3:.1f} 0 -1 0 0;",
             f"wing_flap {rig_name} bone_mid {frequency:.0f} {amplitude * 0.6:.1f} 0 -1 0 0.05;",
             f"wing_flap {rig_name} bone_tip {frequency * 1.2:.0f} {amplitude * 0.4:.1f} 0 -1 0 0.1;",
-            f"wing_flap {rig_name} bone_left {frequency * 0.8:.0f} {amplitude * 0.5:.1f} -1 0 0 0.15;",
-            f"wing_flap {rig_name} bone_right {frequency * 0.8:.0f} {amplitude * 0.5:.1f} 1 0 0 0.15;",
         ]
 
         # Add bloom animation if requested (auto_rotate for smooth opening)
@@ -141,48 +131,23 @@ class CoTRoseCLIGenerator:
                 f"auto_rotate {rig_name} bone_mid 1 0 0 {bloom_angle:.1f} {bloom_duration} smooth;"
             )
 
-        # Generate deformation rotate_bone commands (head/tail modes)
-        # Deformation type based on opening_degree
-        if opening_degree < 0.3:
-            deformation_type = 0  # straight
-        elif opening_degree < 0.6:
-            deformation_type = 1  # s_curve
-        elif opening_degree < 0.8:
-            deformation_type = 2  # c_curve
-        else:
-            deformation_type = 3  # wave
+        # Generate deformation rotate_bone commands (v8 cup shape logic)
+        # Cup intensity inversely proportional to opening_degree
+        cup_intensity = (1.0 - opening_degree)
 
-        intensity = opening_degree
         deformation_cli = [
             f"",
-            f"# Deformation rotate_bone (head/tail modes)",
+            f"# Deformation rotate_bone (v8 cup shape)",
+            f"# cup_intensity = {cup_intensity:.2f} (inversely proportional to opening)",
         ]
 
-        if deformation_type == 1:  # S-curve
+        # Cup shape (forward curve, rx > 0)
+        if cup_intensity > 0.1:  # Only add if significant cup
             deformation_cli.extend([
-                f"rotate_bone {rig_name} bone_base {15 * intensity:.1f} 0 0 head;",
-                f"rotate_bone {rig_name} bone_mid {-25 * intensity:.1f} 0 0 head;",
-                f"rotate_bone {rig_name} bone_tip {15 * intensity:.1f} 0 0 head;",
-                f"rotate_bone {rig_name} bone_left 0 {10 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_right 0 {-10 * intensity:.1f} 0 head;",
+                f"rotate_bone {rig_name} bone_base {20 * cup_intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_mid {30 * cup_intensity:.1f} 0 0 head;",
+                f"rotate_bone {rig_name} bone_tip {20 * cup_intensity:.1f} 0 0 head;",
             ])
-        elif deformation_type == 2:  # C-curve (cup shape)
-            deformation_cli.extend([
-                f"rotate_bone {rig_name} bone_base 0 {20 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_mid 0 {30 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_tip 0 {25 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_left 0 {40 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_right 0 {-40 * intensity:.1f} 0 head;",
-            ])
-        elif deformation_type == 3:  # Wave
-            deformation_cli.extend([
-                f"rotate_bone {rig_name} bone_base {10 * intensity:.1f} {5 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_mid {-15 * intensity:.1f} {-10 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_tip {20 * intensity:.1f} {8 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_left {5 * intensity:.1f} {15 * intensity:.1f} 0 head;",
-                f"rotate_bone {rig_name} bone_right {-5 * intensity:.1f} {-15 * intensity:.1f} 0 head;",
-            ])
-        # straight (type 0) has no deformation
 
         return {
             "geometry": geometry_cli,
