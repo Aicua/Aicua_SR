@@ -204,6 +204,28 @@ class FlowerCLIGeneratorV1:
             "",
         ]
 
+        # Calculate position first for CoT
+        position = self.calculate_position(
+            layer_radius=layer_radius,
+            num_petals=num_petals,
+            petal_index=petal_index,
+            opening_degree=opening_degree,
+            base_tilt_angle=base_tilt_angle,
+            z_variation=z_offset
+        )
+
+        # CoT: Positioning reasoning
+        angle_deg = (petal_index * 360.0) / num_petals
+        cli.extend([
+            f"# CoT Positioning Reasoning:",
+            f"#   Target: Arrange {num_petals} petals in circular pattern",
+            f"#   Angle: petal_{petal_index} = ({petal_index} * 360° / {num_petals}) = {angle_deg:.2f}°",
+            f"#   Position: radius={layer_radius:.2f} → (x={position['pos_x']:.4f}, y={position['pos_y']:.4f}, z={position['pos_z']:.4f})",
+            f"#   Rotation: face_outward = angle + 90° = {position['rotate_z']:.2f}°",
+            f"#   Tilt: cup_shape = {base_tilt_angle:.1f}° * (1 - {opening_degree:.2f}) = {position['rotate_y']:.2f}°",
+            "",
+        ])
+
         # 1. Geometry
         cli.append("# Geometry")
         cli.extend(self.generate_petal_geometry_simple(petal_name, base_size, opening_degree, layer_index))
@@ -214,16 +236,10 @@ class FlowerCLIGeneratorV1:
         cli.extend(self.generate_bone_rigging_v7(petal_name, base_size, opening_degree, layer_index))
         cli.append("")
 
-        # 3. Positioning
-        cli.append("# Positioning (MOVE + ROTATE)")
-        position = self.calculate_position(
-            layer_radius=layer_radius,
-            num_petals=num_petals,
-            petal_index=petal_index,
-            opening_degree=opening_degree,
-            base_tilt_angle=base_tilt_angle,
-            z_variation=z_offset
-        )
+        # 3. Positioning with SR formulas
+        cli.append("# Positioning (MOVE + ROTATE) - Using SR-discovered formulas")
+        cli.append(f"#   pos_x = layer_radius * cos(angle°) = {layer_radius:.2f} * cos({angle_deg:.2f}°)")
+        cli.append(f"#   pos_y = layer_radius * sin(angle°) = {layer_radius:.2f} * sin({angle_deg:.2f}°)")
         cli.extend(self.generate_positioning(petal_name, position))
         cli.append("")
 
