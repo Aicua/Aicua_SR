@@ -179,9 +179,12 @@ def sr_cp15_y(base_size, opening_degree):
 
 
 def sr_extrude_depth(base_size, opening_degree):
-    """SR formula: base_size*(0.0049875244 + opening_degree*(-0.0014847366)) (R²=0.9919)"""
+    """SR formula: base_size*(0.0049875244 + opening_degree*(-0.0014847366)) (R²=0.9919)
+    NOTE: Scaled down 10x because SR was trained on old data with thickness_base=0.005
+    """
     # Ultra-thin extrude (0.001-0.0015) - MUST stay in this range
-    thickness = base_size * (0.0049875244 + opening_degree * (-0.0014847366))
+    # Scale SR formula down 10x to match new thickness_base=0.0005
+    thickness = base_size * (0.00049875244 + opening_degree * (-0.00014847366))
     return max(0.001, min(0.0015, thickness))  # Clamp to [0.001, 0.0015]
 
 
