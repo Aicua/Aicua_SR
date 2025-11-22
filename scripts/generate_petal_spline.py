@@ -160,13 +160,13 @@ def generate_petal_spline(n_samples: int = 3000) -> pd.DataFrame:
         cp15_y = 0.0
 
         # === ULTRA-THIN THICKNESS ===
-        thickness_base = 0.005
+        thickness_base = 0.0005  # Ultra-thin like real rose petals (0.001-0.0015)
         thickness = (
             thickness_base * base_size *
             (1 - layer_idx * 0.1) *
             (1 - opening_degree * 0.3)
         )
-        extrude_depth = max(0.001, thickness)
+        extrude_depth = max(0.001, min(0.0015, thickness))  # Clamp to [0.001, 0.0015]
 
         # === ADD REALISTIC NOISE (3%) ===
         noise = 0.03
