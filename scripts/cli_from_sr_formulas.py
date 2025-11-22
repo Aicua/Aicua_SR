@@ -200,33 +200,45 @@ def compute_bone_rotations(base_size, curvature):
     """
     Compute bone rotations based on curvature parameter.
 
+    C-shape (0.1-0.4): 4 commands only
+      - bone_tip: head only (+20° → +5°)
+      - bone_mid: tail only (-40° → -20°)
+      - bone_base: head + tail (-20° → -10°, -40° → -20°)
+
+    S-shape (0.5-1.0): 6 commands
+      - All bones: head + tail with alternating pattern
+
     Args:
         base_size: Overall rose size (affects rotation intensity)
-        curvature: 0.0 (no curve) to 1.0 (maximum curve)
+        curvature: 0.1-0.4 (C-shape), 0.5-1.0 (S-shape)
 
     Returns:
-        Dictionary with bone rotation values (rx only, ry=rz=0)
+        Dictionary with bone rotation values (None means skip that command)
     """
-    # Base rotation intensity scales with size (larger petals need more curve)
-    base_intensity = base_size * 5.0  # Scale factor
 
     if curvature < 0.5:
-        # C-shape: All bones bend in same direction (down)
-        # Intensity increases with curvature
-        intensity = curvature * 2.0  # Map 0-0.5 to 0-1
+        # C-shape: Only 4 commands
+        # Map curvature 0.1-0.4 to intensity 0-1
+        intensity = (curvature - 0.1) / 0.3 if curvature >= 0.1 else 0
+        intensity = max(0, min(1, intensity))  # Clamp to 0-1
 
-        bone_base_head_rx = -base_intensity * intensity * 0.5  # Half intensity at base
-        bone_base_tail_rx = -base_intensity * intensity * 1.0  # Full intensity
+        # bone_tip: head only, +20° → +5°
+        bone_tip_head_rx = 20.0 - intensity * 15.0
+        bone_tip_tail_rx = None  # Skip
 
-        bone_mid_head_rx = -base_intensity * intensity * 1.0
-        bone_mid_tail_rx = -base_intensity * intensity * 1.2  # Slightly more
+        # bone_mid: tail only, -40° → -20°
+        bone_mid_head_rx = None  # Skip
+        bone_mid_tail_rx = -40.0 + intensity * 20.0
 
-        bone_tip_head_rx = -base_intensity * intensity * 0.8
-        bone_tip_tail_rx = -base_intensity * intensity * 0.3  # Taper at tip
+        # bone_base: head + tail
+        bone_base_head_rx = -20.0 + intensity * 10.0  # -20° → -10°
+        bone_base_tail_rx = -40.0 + intensity * 20.0  # -40° → -20°
+
     else:
-        # S-shape: Alternating bend (down → up → down)
-        # Intensity increases with curvature
+        # S-shape: All 6 commands (alternating bend)
         intensity = (curvature - 0.5) * 2.0  # Map 0.5-1.0 to 0-1
+
+        base_intensity = base_size * 5.0
 
         # Base: Bend down
         bone_base_head_rx = -base_intensity * (0.5 + intensity * 0.5)
@@ -236,7 +248,7 @@ def compute_bone_rotations(base_size, curvature):
         bone_mid_head_rx = base_intensity * (0.3 + intensity * 0.7)
         bone_mid_tail_rx = base_intensity * (0.8 + intensity * 1.0)
 
-        # Tip: Bend down (same as base)
+        # Tip: Bend down
         bone_tip_head_rx = -base_intensity * (0.3 + intensity * 0.5)
         bone_tip_tail_rx = -base_intensity * (0.1 + intensity * 0.2)
 
@@ -324,9 +336,10 @@ sketch_extrude {petal_name} {depth:.4f};"""
 def format_bone_cli(rotations: dict, layer: int = 1, petal: int = 1) -> str:
     """
     Format bone rotations as CLI commands.
+    Skip commands where rotation value is None.
 
     Args:
-        rotations: Dictionary with bone rotation values
+        rotations: Dictionary with bone rotation values (None means skip)
         layer: Layer number for naming
         petal: Petal number for naming
 
@@ -334,13 +347,27 @@ def format_bone_cli(rotations: dict, layer: int = 1, petal: int = 1) -> str:
         CLI commands for bone rotations
     """
     rig_name = f'petal_L{layer}_P{petal}_rig'
+    commands = []
 
-    return f"""rotate_bone {rig_name} bone_base {rotations['bone_base_head_rx']:.4f} 0.0 0.0 head;
-rotate_bone {rig_name} bone_base {rotations['bone_base_tail_rx']:.4f} 0.0 0.0 tail;
-rotate_bone {rig_name} bone_mid {rotations['bone_mid_head_rx']:.4f} 0.0 0.0 head;
-rotate_bone {rig_name} bone_mid {rotations['bone_mid_tail_rx']:.4f} 0.0 0.0 tail;
-rotate_bone {rig_name} bone_tip {rotations['bone_tip_head_rx']:.4f} 0.0 0.0 head;
-rotate_bone {rig_name} bone_tip {rotations['bone_tip_tail_rx']:.4f} 0.0 0.0 tail;"""
+    # bone_tip (check head first, then tail - for proper order)
+    if rotations['bone_tip_head_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_tip {rotations['bone_tip_head_rx']:.4f} 0.0 0.0 head;")
+    if rotations['bone_tip_tail_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_tip {rotations['bone_tip_tail_rx']:.4f} 0.0 0.0 tail;")
+
+    # bone_mid
+    if rotations['bone_mid_head_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_mid {rotations['bone_mid_head_rx']:.4f} 0.0 0.0 head;")
+    if rotations['bone_mid_tail_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_mid {rotations['bone_mid_tail_rx']:.4f} 0.0 0.0 tail;")
+
+    # bone_base
+    if rotations['bone_base_head_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_base {rotations['bone_base_head_rx']:.4f} 0.0 0.0 head;")
+    if rotations['bone_base_tail_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_base {rotations['bone_base_tail_rx']:.4f} 0.0 0.0 tail;")
+
+    return '\n'.join(commands)
 
 
 def main():
