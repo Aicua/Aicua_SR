@@ -49,202 +49,200 @@ def generate_petal_spline(n_samples: int = 3000) -> pd.DataFrame:
     """
     data = []
 
-    petals_per_layer = [5, 8, 13]  # Fibonacci
-
     for _ in range(n_samples):
         base_size = np.random.uniform(2.0, 8.0)
         opening_degree = np.random.uniform(0.0, 1.0)
 
-        for layer_idx in range(3):
-            n_petals = petals_per_layer[layer_idx]
+        # Single layer with 3 petals
+        layer_idx = 0
+        petal_idx = np.random.randint(0, 3)  # Random pick from 3 petals
 
-            for petal_idx in range(n_petals):
-                # === LAYER FACTOR ===
-                layer_factor = 0.8 + 0.1 * layer_idx
+        # === LAYER FACTOR ===
+        layer_factor = 0.8 + 0.1 * layer_idx
 
-                # === PETAL HEIGHT ===
-                petal_height = (
-                    base_size * layer_factor *
-                    (1.2 - opening_degree * 0.3)
-                )
+        # === PETAL HEIGHT ===
+        petal_height = (
+            base_size * layer_factor *
+            (1.2 - opening_degree * 0.3)
+        )
 
-                # === WIDTH CALCULATIONS - Similar to rose_petals_ok.jpg ===
-                base_spread = (
-                    base_size * 0.30 * layer_factor *
-                    (1 + opening_degree * 0.2)
-                )
+        # === WIDTH CALCULATIONS - Similar to rose_petals_ok.jpg ===
+        base_spread = (
+            base_size * 0.30 * layer_factor *
+            (1 + opening_degree * 0.2)
+        )
 
-                # Base NARROW like a point - BUT with random variation
-                # Some petals have wider base, some narrower
-                base_width_factor = np.random.uniform(0.3, 0.7)  # Random 30-70%
-                base_width = base_spread * base_width_factor
+        # Base NARROW like a point - BUT with random variation
+        # Some petals have wider base, some narrower
+        base_width_factor = np.random.uniform(0.3, 0.7)  # Random 30-70%
+        base_width = base_spread * base_width_factor
 
-                # Lower - expands quickly + RANDOM bulge
-                # CP3/CP13 can bulge wider
-                lower_width_factor = np.random.uniform(0.95, 1.15)  # 95-115%
-                lower_width = base_spread * lower_width_factor
+        # Lower - expands quickly + RANDOM bulge
+        # CP3/CP13 can bulge wider
+        lower_width_factor = np.random.uniform(0.95, 1.15)  # 95-115%
+        lower_width = base_spread * lower_width_factor
 
-                # Mid-low - continues to expand
-                mid_low_width = base_spread * 1.4  # Expands
+        # Mid-low - continues to expand
+        mid_low_width = base_spread * 1.4  # Expands
 
-                # Upper-mid - WIDEST (60-65% height, not 50%)
-                upper_mid_width = base_spread * 1.6  # WIDEST
+        # Upper-mid - WIDEST (60-65% height, not 50%)
+        upper_mid_width = base_spread * 1.6  # WIDEST
 
-                # Upper - starts to taper
-                upper_width = base_spread * 1.3    # Tapers back
+        # Upper - starts to taper
+        upper_width = base_spread * 1.3    # Tapers back
 
-                # Near-tip - narrows significantly
-                near_tip_width = base_spread * 0.8  # Narrows
+        # Near-tip - narrows significantly
+        near_tip_width = base_spread * 0.8  # Narrows
 
-                # Tip x offset (for asymmetry/tilt)
-                tip_x_offset = base_size * 0.02 * layer_idx * opening_degree
+        # Tip x offset (for asymmetry/tilt)
+        tip_x_offset = base_size * 0.02 * layer_idx * opening_degree
 
-                # === 13 CONTROL POINTS (similar to rose_petals_ok.jpg) ===
+        # === 13 CONTROL POINTS (similar to rose_petals_ok.jpg) ===
 
-                # CP1: Base center (starting point)
-                cp1_x = 0.0
-                cp1_y = 0.0
+        # CP1: Base center (starting point)
+        cp1_x = 0.0
+        cp1_y = 0.0
 
-                # CP2: Base left - VERY NARROW (like a point) + RANDOM HEIGHT
-                # Height can be from 3-8% (not fixed at 5%)
-                base_left_height = np.random.uniform(0.03, 0.08)
-                cp2_x = -base_width * 0.5
-                cp2_y = petal_height * base_left_height
+        # CP2: Base left - VERY NARROW (like a point) + RANDOM HEIGHT
+        # Height can be from 3-8% (not fixed at 5%)
+        base_left_height = np.random.uniform(0.03, 0.08)
+        cp2_x = -base_width * 0.5
+        cp2_y = petal_height * base_left_height
 
-                # CP3: Lower left - expands quickly
-                cp3_x = -lower_width * 0.5
-                cp3_y = petal_height * 0.25  # 25% height
+        # CP3: Lower left - expands quickly
+        cp3_x = -lower_width * 0.5
+        cp3_y = petal_height * 0.25  # 25% height
 
-                # CP4: Mid-low left - continues to expand
-                cp4_x = -mid_low_width * 0.5
-                cp4_y = petal_height * 0.45  # 45% height
+        # CP4: Mid-low left - continues to expand
+        cp4_x = -mid_low_width * 0.5
+        cp4_y = petal_height * 0.45  # 45% height
 
-                # CP5: Upper-mid left - WIDEST (60-65%)
-                cp5_x = -upper_mid_width * 0.5
-                cp5_y = petal_height * 0.62  # 62% height
+        # CP5: Upper-mid left - WIDEST (60-65%)
+        cp5_x = -upper_mid_width * 0.5
+        cp5_y = petal_height * 0.62  # 62% height
 
-                # CP6: Upper left - tapers
-                cp6_x = -upper_width * 0.5
-                cp6_y = petal_height * 0.78  # 78% height
+        # CP6: Upper left - tapers
+        cp6_x = -upper_width * 0.5
+        cp6_y = petal_height * 0.78  # 78% height
 
-                # CP7: Near-tip left - narrows significantly
-                cp7_x = -near_tip_width * 0.5
-                cp7_y = petal_height * 0.92  # 92% height
+        # CP7: Near-tip left - narrows significantly
+        cp7_x = -near_tip_width * 0.5
+        cp7_y = petal_height * 0.92  # 92% height
 
-                # CP8: Tip center (rounded)
-                cp8_x = tip_x_offset
-                cp8_y = petal_height
+        # CP8: Tip center (rounded)
+        cp8_x = tip_x_offset
+        cp8_y = petal_height
 
-                # CP9: Near-tip right - symmetric
-                cp9_x = near_tip_width * 0.5
-                cp9_y = petal_height * 0.92
+        # CP9: Near-tip right - symmetric
+        cp9_x = near_tip_width * 0.5
+        cp9_y = petal_height * 0.92
 
-                # CP10: Upper right - symmetric
-                cp10_x = upper_width * 0.5
-                cp10_y = petal_height * 0.78
+        # CP10: Upper right - symmetric
+        cp10_x = upper_width * 0.5
+        cp10_y = petal_height * 0.78
 
-                # CP11: Upper-mid right - WIDEST symmetric
-                cp11_x = upper_mid_width * 0.5
-                cp11_y = petal_height * 0.62
+        # CP11: Upper-mid right - WIDEST symmetric
+        cp11_x = upper_mid_width * 0.5
+        cp11_y = petal_height * 0.62
 
-                # CP12: Mid-low right - symmetric
-                cp12_x = mid_low_width * 0.5
-                cp12_y = petal_height * 0.45
+        # CP12: Mid-low right - symmetric
+        cp12_x = mid_low_width * 0.5
+        cp12_y = petal_height * 0.45
 
-                # CP13: Lower right - symmetric
-                cp13_x = lower_width * 0.5
-                cp13_y = petal_height * 0.25
+        # CP13: Lower right - symmetric
+        cp13_x = lower_width * 0.5
+        cp13_y = petal_height * 0.25
 
-                # CP14: Base right - NARROW + RANDOM HEIGHT (symmetric with CP2)
-                cp14_x = base_width * 0.5
-                cp14_y = petal_height * base_left_height  # Same height as CP2
+        # CP14: Base right - NARROW + RANDOM HEIGHT (symmetric with CP2)
+        cp14_x = base_width * 0.5
+        cp14_y = petal_height * base_left_height  # Same height as CP2
 
-                # CP15: Back to base center (closed spline)
-                cp15_x = 0.0
-                cp15_y = 0.0
+        # CP15: Back to base center (closed spline)
+        cp15_x = 0.0
+        cp15_y = 0.0
 
-                # === ULTRA-THIN THICKNESS ===
-                thickness_base = 0.005
-                thickness = (
-                    thickness_base * base_size *
-                    (1 - layer_idx * 0.1) *
-                    (1 - opening_degree * 0.3)
-                )
-                extrude_depth = max(0.001, thickness)
+        # === ULTRA-THIN THICKNESS ===
+        thickness_base = 0.005
+        thickness = (
+            thickness_base * base_size *
+            (1 - layer_idx * 0.1) *
+            (1 - opening_degree * 0.3)
+        )
+        extrude_depth = max(0.001, thickness)
 
-                # === ADD REALISTIC NOISE (3%) ===
-                noise = 0.03
+        # === ADD REALISTIC NOISE (3%) ===
+        noise = 0.03
 
-                # Apply noise (skip CP1 and CP15 - fixed at origin)
-                cp2_x *= (1 + np.random.normal(0, noise))
-                cp2_y *= (1 + np.random.normal(0, noise))
-                cp3_x *= (1 + np.random.normal(0, noise))
-                cp3_y *= (1 + np.random.normal(0, noise))
-                cp4_x *= (1 + np.random.normal(0, noise))
-                cp4_y *= (1 + np.random.normal(0, noise))
-                cp5_x *= (1 + np.random.normal(0, noise))
-                cp5_y *= (1 + np.random.normal(0, noise))
-                cp6_x *= (1 + np.random.normal(0, noise))
-                cp6_y *= (1 + np.random.normal(0, noise))
-                cp7_x *= (1 + np.random.normal(0, noise))
-                cp7_y *= (1 + np.random.normal(0, noise))
-                cp8_x += np.random.normal(0, noise * base_size * 0.05)
-                cp8_y *= (1 + np.random.normal(0, noise))
-                cp9_x *= (1 + np.random.normal(0, noise))
-                cp9_y *= (1 + np.random.normal(0, noise))
-                cp10_x *= (1 + np.random.normal(0, noise))
-                cp10_y *= (1 + np.random.normal(0, noise))
-                cp11_x *= (1 + np.random.normal(0, noise))
-                cp11_y *= (1 + np.random.normal(0, noise))
-                cp12_x *= (1 + np.random.normal(0, noise))
-                cp12_y *= (1 + np.random.normal(0, noise))
-                cp13_x *= (1 + np.random.normal(0, noise))
-                cp13_y *= (1 + np.random.normal(0, noise))
-                cp14_x *= (1 + np.random.normal(0, noise))
-                cp14_y *= (1 + np.random.normal(0, noise))
-                extrude_depth *= (1 + np.random.normal(0, noise))
-                extrude_depth = max(0.001, extrude_depth)
+        # Apply noise (skip CP1 and CP15 - fixed at origin)
+        cp2_x *= (1 + np.random.normal(0, noise))
+        cp2_y *= (1 + np.random.normal(0, noise))
+        cp3_x *= (1 + np.random.normal(0, noise))
+        cp3_y *= (1 + np.random.normal(0, noise))
+        cp4_x *= (1 + np.random.normal(0, noise))
+        cp4_y *= (1 + np.random.normal(0, noise))
+        cp5_x *= (1 + np.random.normal(0, noise))
+        cp5_y *= (1 + np.random.normal(0, noise))
+        cp6_x *= (1 + np.random.normal(0, noise))
+        cp6_y *= (1 + np.random.normal(0, noise))
+        cp7_x *= (1 + np.random.normal(0, noise))
+        cp7_y *= (1 + np.random.normal(0, noise))
+        cp8_x += np.random.normal(0, noise * base_size * 0.05)
+        cp8_y *= (1 + np.random.normal(0, noise))
+        cp9_x *= (1 + np.random.normal(0, noise))
+        cp9_y *= (1 + np.random.normal(0, noise))
+        cp10_x *= (1 + np.random.normal(0, noise))
+        cp10_y *= (1 + np.random.normal(0, noise))
+        cp11_x *= (1 + np.random.normal(0, noise))
+        cp11_y *= (1 + np.random.normal(0, noise))
+        cp12_x *= (1 + np.random.normal(0, noise))
+        cp12_y *= (1 + np.random.normal(0, noise))
+        cp13_x *= (1 + np.random.normal(0, noise))
+        cp13_y *= (1 + np.random.normal(0, noise))
+        cp14_x *= (1 + np.random.normal(0, noise))
+        cp14_y *= (1 + np.random.normal(0, noise))
+        extrude_depth *= (1 + np.random.normal(0, noise))
+        extrude_depth = max(0.001, extrude_depth)
 
-                data.append({
-                    # Features
-                    'base_size': round(base_size, 6),
-                    'layer_index': layer_idx,
-                    'petal_index': petal_idx,
-                    'opening_degree': round(opening_degree, 6),
+        data.append({
+            # Features
+            'base_size': round(base_size, 6),
+            'layer_index': layer_idx,
+            'petal_index': petal_idx,
+            'opening_degree': round(opening_degree, 6),
 
-                    # Targets - 15 Control Points
-                    'cp1_x': round(cp1_x, 6),
-                    'cp1_y': round(cp1_y, 6),
-                    'cp2_x': round(cp2_x, 6),
-                    'cp2_y': round(cp2_y, 6),
-                    'cp3_x': round(cp3_x, 6),
-                    'cp3_y': round(cp3_y, 6),
-                    'cp4_x': round(cp4_x, 6),
-                    'cp4_y': round(cp4_y, 6),
-                    'cp5_x': round(cp5_x, 6),
-                    'cp5_y': round(cp5_y, 6),
-                    'cp6_x': round(cp6_x, 6),
-                    'cp6_y': round(cp6_y, 6),
-                    'cp7_x': round(cp7_x, 6),
-                    'cp7_y': round(cp7_y, 6),
-                    'cp8_x': round(cp8_x, 6),
-                    'cp8_y': round(cp8_y, 6),
-                    'cp9_x': round(cp9_x, 6),
-                    'cp9_y': round(cp9_y, 6),
-                    'cp10_x': round(cp10_x, 6),
-                    'cp10_y': round(cp10_y, 6),
-                    'cp11_x': round(cp11_x, 6),
-                    'cp11_y': round(cp11_y, 6),
-                    'cp12_x': round(cp12_x, 6),
-                    'cp12_y': round(cp12_y, 6),
-                    'cp13_x': round(cp13_x, 6),
-                    'cp13_y': round(cp13_y, 6),
-                    'cp14_x': round(cp14_x, 6),
-                    'cp14_y': round(cp14_y, 6),
-                    'cp15_x': round(cp15_x, 6),
-                    'cp15_y': round(cp15_y, 6),
-                    'extrude_depth': round(extrude_depth, 6),
-                })
+            # Targets - 15 Control Points
+            'cp1_x': round(cp1_x, 6),
+            'cp1_y': round(cp1_y, 6),
+            'cp2_x': round(cp2_x, 6),
+            'cp2_y': round(cp2_y, 6),
+            'cp3_x': round(cp3_x, 6),
+            'cp3_y': round(cp3_y, 6),
+            'cp4_x': round(cp4_x, 6),
+            'cp4_y': round(cp4_y, 6),
+            'cp5_x': round(cp5_x, 6),
+            'cp5_y': round(cp5_y, 6),
+            'cp6_x': round(cp6_x, 6),
+            'cp6_y': round(cp6_y, 6),
+            'cp7_x': round(cp7_x, 6),
+            'cp7_y': round(cp7_y, 6),
+            'cp8_x': round(cp8_x, 6),
+            'cp8_y': round(cp8_y, 6),
+            'cp9_x': round(cp9_x, 6),
+            'cp9_y': round(cp9_y, 6),
+            'cp10_x': round(cp10_x, 6),
+            'cp10_y': round(cp10_y, 6),
+            'cp11_x': round(cp11_x, 6),
+            'cp11_y': round(cp11_y, 6),
+            'cp12_x': round(cp12_x, 6),
+            'cp12_y': round(cp12_y, 6),
+            'cp13_x': round(cp13_x, 6),
+            'cp13_y': round(cp13_y, 6),
+            'cp14_x': round(cp14_x, 6),
+            'cp14_y': round(cp14_y, 6),
+            'cp15_x': round(cp15_x, 6),
+            'cp15_y': round(cp15_y, 6),
+            'extrude_depth': round(extrude_depth, 6),
+        })
 
     return pd.DataFrame(data)
 
