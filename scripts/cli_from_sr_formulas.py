@@ -192,9 +192,10 @@ def sr_cp15_y(base_size, opening_degree):
 
 def sr_extrude_depth(base_size, opening_degree):
     """SR formula for extrude_depth - REPLACE WITH ACTUAL FORMULA"""
-    # Ultra-thin extrude (0.001-0.0015)
+    # Ultra-thin extrude (0.001-0.0015) - MUST stay in this range
     # Example: 0.0005 * base_size * (1 - 0.3 * opening_degree)
-    return max(0.001, 0.0005 * base_size * (1.0 - 0.3 * opening_degree))
+    thickness = 0.0005 * base_size * (1.0 - 0.3 * opening_degree)
+    return max(0.001, min(0.0015, thickness))  # Clamp to [0.001, 0.0015]
 
 
 # =============================================================================
@@ -265,7 +266,7 @@ def format_cli(control_points: dict, layer: int = 1, petal: int = 1) -> str:
 obj {petal_name};
 spline {spline_str};
 exit;
-sketch_extrude {petal_name} {depth:.3f};"""
+sketch_extrude {petal_name} {depth:.4f};"""
 
 
 def main():

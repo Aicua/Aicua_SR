@@ -133,7 +133,7 @@ def compute_petal_spline(base_size: float, opening_degree: float,
         (1 - layer_idx * 0.1) *
         (1 - opening_degree * 0.3)
     )
-    extrude_depth = max(0.001, thickness)
+    extrude_depth = max(0.001, min(0.0015, thickness))  # Clamp to [0.001, 0.0015]
 
     return {
         'cp1_x': cp1_x, 'cp1_y': cp1_y,
@@ -185,7 +185,7 @@ def format_cli_output(control_points: dict, layer_idx: int = 1, petal_idx: int =
 obj {petal_name};
 spline {spline_coords};
 exit;
-sketch_extrude {petal_name} {extrude_depth:.3f};"""
+sketch_extrude {petal_name} {extrude_depth:.4f};"""
 
     return cli
 
