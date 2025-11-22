@@ -298,8 +298,6 @@ def main():
     print("=" * 60)
     print(cli)
     print()
-    print("NOTE: Update the sr_* functions with actual formulas from Kaggle training")
-    print()
 
 
 if __name__ == '__main__':
