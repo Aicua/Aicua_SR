@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """
-Generate Rose CAD CLI using SR-discovered formulas.
+Generate Rose CAD CLI V2 using 5 independent bones.
 
-This is the main application that uses discovered formulas to generate
-CLI commands for creating 3D rose models with bones for animation.
+Key changes from v1:
+- Uses 5 independent bones (no parent-child)
+- Supports deformation types: straight, s_curve, c_curve, wave
+- Each bone can be rotated independently without affecting others
 """
 
 import argparse
-import json
 import sys
 from pathlib import Path
 
@@ -15,50 +16,104 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "data" / "generated"))
 
 
-def load_formulas_module():
-    """Dynamically load formula functions."""
-    try:
-        # Import all formula modules
-        import petal_geometry_formulas as petal
-        import bone_rigging_formulas as bone
-        import animation_params_formulas as anim
-        return petal, bone, anim
-    except ImportError as e:
-        print(f"Error loading formulas: {e}")
-        print("Make sure to run:")
-        print("  1. python scripts/generate_rose_dataset.py")
-        print("  2. python scripts/train_sr_models.py")
-        print("  3. python scripts/codegen_formulas.py")
-        sys.exit(1)
-
-
-class RoseCLIGenerator:
-    """Generate CLI commands for 3D rose with bones."""
+class RoseCLIGeneratorV2:
+    """Generate CLI commands for 3D rose with 5 independent bones."""
 
     def __init__(self):
-        self.petal_mod, self.bone_mod, self.anim_mod = load_formulas_module()
         self.cli_commands = []
 
-    def generate_petal(self, layer_idx: int, petal_idx: int, base_size: float,
-                       opening_degree: float) -> dict:
-        """Generate CLI for a single petal with bones."""
+    def compute_bone_positions(self, petal_height: float, base_spread: float,
+                                deformation_type: int, intensity: float) -> dict:
+        """
+        Compute positions for 5 independent bones - T-shape.
 
-        # Use SR-discovered formulas for geometry
-        base_width = self.petal_mod.compute_base_width(
-            base_size, layer_idx, petal_idx, opening_degree
-        )
-        length = self.petal_mod.compute_length(
-            base_size, layer_idx, petal_idx, opening_degree
-        )
-        curvature = self.petal_mod.compute_curvature(
-            base_size, layer_idx, petal_idx, opening_degree
-        )
-        twist_angle = self.petal_mod.compute_twist_angle(
-            base_size, layer_idx, petal_idx, opening_degree
-        )
-        thickness = self.petal_mod.compute_thickness(
-            base_size, layer_idx, petal_idx, opening_degree
-        )
+        Args:
+            petal_height: Total height of petal
+            base_spread: Base width parameter
+            deformation_type: 0=straight, 1=s_curve, 2=c_curve, 3=wave
+            intensity: Deformation intensity (0.0 - 1.0)
+
+        Returns:
+            Dictionary with bone positions
+        """
+        import numpy as np
+
+        # Width at 62% (widest point)
+        width_at_62 = base_spread * 1.6
+
+        # Calculate x-offsets based on deformation type for vertical bones
+        offset_45 = 0.0
+        offset_78 = 0.0
+        offset_100 = 0.0
+        # Edge curl for horizontal bones
+        curl_left = 0.0
+        curl_right = 0.0
+
+        if deformation_type == 0:  # Straight
+            pass
+
+        elif deformation_type == 1:  # S-curve
+            offset_45 = base_spread * 0.2 * intensity
+            offset_78 = -base_spread * 0.15 * intensity
+            offset_100 = base_spread * 0.1 * intensity
+            curl_left = width_at_62 * 0.1 * intensity
+            curl_right = width_at_62 * 0.1 * intensity
+
+        elif deformation_type == 2:  # C-curve
+            offset_45 = -base_spread * 0.05 * intensity
+            offset_78 = -base_spread * 0.15 * intensity
+            offset_100 = -base_spread * 0.1 * intensity
+            curl_left = width_at_62 * 0.35 * intensity
+            curl_right = width_at_62 * 0.35 * intensity
+
+        elif deformation_type == 3:  # Wave
+            offset_45 = base_spread * 0.15 * np.sin(0.45 * np.pi * 2) * intensity
+            offset_78 = base_spread * 0.15 * np.sin(0.78 * np.pi * 2) * intensity
+            offset_100 = base_spread * 0.15 * np.sin(1.0 * np.pi * 2) * intensity
+            curl_left = width_at_62 * 0.2 * np.sin(0.62 * np.pi * 3) * intensity
+            curl_right = width_at_62 * 0.2 * np.sin(0.62 * np.pi * 3 + np.pi) * intensity
+
+        return {
+            # Vertical spine bones
+            'bone_base': {
+                'start_x': 0.0, 'start_y': 0.0,
+                'end_x': offset_45, 'end_y': petal_height * 0.45
+            },
+            'bone_mid': {
+                'start_x': offset_78, 'start_y': petal_height * 0.78,
+                'end_x': offset_45, 'end_y': petal_height * 0.45
+            },
+            'bone_tip': {
+                'start_x': offset_78, 'start_y': petal_height * 0.78,
+                'end_x': offset_100, 'end_y': petal_height
+            },
+            # Horizontal edge bones at 62%
+            'bone_left': {
+                'start_x': 0.0, 'start_y': petal_height * 0.62,
+                'end_x': -width_at_62 / 2 + curl_left, 'end_y': petal_height * 0.62
+            },
+            'bone_right': {
+                'start_x': 0.0, 'start_y': petal_height * 0.62,
+                'end_x': width_at_62 / 2 - curl_right, 'end_y': petal_height * 0.62
+            }
+        }
+
+    def generate_petal(self, layer_idx: int, petal_idx: int, base_size: float,
+                       opening_degree: float, deformation_type: int = 0,
+                       intensity: float = 0.5) -> dict:
+        """Generate CLI for a single petal with 5 independent bones."""
+
+        # Calculate petal dimensions
+        layer_factor = 0.8 + 0.1 * layer_idx
+        petal_height = base_size * layer_factor * (1.2 - opening_degree * 0.3)
+        base_spread = base_size * 0.30 * layer_factor * (1 + opening_degree * 0.2)
+
+        # Simplified geometry parameters
+        base_width = base_spread * 2
+        length = petal_height
+        curvature = 0.3 + opening_degree * 0.4
+        twist_angle = layer_idx * 5 + petal_idx * 2
+        thickness = 0.01 * base_size
 
         petal_name = f"petal_L{layer_idx}_P{petal_idx}"
 
@@ -69,20 +124,11 @@ class RoseCLIGenerator:
             f"bezier_surface {petal_name} {length:.4f} {base_width:.4f} {curvature:.4f} {twist_angle:.4f} {thickness:.6f};",
         ]
 
-        # Generate bone rigging with 5 independent bones - T-shape (v7)
-        flexibility = 0.5 + (3 - layer_idx) * 0.15  # Outer more flexible
-        bind_weight = flexibility * [1.0, 1.5, 2.0][layer_idx - 1] if layer_idx > 0 else 1.0
+        # Compute bone positions
+        bones = self.compute_bone_positions(petal_height, base_spread,
+                                             deformation_type, intensity)
 
-        armature_name = f"{petal_name}_arm"
-
-        # Calculate bone heights based on petal length - T-shape
-        # Vertical: base (0-45%), mid (45-78%), tip (78-100%)
-        # Horizontal: left/right at 62%
-        h_45 = length * 0.45
-        h_62 = length * 0.62
-        h_78 = length * 0.78
-        h_100 = length
-        half_width = base_width / 2
+        armature_name = f"{petal_name}_rig"
 
         rigging_cli = [
             f"",
@@ -91,84 +137,56 @@ class RoseCLIGenerator:
         ]
 
         # Generate 5 independent bones - T-shape (NO parent_bone commands!)
-        # Vertical spine
-        rigging_cli.append(f"add_bone {armature_name} bone_base 0 0.0000 0 0 {h_45:.4f} 0;")
-        rigging_cli.append(f"add_bone {armature_name} bone_mid 0 {h_78:.4f} 0 0 {h_45:.4f} 0;")
-        rigging_cli.append(f"add_bone {armature_name} bone_tip 0 {h_78:.4f} 0 0 {h_100:.4f} 0;")
-        # Horizontal edges at 62%
-        rigging_cli.append(f"add_bone {armature_name} bone_left 0 {h_62:.4f} 0 {-half_width:.4f} {h_62:.4f} 0;")
-        rigging_cli.append(f"add_bone {armature_name} bone_right 0 {h_62:.4f} 0 {half_width:.4f} {h_62:.4f} 0;")
+        bone_names = ['bone_base', 'bone_mid', 'bone_tip', 'bone_left', 'bone_right']
+        for bone_name in bone_names:
+            pos = bones[bone_name]
+            rigging_cli.append(
+                f"add_bone {armature_name} {bone_name} "
+                f"{pos['start_x']:.4f} {pos['start_y']:.4f} 0 "
+                f"{pos['end_x']:.4f} {pos['end_y']:.4f} 0;"
+            )
 
         rigging_cli.append(f"finalize_bones {armature_name};")
-        rigging_cli.append(f"bind_armature {armature_name} {petal_name} {bind_weight:.4f};")
-
-        # Generate animation parameters using discovered formulas
-        petal_mass = base_size * base_width * length * 0.01  # Estimated mass
-        wind_speed = 3.0  # Default wind speed
-
-        frequency = self.anim_mod.compute_frequency(
-            base_size, petal_mass, wind_speed, flexibility
-        )
-        amplitude = self.anim_mod.compute_amplitude(
-            base_size, petal_mass, wind_speed, flexibility
-        )
-        damping = self.anim_mod.compute_damping_factor(
-            base_size, petal_mass, wind_speed, flexibility
-        )
-
-        # Clamp to reasonable ranges
-        frequency = max(0.5, min(frequency, 15.0))
-        amplitude = max(5.0, min(amplitude, 60.0))
-        damping = max(0.01, min(damping, 0.5))
-
-        animation_cli = [
-            f"",
-            f"# Animation for {petal_name} (v7 - T-shape 5 bones)",
-            f"wind_sway {armature_name} bone_base {frequency:.4f} {amplitude * 0.3:.4f} 0 1 0 {damping:.6f};",
-            f"wind_sway {armature_name} bone_mid {frequency:.4f} {amplitude * 0.6:.4f} 0 1 0 {damping:.6f};",
-            f"wind_sway {armature_name} bone_tip {frequency:.4f} {amplitude * 0.4:.4f} 0 1 0 {damping:.6f};",
-            f"wind_sway {armature_name} bone_left {frequency * 0.8:.4f} {amplitude * 0.5:.4f} -1 0 0 {damping:.6f};",
-            f"wind_sway {armature_name} bone_right {frequency * 0.8:.4f} {amplitude * 0.5:.4f} 1 0 0 {damping:.6f};",
-        ]
+        rigging_cli.append(f"bind_armature {armature_name} {petal_name};")
 
         return {
             'geometry': geometry_cli,
             'rigging': rigging_cli,
-            'animation': animation_cli,
             'params': {
                 'base_width': base_width,
                 'length': length,
-                'curvature': curvature,
-                'twist_angle': twist_angle,
-                'thickness': thickness,
-                'bone_count': 5,  # Fixed 5 bones
-                'frequency': frequency,
-                'amplitude': amplitude,
+                'petal_height': petal_height,
+                'deformation_type': deformation_type,
+                'intensity': intensity,
             }
         }
 
     def generate_rose(self, base_size: float = 2.0, opening_degree: float = 0.8,
-                      n_layers: int = 3) -> str:
+                      n_layers: int = 3, deformation_type: int = 0,
+                      intensity: float = 0.5) -> str:
         """
-        Generate complete rose CLI.
+        Generate complete rose CLI with 5 independent bones per petal.
 
         Args:
             base_size: Overall size of rose
             opening_degree: How open (0.0 = bud, 1.0 = fully open)
             n_layers: Number of petal layers (1-3)
+            deformation_type: 0=straight, 1=s_curve, 2=c_curve, 3=wave
+            intensity: Deformation intensity (0.0 - 1.0)
 
         Returns:
             Complete CLI string
         """
-        # Fibonacci-inspired petal counts
+        deform_names = ['straight', 's_curve', 'c_curve', 'wave']
         petals_per_layer = [5, 8, 13]
 
         all_cli = [
-            "# Rose CAD Generation",
+            "# Rose CAD Generation V2",
             f"# Base Size: {base_size}",
             f"# Opening Degree: {opening_degree}",
             f"# Layers: {n_layers}",
-            f"# Generated using SR-discovered formulas",
+            f"# Deformation: {deform_names[deformation_type]} (intensity={intensity})",
+            f"# Using 5 INDEPENDENT bones per petal (no parent-child)",
             "",
             "2d;",
             "",
@@ -184,15 +202,14 @@ class RoseCLIGenerator:
 
             for petal_idx in range(n_petals):
                 petal_data = self.generate_petal(
-                    layer_idx, petal_idx, base_size, opening_degree
+                    layer_idx, petal_idx, base_size, opening_degree,
+                    deformation_type, intensity
                 )
 
                 # Add geometry
                 all_cli.extend(petal_data['geometry'])
                 # Add rigging
                 all_cli.extend(petal_data['rigging'])
-                # Add animation
-                all_cli.extend(petal_data['animation'])
                 all_cli.append("")
 
                 total_petals += 1
@@ -201,8 +218,8 @@ class RoseCLIGenerator:
         all_cli.append("exit;")
         all_cli.append("")
         all_cli.append(f"# Total petals: {total_petals}")
-        all_cli.append(f"# Total bones: {total_petals * 5}")  # 5 independent bones per petal
-        all_cli.append(f"# All parameters computed using Symbolic Regression")
+        all_cli.append(f"# Total bones: {total_petals * 5}")
+        all_cli.append(f"# Each petal has 5 independent bones (no hierarchy)")
 
         return '\n'.join(all_cli)
 
@@ -210,12 +227,12 @@ class RoseCLIGenerator:
         """Save CLI to file."""
         with open(output_path, 'w') as f:
             f.write(cli_text)
-        print(f"✓ Saved CLI to {output_path}")
+        print(f"Saved CLI to {output_path}")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Generate Rose CAD CLI using SR-discovered formulas"
+        description="Generate Rose CAD CLI V2 with 5 independent bones"
     )
 
     parser.add_argument(
@@ -229,6 +246,14 @@ def main():
     parser.add_argument(
         '--layers', type=int, default=3,
         help='Number of petal layers 1-3 (default: 3)'
+    )
+    parser.add_argument(
+        '--deformation', type=int, default=0,
+        help='Deformation type: 0=straight, 1=s_curve, 2=c_curve, 3=wave (default: 0)'
+    )
+    parser.add_argument(
+        '--intensity', type=float, default=0.5,
+        help='Deformation intensity 0.0-1.0 (default: 0.5)'
     )
     parser.add_argument(
         '--output', type=str, default=None,
@@ -250,23 +275,37 @@ def main():
         print("Error: layers must be 1, 2, or 3")
         sys.exit(1)
 
+    if args.deformation < 0 or args.deformation > 3:
+        print("Error: deformation must be 0, 1, 2, or 3")
+        sys.exit(1)
+
+    if args.intensity < 0 or args.intensity > 1:
+        print("Error: intensity must be between 0.0 and 1.0")
+        sys.exit(1)
+
     print("=" * 60)
-    print("Rose CLI Generator (using SR-discovered formulas)")
+    print("Rose CLI Generator V2 (5 Independent Bones)")
     print("=" * 60)
+
+    deform_names = ['straight', 's_curve', 'c_curve', 'wave']
 
     if args.verbose:
         print(f"Parameters:")
         print(f"  Base Size: {args.size}")
         print(f"  Opening Degree: {args.opening}")
         print(f"  Layers: {args.layers}")
+        print(f"  Deformation: {deform_names[args.deformation]}")
+        print(f"  Intensity: {args.intensity}")
         print()
 
     # Generate
-    generator = RoseCLIGenerator()
+    generator = RoseCLIGeneratorV2()
     cli = generator.generate_rose(
         base_size=args.size,
         opening_degree=args.opening,
-        n_layers=args.layers
+        n_layers=args.layers,
+        deformation_type=args.deformation,
+        intensity=args.intensity
     )
 
     # Output
@@ -277,7 +316,13 @@ def main():
         print("-" * 60)
         print(cli)
 
-    print("\n✓ Rose CLI generation complete!")
+    print("\nRose CLI generation complete!")
+    print("\nNote: Each petal has 5 independent bones:")
+    print("  - bone_base (0-25%)")
+    print("  - bone_mid (25-45%)")
+    print("  - bone_mid_upper (45-62%) - WIDEST")
+    print("  - bone_upper (62-78%)")
+    print("  - bone_tip (78-100%)")
 
 
 if __name__ == "__main__":

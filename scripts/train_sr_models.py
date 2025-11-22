@@ -50,8 +50,8 @@ class RoseSRTrainer:
         data_dir = Path(__file__).parent.parent / "data" / "processed"
 
         file_map = {
-            'petal_spline_v3': 'petal_spline_v3.csv',
-            'bone_rigging_v5': 'bone_rigging_v5.csv',
+            'petal_spline': 'petal_spline.csv',
+            'bone_rigging': 'bone_rigging.csv',
             'animation_wingflap': 'animation_wingflap.csv',
         }
 

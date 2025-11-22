@@ -102,7 +102,7 @@ class FlowerCLIGeneratorV1:
 
     def generate_petal_geometry_spline(self, petal_name: str, base_size: float,
                                        opening_degree: float, layer_index: int) -> list:
-        """Generate petal geometry using 15-CP spline (matching petal_spline_v3.csv)."""
+        """Generate petal geometry using 15-CP spline (matching petal_spline.csv)."""
         import random
 
         # Layer factor

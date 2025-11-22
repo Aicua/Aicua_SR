@@ -13,7 +13,7 @@ import numpy as np
 from pathlib import Path
 
 
-def generate_petal_spline_v3(n_samples: int = 3000) -> pd.DataFrame:
+def generate_petal_spline(n_samples: int = 3000) -> pd.DataFrame:
     """
     Generate petal spline dataset with 15 control points.
 
@@ -260,10 +260,10 @@ def main():
     output_dir = Path(__file__).parent.parent / "data" / "processed"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    print("\nGenerating petal spline v3 dataset...")
-    df = generate_petal_spline_v3(n_samples=3000)
+    print("\nGenerating petal spline dataset...")
+    df = generate_petal_spline(n_samples=3000)
 
-    output_path = output_dir / "petal_spline_v3.csv"
+    output_path = output_dir / "petal_spline.csv"
     df.to_csv(output_path, index=False)
 
     print(f"\nGenerated {len(df)} samples")
