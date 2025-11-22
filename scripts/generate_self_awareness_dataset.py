@@ -23,7 +23,7 @@ from petal_self_awareness import (
 from cot_reasoning import CoTReasoner
 
 
-def generate_genesis_dataset(n_samples: int = 500) -> pd.DataFrame:
+def generate_genesis_dataset(n_samples: int = 3000) -> pd.DataFrame:
     """
     Generate dataset for Genesis reasoning.
 
@@ -103,7 +103,7 @@ def generate_genesis_dataset(n_samples: int = 500) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def generate_transformation_dataset(n_samples: int = 500) -> pd.DataFrame:
+def generate_transformation_dataset(n_samples: int = 3000) -> pd.DataFrame:
     """
     Generate dataset for Transformation reasoning.
 
@@ -181,7 +181,7 @@ def generate_transformation_dataset(n_samples: int = 500) -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def generate_composition_dataset(n_samples: int = 300) -> pd.DataFrame:
+def generate_composition_dataset(n_samples: int = 3000) -> pd.DataFrame:
     """
     Generate dataset for Composition reasoning.
 

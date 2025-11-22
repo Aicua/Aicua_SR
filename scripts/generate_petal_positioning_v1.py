@@ -24,7 +24,7 @@ import pandas as pd
 from pathlib import Path
 
 
-def generate_petal_positioning_v1(n_samples: int = 5000) -> pd.DataFrame:
+def generate_petal_positioning_v1(n_samples: int = 3000) -> pd.DataFrame:
     """
     Generate dataset for petal positioning with MOVE + ROTATE commands.
 
@@ -284,7 +284,7 @@ if __name__ == '__main__':
 
     # 2. Generate main training dataset
     print(f"\n[2/3] Generating main training dataset...")
-    n_samples = 5000
+    n_samples = 3000
     train_df = generate_petal_positioning_v1(n_samples=n_samples)
     train_file = output_dir / 'petal_positioning_v1.csv'
     train_df.to_csv(train_file, index=False)
