@@ -127,7 +127,7 @@ def compute_petal_spline(base_size: float, opening_degree: float,
     cp15_y = 0.0
 
     # === EXTRUDE DEPTH ===
-    thickness_base = 0.005
+    thickness_base = 0.0005  # Ultra-thin like real rose petals (0.001-0.0015)
     thickness = (
         thickness_base * base_size *
         (1 - layer_idx * 0.1) *

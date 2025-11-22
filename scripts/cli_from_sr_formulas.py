@@ -192,9 +192,9 @@ def sr_cp15_y(base_size, opening_degree):
 
 def sr_extrude_depth(base_size, opening_degree):
     """SR formula for extrude_depth - REPLACE WITH ACTUAL FORMULA"""
-    # Ultra-thin extrude
-    # Example: 0.005 * base_size * (1 - 0.3 * opening_degree)
-    return max(0.001, 0.005 * base_size * (1.0 - 0.3 * opening_degree))
+    # Ultra-thin extrude (0.001-0.0015)
+    # Example: 0.0005 * base_size * (1 - 0.3 * opening_degree)
+    return max(0.001, 0.0005 * base_size * (1.0 - 0.3 * opening_degree))
 
 
 # =============================================================================
