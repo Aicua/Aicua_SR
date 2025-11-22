@@ -59,21 +59,17 @@ Aicua_SR/
 │   └── generated/              # Auto-generated Python code
 │
 ├── scripts/
-│   ├── generate_rose_dataset.py
+│   ├── generate_petal_spline.py
+│   ├── generate_bone_rigging.py
+│   ├── generate_petal_positioning.py
 │   ├── train_sr_models.py
-│   ├── codegen_formulas.py
-│   └── generate_rose_cli.py
+│   └── generate_flower_cli.py
 │
-├── configs/
-│   ├── sr_config.yaml          # SR training configuration
-│   └── rose_definition.yaml    # Rose structure definition
+├── notebooks/
+│   └── kaggle_sr_training.ipynb  # Main training notebook (Kaggle GPU)
 │
 ├── tests/
 │   └── test_discovered_formulas.py
-│
-├── .github/workflows/
-│   ├── generate-dataset.yml
-│   └── train-sr-models.yml
 │
 └── examples/
     └── rose_samples/
@@ -81,12 +77,12 @@ Aicua_SR/
 
 ## Workflow
 
-### 1. Data Generation (GitHub Actions)
-- Parse existing rose CLI outputs
-- Extract geometry parameters
-- Create training datasets
+### 1. Data Generation (On Kaggle)
+- Generate synthetic datasets using mathematical formulas
+- Create training data for petal splines, bone rigging, and positioning
+- 3000 samples per dataset for fast testing
 
-### 2. Symbolic Regression (Kaggle/Local)
+### 2. Symbolic Regression Training (Kaggle GPU)
 - Discover formulas for petal geometry
 - Learn bone/rigging relationships
 - Find animation parameters
