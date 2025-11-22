@@ -25,176 +25,163 @@ import math
 # =============================================================================
 
 def sr_cp1_x(base_size, opening_degree):
-    """SR formula for cp1_x - REPLACE WITH ACTUAL FORMULA"""
-    # Example: return 0.0  (cp1 is always at origin)
-    return 0.0
+    """SR formula: (-opening_degree + opening_degree)**4 (R²=1.0000)"""
+    return 0.0  # Simplifies to 0
 
 
 def sr_cp1_y(base_size, opening_degree):
-    """SR formula for cp1_y - REPLACE WITH ACTUAL FORMULA"""
-    # Example: return 0.0  (cp1 is always at origin)
-    return 0.0
+    """SR formula: (-opening_degree + opening_degree)**2 (R²=1.0000)"""
+    return 0.0  # Simplifies to 0
 
 
 def sr_cp2_x(base_size, opening_degree):
-    """SR formula for cp2_x - REPLACE WITH ACTUAL FORMULA"""
-    # Placeholder - replace with actual SR formula
-    # Example from training: -0.12 * base_size * (1.08 + 0.06 * opening_degree)
-    return -0.12 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*(-0.06660193) (R²=0.6408)"""
+    return base_size * (-0.06660193)
 
 
 def sr_cp2_y(base_size, opening_degree):
-    """SR formula for cp2_y - REPLACE WITH ACTUAL FORMULA"""
-    # Placeholder - replace with actual SR formula
-    # Example: 0.066 * base_size * (1.2 - 0.3 * opening_degree)
-    return 0.066 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size*0.046049967 (R²=0.5716)"""
+    return base_size * 0.046049967
 
 
 def sr_cp3_x(base_size, opening_degree):
-    """SR formula for cp3_x - REPLACE WITH ACTUAL FORMULA"""
-    return -0.2625 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: (base_size + opening_degree)*(-0.12700757) (R²=0.9532)"""
+    return (base_size + opening_degree) * (-0.12700757)
 
 
 def sr_cp3_y(base_size, opening_degree):
-    """SR formula for cp3_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.25 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size*(0.23950993 - 0.059578367*opening_degree) (R²=0.9917)"""
+    return base_size * (0.23950993 - 0.059578367 * opening_degree)
 
 
 def sr_cp4_x(base_size, opening_degree):
-    """SR formula for cp4_x - REPLACE WITH ACTUAL FORMULA"""
-    return -0.35 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*(opening_degree*(-0.033973925) - 1*0.16772935) (R²=0.9914)"""
+    return base_size * (opening_degree * (-0.033973925) - 0.16772935)
 
 
 def sr_cp4_y(base_size, opening_degree):
-    """SR formula for cp4_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.45 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size*(0.43164855 - 0.10751137*opening_degree) (R²=0.9920)"""
+    return base_size * (0.43164855 - 0.10751137 * opening_degree)
 
 
 def sr_cp5_x(base_size, opening_degree):
-    """SR formula for cp5_x - REPLACE WITH ACTUAL FORMULA"""
-    return -0.40 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size/(opening_degree - 5.2565217) (R²=0.9910)"""
+    try:
+        return base_size / (opening_degree - 5.2565217)
+    except ZeroDivisionError:
+        return -0.19
 
 
 def sr_cp5_y(base_size, opening_degree):
-    """SR formula for cp5_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.62 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size*(-0.14710286)*(opening_degree - 1*4.039837) (R²=0.9916)"""
+    return base_size * (-0.14710286) * (opening_degree - 4.039837)
 
 
 def sr_cp6_x(base_size, opening_degree):
-    """SR formula for cp6_x - REPLACE WITH ACTUAL FORMULA"""
-    return -0.325 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*(opening_degree*(-0.030374026) - 0.1565289) (R²=0.9916)"""
+    return base_size * (opening_degree * (-0.030374026) - 0.1565289)
 
 
 def sr_cp6_y(base_size, opening_degree):
-    """SR formula for cp6_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.78 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: 0.736865096629327*base_size/sqrt(0.542970170630548*opening_degree + 1) (R²=0.9881)"""
+    return 0.736865096629327 * base_size / math.sqrt(0.542970170630548 * opening_degree + 1)
 
 
 def sr_cp7_x(base_size, opening_degree):
-    """SR formula for cp7_x - REPLACE WITH ACTUAL FORMULA"""
-    return -0.20 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*(-0.019377816*opening_degree - 0.095919825) (R²=0.9918)"""
+    return base_size * (-0.019377816 * opening_degree - 0.095919825)
 
 
 def sr_cp7_y(base_size, opening_degree):
-    """SR formula for cp7_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.92 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: 0.905464601038703*base_size/sqrt(0.819866143734177*opening_degree + 1) (R²=0.9907)"""
+    return 0.905464601038703 * base_size / math.sqrt(0.819866143734177 * opening_degree + 1)
 
 
 def sr_cp8_x(base_size, opening_degree):
-    """SR formula for cp8_x - REPLACE WITH ACTUAL FORMULA"""
-    # Tip x-offset (usually near 0 for layer 0)
+    """SR formula: 7.970367e-6/(0.20965719 - opening_degree) (R²=0.0054)"""
+    # R² very low - essentially 0
     return 0.0
 
 
 def sr_cp8_y(base_size, opening_degree):
-    """SR formula for cp8_y - REPLACE WITH ACTUAL FORMULA"""
-    # Petal height
-    return base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size*(0.961326 - opening_degree/4.117992) (R²=0.9915)"""
+    return base_size * (0.961326 - opening_degree / 4.117992)
 
 
 def sr_cp9_x(base_size, opening_degree):
-    """SR formula for cp9_x - REPLACE WITH ACTUAL FORMULA"""
-    # Symmetric to cp7
-    return 0.20 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*(opening_degree*0.01915575 + 0.09590936) (R²=0.9911)"""
+    return base_size * (opening_degree * 0.01915575 + 0.09590936)
 
 
 def sr_cp9_y(base_size, opening_degree):
-    """SR formula for cp9_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.92 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: 0.892451988766659*base_size/sqrt(0.796470552253566*opening_degree + 1) (R²=0.9892)"""
+    return 0.892451988766659 * base_size / math.sqrt(0.796470552253566 * opening_degree + 1)
 
 
 def sr_cp10_x(base_size, opening_degree):
-    """SR formula for cp10_x - REPLACE WITH ACTUAL FORMULA"""
-    # Symmetric to cp6
-    return 0.325 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*(opening_degree*0.031619746 + 0.15594344) (R²=0.9919)"""
+    return base_size * (opening_degree * 0.031619746 + 0.15594344)
 
 
 def sr_cp10_y(base_size, opening_degree):
-    """SR formula for cp10_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.78 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size*(opening_degree*0.35291463 - 1*1.4014238)*(-0.53408945) (R²=0.9918)"""
+    return base_size * (opening_degree * 0.35291463 - 1.4014238) * (-0.53408945)
 
 
 def sr_cp11_x(base_size, opening_degree):
-    """SR formula for cp11_x - REPLACE WITH ACTUAL FORMULA"""
-    # Symmetric to cp5 - WIDEST
-    return 0.40 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*(opening_degree*0.037792355 + 0.19234422) (R²=0.9913)"""
+    return base_size * (opening_degree * 0.037792355 + 0.19234422)
 
 
 def sr_cp11_y(base_size, opening_degree):
-    """SR formula for cp11_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.62 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size*(0.5965338 - 0.15095319*opening_degree) (R²=0.9916)"""
+    return base_size * (0.5965338 - 0.15095319 * opening_degree)
 
 
 def sr_cp12_x(base_size, opening_degree):
-    """SR formula for cp12_x - REPLACE WITH ACTUAL FORMULA"""
-    # Symmetric to cp4
-    return 0.35 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*(0.16823693 - (-0.033299472)*opening_degree) (R²=0.9917)"""
+    return base_size * (0.16823693 + 0.033299472 * opening_degree)
 
 
 def sr_cp12_y(base_size, opening_degree):
-    """SR formula for cp12_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.45 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size*(0.43128464 - 0.107101806*opening_degree) (R²=0.9922)"""
+    return base_size * (0.43128464 - 0.107101806 * opening_degree)
 
 
 def sr_cp13_x(base_size, opening_degree):
-    """SR formula for cp13_x - REPLACE WITH ACTUAL FORMULA"""
-    # Symmetric to cp3
-    return 0.2625 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*(opening_degree*0.025087584 + 0.1258421) (R²=0.9620)"""
+    return base_size * (opening_degree * 0.025087584 + 0.1258421)
 
 
 def sr_cp13_y(base_size, opening_degree):
-    """SR formula for cp13_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.25 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size/(opening_degree*1.3537062 + 4.1148305) (R²=0.9917)"""
+    return base_size / (opening_degree * 1.3537062 + 4.1148305)
 
 
 def sr_cp14_x(base_size, opening_degree):
-    """SR formula for cp14_x - REPLACE WITH ACTUAL FORMULA"""
-    # Symmetric to cp2
-    return 0.12 * base_size * (1.08 + 0.06 * opening_degree)
+    """SR formula: base_size*0.0664584 (R²=0.6409)"""
+    return base_size * 0.0664584
 
 
 def sr_cp14_y(base_size, opening_degree):
-    """SR formula for cp14_y - REPLACE WITH ACTUAL FORMULA"""
-    return 0.066 * base_size * (1.2 - 0.3 * opening_degree)
+    """SR formula: base_size*0.046029154 (R²=0.5704)"""
+    return base_size * 0.046029154
 
 
 def sr_cp15_x(base_size, opening_degree):
-    """SR formula for cp15_x - REPLACE WITH ACTUAL FORMULA"""
-    # Close spline - back to origin
+    """SR formula: 0 (R²=1.0000)"""
     return 0.0
 
 
 def sr_cp15_y(base_size, opening_degree):
-    """SR formula for cp15_y - REPLACE WITH ACTUAL FORMULA"""
-    # Close spline - back to origin
-    return 0.0
+    """SR formula: -opening_degree + opening_degree (R²=1.0000)"""
+    return 0.0  # Simplifies to 0
 
 
 def sr_extrude_depth(base_size, opening_degree):
-    """SR formula for extrude_depth - REPLACE WITH ACTUAL FORMULA"""
+    """SR formula: base_size*(0.0049875244 + opening_degree*(-0.0014847366)) (R²=0.9919)"""
     # Ultra-thin extrude (0.001-0.0015) - MUST stay in this range
-    # Example: 0.0005 * base_size * (1 - 0.3 * opening_degree)
-    thickness = 0.0005 * base_size * (1.0 - 0.3 * opening_degree)
+    thickness = base_size * (0.0049875244 + opening_degree * (-0.0014847366))
     return max(0.001, min(0.0015, thickness))  # Clamp to [0.001, 0.0015]
 
 
