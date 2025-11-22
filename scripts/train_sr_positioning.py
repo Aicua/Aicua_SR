@@ -38,7 +38,7 @@ class PositioningSRTrainer:
     def __init__(self, dataset_path: str = None):
         """Initialize trainer with dataset."""
         if dataset_path is None:
-            dataset_path = Path(__file__).parent.parent / "data" / "generated" / "petal_positioning_v1.csv"
+            dataset_path = Path(__file__).parent.parent / "data" / "generated" / "petal_positioning.csv"
 
         self.dataset_path = Path(dataset_path)
         self.models = {}

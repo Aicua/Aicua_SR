@@ -24,7 +24,7 @@ import pandas as pd
 from pathlib import Path
 
 
-def generate_petal_positioning_v1(n_samples: int = 5000) -> pd.DataFrame:
+def generate_petal_positioning(n_samples: int = 3000) -> pd.DataFrame:
     """
     Generate dataset for petal positioning with MOVE + ROTATE commands.
 
@@ -274,7 +274,7 @@ if __name__ == '__main__':
     # 1. Generate symmetric test case (3 petals)
     print("\n[1/3] Generating symmetric test case (3 petals)...")
     test_df = generate_symmetric_test_case(num_petals=3, layer_radius=5.0)
-    test_file = output_dir / 'petal_positioning_v1_test.csv'
+    test_file = output_dir / 'petal_positioning_test.csv'
     test_df.to_csv(test_file, index=False)
     print(f"  Saved: {test_file}")
     print(f"  Samples: {len(test_df)}")
@@ -284,9 +284,9 @@ if __name__ == '__main__':
 
     # 2. Generate main training dataset
     print(f"\n[2/3] Generating main training dataset...")
-    n_samples = 5000
-    train_df = generate_petal_positioning_v1(n_samples=n_samples)
-    train_file = output_dir / 'petal_positioning_v1.csv'
+    n_samples = 3000
+    train_df = generate_petal_positioning(n_samples=n_samples)
+    train_file = output_dir / 'petal_positioning.csv'
     train_df.to_csv(train_file, index=False)
     print(f"  Saved: {train_file}")
     print(f"  Samples: {len(train_df)}")
@@ -322,6 +322,6 @@ if __name__ == '__main__':
     print("✓ Dataset generation complete!")
     print(f"{'='*70}")
     print(f"\nNext steps:")
-    print(f"  1. Train SR model: python scripts/train_sr_positioning_v1.py")
-    print(f"  2. Generate CLI commands: python scripts/generate_flower_cli_v1.py")
+    print(f"  1. Train SR model: python scripts/train_sr_positioning.py")
+    print(f"  2. Generate CLI commands: python scripts/generate_flower_cli.py")
     print(f"  3. Visualize arrangement: python scripts/visualize_positioning.py")

@@ -15,7 +15,7 @@ import pandas as pd
 from pathlib import Path
 
 
-def generate_bone_rigging_v7(n_samples: int = 1000) -> pd.DataFrame:
+def generate_bone_rigging(n_samples: int = 3000) -> pd.DataFrame:
     """
     Generate dataset for vertical spine bone rigging (3 bones).
 
@@ -213,13 +213,13 @@ def main():
     print("=" * 60)
 
     # Generate dataset
-    n_samples = 2000
-    df = generate_bone_rigging_v7(n_samples)
+    n_samples = 3000
+    df = generate_bone_rigging(n_samples)
 
     # Save to CSV
     output_dir = Path(__file__).parent.parent / "data" / "processed"
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / "bone_rigging_v7.csv"
+    output_path = output_dir / "bone_rigging.csv"
 
     df.to_csv(output_path, index=False)
 
