@@ -37,10 +37,8 @@ def generate_petal_spline(n_samples: int = 3000) -> pd.DataFrame:
     - CP8: Tip center
     - CP15: Close spline
 
-    Features:
+    Features (2 dimensions):
         - base_size: Overall rose size (2.0 - 8.0)
-        - layer_index: 0 (inner), 1 (middle), 2 (outer)
-        - petal_index: Position within layer (0-12)
         - opening_degree: 0.0 (closed) to 1.0 (fully open)
 
     Targets:
@@ -162,13 +160,13 @@ def generate_petal_spline(n_samples: int = 3000) -> pd.DataFrame:
         cp15_y = 0.0
 
         # === ULTRA-THIN THICKNESS ===
-        thickness_base = 0.005
+        thickness_base = 0.0005  # Ultra-thin like real rose petals (0.001-0.0015)
         thickness = (
             thickness_base * base_size *
             (1 - layer_idx * 0.1) *
             (1 - opening_degree * 0.3)
         )
-        extrude_depth = max(0.001, thickness)
+        extrude_depth = max(0.001, min(0.0015, thickness))  # Clamp to [0.001, 0.0015]
 
         # === ADD REALISTIC NOISE (3%) ===
         noise = 0.03
@@ -206,8 +204,6 @@ def generate_petal_spline(n_samples: int = 3000) -> pd.DataFrame:
         data.append({
             # Features
             'base_size': round(base_size, 6),
-            'layer_index': layer_idx,
-            'petal_index': petal_idx,
             'opening_degree': round(opening_degree, 6),
 
             # Targets - 15 Control Points
