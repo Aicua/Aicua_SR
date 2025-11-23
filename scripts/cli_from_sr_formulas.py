@@ -415,7 +415,7 @@ def format_bone_creation_cli(petal_height: float, layer: int = 1, petal: int = 1
     h_67 = petal_height * 0.67
     h_100 = petal_height
 
-    return f"""add_armature {rig_name};
+    return f"""create_armature {rig_name};
 add_bone {rig_name} bone_base 0 0 0 0 {h_33:.4f} 0;
 add_bone {rig_name} bone_mid 0 {h_33:.4f} 0 0 {h_67:.4f} 0;
 add_bone {rig_name} bone_tip 0 {h_67:.4f} 0 0 {h_100:.4f} 0;
