@@ -394,6 +394,35 @@ def format_bone_cli(rotations: dict, layer: int = 1, petal: int = 1) -> str:
     return '\n'.join(commands)
 
 
+def format_bone_creation_cli(petal_height: float, layer: int = 1, petal: int = 1, bind_weight: float = 1.0) -> str:
+    """
+    Format bone creation CLI commands (add_bone, finalize, bind).
+
+    Args:
+        petal_height: Height of petal (from control points)
+        layer: Layer number for naming
+        petal: Petal number for naming
+        bind_weight: Armature binding weight (default: 1.0)
+
+    Returns:
+        CLI commands for bone creation
+    """
+    rig_name = f'petal_L{layer}_P{petal}_rig'
+    petal_name = f'petal_L{layer}_P{petal}'
+
+    # 3-bone spine: divide height into thirds
+    h_33 = petal_height * 0.33
+    h_67 = petal_height * 0.67
+    h_100 = petal_height
+
+    return f"""add_armature {rig_name};
+add_bone {rig_name} bone_base 0 0 0 0 {h_33:.4f} 0;
+add_bone {rig_name} bone_mid 0 {h_33:.4f} 0 0 {h_67:.4f} 0;
+add_bone {rig_name} bone_tip 0 {h_67:.4f} 0 0 {h_100:.4f} 0;
+finalize_bones {rig_name};
+bind_armature {rig_name} {petal_name} {bind_weight:.4f};"""
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Generate CLI using SR-discovered formulas',
@@ -447,22 +476,34 @@ def main():
         print(cli)
         print()
 
-    # Generate bone rotation CLI if curvature is provided
+    # Generate bone CLI if curvature is provided
     if args.curvature is not None:
-        rotations = compute_bone_rotations(args.base_size, args.curvature)
+        # Compute control points to get petal height
+        if args.bones_only:
+            control_points = compute_petal_from_sr(args.base_size, args.opening_degree)
 
-        bone_cli = format_bone_cli(rotations, args.layer, args.petal)
+        # Petal height = CP8 y-coordinate (top of petal)
+        petal_height = control_points['cp8_y']
+
+        # Generate bone creation CLI (add_bone, finalize, bind)
+        bone_creation_cli = format_bone_creation_cli(petal_height, args.layer, args.petal, bind_weight=1.0)
+
+        # Generate bone rotation CLI
+        rotations = compute_bone_rotations(args.base_size, args.curvature)
+        bone_rotation_cli = format_bone_cli(rotations, args.layer, args.petal)
 
         # Determine style description
         if args.curvature < 0.5:
-            style = f"C-shape (uniform bend, intensity={args.curvature*2:.1f})"
+            style = f"C-shape"
         else:
-            style = f"S-shape (alternating bend, intensity={(args.curvature-0.5)*2:.1f})"
+            style = f"S-shape"
 
         print("=" * 60)
-        print(f"Bone Rotation CLI (curvature={args.curvature:.2f}, {style})")
+        print(f"Bone Rigging CLI (curvature={args.curvature:.2f}, {style})")
         print("=" * 60)
-        print(bone_cli)
+        print(bone_creation_cli)
+        print()
+        print(bone_rotation_cli)
         print()
 
 
