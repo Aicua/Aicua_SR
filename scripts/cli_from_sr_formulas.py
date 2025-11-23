@@ -189,6 +189,104 @@ def sr_extrude_depth(base_size, opening_degree):
 
 
 # =============================================================================
+# BONE ROTATION FORMULAS
+# Curvature parameter (0-1) controls bone deformation style:
+# - 0.0-0.4: C-shape (uniform bend)
+# - 0.5-0.7: Slight S-shape (natural)
+# - 0.8-1.0: Strong S-shape (dramatic bloom)
+# =============================================================================
+
+def compute_bone_rotations(base_size, curvature):
+    """
+    Compute bone rotations based on curvature parameter.
+
+    Spec from user (exact values):
+    - 0.1: bone_tip(+10 head), bone_mid(-40 tail), bone_base(-20 head, -40 tail)
+    - 0.4: bone_tip(+10 head), bone_mid(-20 tail), bone_base(-20 tail)
+    - 0.5: bone_tip(+5 head), bone_mid(-10 tail), bone_base(-10 tail)
+    - 0.7: bone_tip(-20 head), bone_mid(-10 head), bone_base(-40 head)
+    - 0.9: bone_tip(-60 head), bone_mid(-45 head), bone_base(-40 head)
+    - 1.0: bone_tip(-70 head), bone_mid(-80 head), bone_base(-45 head)
+
+    Returns:
+        Dictionary with bone rotation values (None means skip that command)
+    """
+
+    def lerp(v0, v1, t):
+        """Linear interpolation"""
+        return v0 + (v1 - v0) * t
+
+    # Piecewise linear interpolation based on curvature ranges
+    if curvature <= 0.1:
+        # At or below 0.1
+        bone_tip_head_rx = 10.0
+        bone_mid_tail_rx = -40.0
+        bone_base_head_rx = -20.0
+        bone_base_tail_rx = -40.0
+        bone_mid_head_rx = None
+        bone_tip_tail_rx = None
+
+    elif curvature <= 0.4:
+        # Between 0.1 and 0.4
+        t = (curvature - 0.1) / (0.4 - 0.1)
+        bone_tip_head_rx = 10.0  # Constant
+        bone_mid_tail_rx = lerp(-40.0, -20.0, t)
+        bone_base_head_rx = -20.0 if t < 0.99 else None  # Disappears at 0.4
+        bone_base_tail_rx = lerp(-40.0, -20.0, t)
+        bone_mid_head_rx = None
+        bone_tip_tail_rx = None
+
+    elif curvature <= 0.5:
+        # Between 0.4 and 0.5
+        t = (curvature - 0.4) / (0.5 - 0.4)
+        bone_tip_head_rx = lerp(10.0, 5.0, t)
+        bone_mid_tail_rx = lerp(-20.0, -10.0, t)
+        bone_base_head_rx = None
+        bone_base_tail_rx = lerp(-20.0, -10.0, t)
+        bone_mid_head_rx = None
+        bone_tip_tail_rx = None
+
+    elif curvature <= 0.7:
+        # Between 0.5 and 0.7 (transition to S-shape)
+        t = (curvature - 0.5) / (0.7 - 0.5)
+        bone_tip_head_rx = lerp(5.0, -20.0, t)
+        bone_mid_head_rx = -10.0  # Constant at -10
+        bone_mid_tail_rx = -10.0 if t < 0.99 else None  # Disappears at 0.7
+        bone_base_head_rx = lerp(-10.0, -40.0, t)
+        bone_base_tail_rx = -10.0 if t < 0.99 else None  # Disappears at 0.7
+        bone_tip_tail_rx = None
+
+    elif curvature <= 0.9:
+        # Between 0.7 and 0.9
+        t = (curvature - 0.7) / (0.9 - 0.7)
+        bone_tip_head_rx = lerp(-20.0, -60.0, t)
+        bone_mid_head_rx = lerp(-10.0, -45.0, t)
+        bone_base_head_rx = -40.0  # Constant
+        bone_mid_tail_rx = None
+        bone_base_tail_rx = None
+        bone_tip_tail_rx = None
+
+    else:  # 0.9 < curvature <= 1.0
+        # Between 0.9 and 1.0
+        t = (curvature - 0.9) / (1.0 - 0.9)
+        bone_tip_head_rx = lerp(-60.0, -70.0, t)
+        bone_mid_head_rx = lerp(-45.0, -80.0, t)
+        bone_base_head_rx = lerp(-40.0, -45.0, t)
+        bone_mid_tail_rx = None
+        bone_base_tail_rx = None
+        bone_tip_tail_rx = None
+
+    return {
+        'bone_base_head_rx': bone_base_head_rx,
+        'bone_base_tail_rx': bone_base_tail_rx,
+        'bone_mid_head_rx': bone_mid_head_rx,
+        'bone_mid_tail_rx': bone_mid_tail_rx,
+        'bone_tip_head_rx': bone_tip_head_rx,
+        'bone_tip_tail_rx': bone_tip_tail_rx,
+    }
+
+
+# =============================================================================
 # CLI GENERATION
 # =============================================================================
 
@@ -259,6 +357,43 @@ exit;
 sketch_extrude {petal_name} {depth:.4f};"""
 
 
+def format_bone_cli(rotations: dict, layer: int = 1, petal: int = 1) -> str:
+    """
+    Format bone rotations as CLI commands.
+    Skip commands where rotation value is None.
+
+    Args:
+        rotations: Dictionary with bone rotation values (None means skip)
+        layer: Layer number for naming
+        petal: Petal number for naming
+
+    Returns:
+        CLI commands for bone rotations
+    """
+    rig_name = f'petal_L{layer}_P{petal}_rig'
+    commands = []
+
+    # bone_tip (check head first, then tail - for proper order)
+    if rotations['bone_tip_head_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_tip {rotations['bone_tip_head_rx']:.4f} 0.0 0.0 head;")
+    if rotations['bone_tip_tail_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_tip {rotations['bone_tip_tail_rx']:.4f} 0.0 0.0 tail;")
+
+    # bone_mid
+    if rotations['bone_mid_head_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_mid {rotations['bone_mid_head_rx']:.4f} 0.0 0.0 head;")
+    if rotations['bone_mid_tail_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_mid {rotations['bone_mid_tail_rx']:.4f} 0.0 0.0 tail;")
+
+    # bone_base
+    if rotations['bone_base_head_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_base {rotations['bone_base_head_rx']:.4f} 0.0 0.0 head;")
+    if rotations['bone_base_tail_rx'] is not None:
+        commands.append(f"rotate_bone {rig_name} bone_base {rotations['bone_base_tail_rx']:.4f} 0.0 0.0 tail;")
+
+    return '\n'.join(commands)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='Generate CLI using SR-discovered formulas',
@@ -269,38 +404,66 @@ def main():
                        help='Overall rose size (2.0 - 8.0)')
     parser.add_argument('-o', '--opening_degree', type=float, required=True,
                        help='Opening degree: 0.0 (closed) to 1.0 (fully open)')
+    parser.add_argument('-c', '--curvature', type=float, default=None,
+                       help='Bone curvature: 0.0-0.4 (C-shape), 0.5-0.7 (natural S), 0.8-1.0 (dramatic S)')
     parser.add_argument('-l', '--layer', type=int, default=1,
                        help='Layer number for naming (default: 1)')
     parser.add_argument('-p', '--petal', type=int, default=1,
                        help='Petal number for naming (default: 1)')
     parser.add_argument('--show-coords', action='store_true',
                        help='Show control point coordinates')
+    parser.add_argument('--bones-only', action='store_true',
+                       help='Generate only bone rotation CLI (skip petal geometry)')
 
     args = parser.parse_args()
 
-    # Compute using SR formulas
-    control_points = compute_petal_from_sr(args.base_size, args.opening_degree)
+    # Validate curvature if provided
+    if args.curvature is not None and not (0.0 <= args.curvature <= 1.0):
+        print(f"Warning: curvature {args.curvature} is outside range (0.0 - 1.0)")
 
-    # Show coordinates if requested
-    if args.show_coords:
+    # Generate petal geometry CLI (unless bones-only)
+    if not args.bones_only:
+        # Compute using SR formulas
+        control_points = compute_petal_from_sr(args.base_size, args.opening_degree)
+
+        # Show coordinates if requested
+        if args.show_coords:
+            print("=" * 60)
+            print("SR-Computed Control Points:")
+            print("=" * 60)
+            for i in range(1, 16):
+                x = control_points[f'cp{i}_x']
+                y = control_points[f'cp{i}_y']
+                print(f"  CP{i:2d}: ({x:8.4f}, {y:8.4f})")
+            print(f"  Extrude: {control_points['extrude_depth']:.6f}")
+            print()
+
+        # Generate petal geometry CLI
+        cli = format_cli(control_points, args.layer, args.petal)
+
         print("=" * 60)
-        print("SR-Computed Control Points:")
+        print(f"Petal Geometry CLI (base_size={args.base_size}, opening={args.opening_degree})")
         print("=" * 60)
-        for i in range(1, 16):
-            x = control_points[f'cp{i}_x']
-            y = control_points[f'cp{i}_y']
-            print(f"  CP{i:2d}: ({x:8.4f}, {y:8.4f})")
-        print(f"  Extrude: {control_points['extrude_depth']:.6f}")
+        print(cli)
         print()
 
-    # Generate CLI
-    cli = format_cli(control_points, args.layer, args.petal)
+    # Generate bone rotation CLI if curvature is provided
+    if args.curvature is not None:
+        rotations = compute_bone_rotations(args.base_size, args.curvature)
 
-    print("=" * 60)
-    print(f"CLI from SR Formulas (base_size={args.base_size}, opening={args.opening_degree})")
-    print("=" * 60)
-    print(cli)
-    print()
+        bone_cli = format_bone_cli(rotations, args.layer, args.petal)
+
+        # Determine style description
+        if args.curvature < 0.5:
+            style = f"C-shape (uniform bend, intensity={args.curvature*2:.1f})"
+        else:
+            style = f"S-shape (alternating bend, intensity={(args.curvature-0.5)*2:.1f})"
+
+        print("=" * 60)
+        print(f"Bone Rotation CLI (curvature={args.curvature:.2f}, {style})")
+        print("=" * 60)
+        print(bone_cli)
+        print()
 
 
 if __name__ == '__main__':
