@@ -200,57 +200,81 @@ def compute_bone_rotations(base_size, curvature):
     """
     Compute bone rotations based on curvature parameter.
 
-    C-shape (0.1-0.4): 4 commands only
-      - bone_tip: head only (+20° → +5°)
-      - bone_mid: tail only (-40° → -20°)
-      - bone_base: head + tail (-20° → -10°, -40° → -20°)
-
-    S-shape (0.5-1.0): 6 commands
-      - All bones: head + tail with alternating pattern
-
-    Args:
-        base_size: Overall rose size (affects rotation intensity)
-        curvature: 0.1-0.4 (C-shape), 0.5-1.0 (S-shape)
+    Spec from user (exact values):
+    - 0.1: bone_tip(+10 head), bone_mid(-40 tail), bone_base(-20 head, -40 tail)
+    - 0.4: bone_tip(+10 head), bone_mid(-20 tail), bone_base(-20 tail)
+    - 0.5: bone_tip(+5 head), bone_mid(-10 tail), bone_base(-10 tail)
+    - 0.7: bone_tip(-20 head), bone_mid(-10 head), bone_base(-40 head)
+    - 0.9: bone_tip(-60 head), bone_mid(-45 head), bone_base(-40 head)
+    - 1.0: bone_tip(-70 head), bone_mid(-80 head), bone_base(-45 head)
 
     Returns:
         Dictionary with bone rotation values (None means skip that command)
     """
 
-    if curvature < 0.5:
-        # C-shape: Only 4 commands
-        # Map curvature 0.1-0.4 to intensity 0-1
-        intensity = (curvature - 0.1) / 0.3 if curvature >= 0.1 else 0
-        intensity = max(0, min(1, intensity))  # Clamp to 0-1
+    def lerp(v0, v1, t):
+        """Linear interpolation"""
+        return v0 + (v1 - v0) * t
 
-        # bone_tip: head only, +20° → +5°
-        bone_tip_head_rx = 20.0 - intensity * 15.0
-        bone_tip_tail_rx = None  # Skip
+    # Piecewise linear interpolation based on curvature ranges
+    if curvature <= 0.1:
+        # At or below 0.1
+        bone_tip_head_rx = 10.0
+        bone_mid_tail_rx = -40.0
+        bone_base_head_rx = -20.0
+        bone_base_tail_rx = -40.0
+        bone_mid_head_rx = None
+        bone_tip_tail_rx = None
 
-        # bone_mid: tail only, -40° → -20°
-        bone_mid_head_rx = None  # Skip
-        bone_mid_tail_rx = -40.0 + intensity * 20.0
+    elif curvature <= 0.4:
+        # Between 0.1 and 0.4
+        t = (curvature - 0.1) / (0.4 - 0.1)
+        bone_tip_head_rx = 10.0  # Constant
+        bone_mid_tail_rx = lerp(-40.0, -20.0, t)
+        bone_base_head_rx = -20.0 if t < 0.99 else None  # Disappears at 0.4
+        bone_base_tail_rx = lerp(-40.0, -20.0, t)
+        bone_mid_head_rx = None
+        bone_tip_tail_rx = None
 
-        # bone_base: head + tail
-        bone_base_head_rx = -20.0 + intensity * 10.0  # -20° → -10°
-        bone_base_tail_rx = -40.0 + intensity * 20.0  # -40° → -20°
+    elif curvature <= 0.5:
+        # Between 0.4 and 0.5
+        t = (curvature - 0.4) / (0.5 - 0.4)
+        bone_tip_head_rx = lerp(10.0, 5.0, t)
+        bone_mid_tail_rx = lerp(-20.0, -10.0, t)
+        bone_base_head_rx = None
+        bone_base_tail_rx = lerp(-20.0, -10.0, t)
+        bone_mid_head_rx = None
+        bone_tip_tail_rx = None
 
-    else:
-        # S-shape: All 6 commands (alternating bend)
-        intensity = (curvature - 0.5) * 2.0  # Map 0.5-1.0 to 0-1
+    elif curvature <= 0.7:
+        # Between 0.5 and 0.7 (transition to S-shape)
+        t = (curvature - 0.5) / (0.7 - 0.5)
+        bone_tip_head_rx = lerp(5.0, -20.0, t)
+        bone_mid_head_rx = -10.0  # Constant at -10
+        bone_mid_tail_rx = -10.0 if t < 0.99 else None  # Disappears at 0.7
+        bone_base_head_rx = lerp(-10.0, -40.0, t)
+        bone_base_tail_rx = -10.0 if t < 0.99 else None  # Disappears at 0.7
+        bone_tip_tail_rx = None
 
-        base_intensity = base_size * 5.0
+    elif curvature <= 0.9:
+        # Between 0.7 and 0.9
+        t = (curvature - 0.7) / (0.9 - 0.7)
+        bone_tip_head_rx = lerp(-20.0, -60.0, t)
+        bone_mid_head_rx = lerp(-10.0, -45.0, t)
+        bone_base_head_rx = -40.0  # Constant
+        bone_mid_tail_rx = None
+        bone_base_tail_rx = None
+        bone_tip_tail_rx = None
 
-        # Base: Bend down
-        bone_base_head_rx = -base_intensity * (0.5 + intensity * 0.5)
-        bone_base_tail_rx = -base_intensity * (0.8 + intensity * 0.8)
-
-        # Mid: Bend up (opposite direction)
-        bone_mid_head_rx = base_intensity * (0.3 + intensity * 0.7)
-        bone_mid_tail_rx = base_intensity * (0.8 + intensity * 1.0)
-
-        # Tip: Bend down
-        bone_tip_head_rx = -base_intensity * (0.3 + intensity * 0.5)
-        bone_tip_tail_rx = -base_intensity * (0.1 + intensity * 0.2)
+    else:  # 0.9 < curvature <= 1.0
+        # Between 0.9 and 1.0
+        t = (curvature - 0.9) / (1.0 - 0.9)
+        bone_tip_head_rx = lerp(-60.0, -70.0, t)
+        bone_mid_head_rx = lerp(-45.0, -80.0, t)
+        bone_base_head_rx = lerp(-40.0, -45.0, t)
+        bone_mid_tail_rx = None
+        bone_base_tail_rx = None
+        bone_tip_tail_rx = None
 
     return {
         'bone_base_head_rx': bone_base_head_rx,
